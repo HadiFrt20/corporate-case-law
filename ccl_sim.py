@@ -43,6 +43,9 @@ HARD_LOOSEN = [
 ]
 HARD = (HARD_LOOSEN, TIGHT)
 WORLD = "easy"
+ROGUE_EFFECT = "segment"   # "segment": the rogue approver's whole book renews badly (v1-v4 default)
+                           # "exception": only the above-policy approvals renew badly (the discount CAUSES the churn)
+LAW_REF = "global"         # bad-law reference: "global" = all policy approvals; "scoped" = policy approvals in the holding's own population
 def set_world(w):
     global LOOSEN, TIGHT, ROGUE, WORLD
     assert w in {"easy", "hard"}, w
@@ -75,6 +78,7 @@ def make_firm(rng, n, bad_renew, month=None):
     d["good_decision"] = d.disc.values <= cap_good  # policy-consistent, noiseless: what a well-run firm decides
     d["binding"] = binding
     rogue = (binding == ROGUE) & d.approved.values
+    if ROGUE_EFFECT == "exception": rogue &= d.disc.values > STATUTE_CAP
     d["renewed"] = rng.random(n) < np.where(rogue, bad_renew, 0.85)
     d["outcome_known_month"] = d.month + 12 * d.term  # renewal is only observable when the term ends
     d["statute"] = d.disc <= STATUTE_CAP
@@ -106,10 +110,11 @@ LITS = [f"segment = '{v}'" for v in ["SMB", "MM", "ENT"]] + [f"region = '{v}'" f
 def generic_literals(d):
     """every condition a real miner would try: category = / !=, boolean / NOT, numeric > and <= at deciles + round sizes"""
     L = []
-    for f in CAT:
+    cat_, bool_, num_ = (CAT, BOOL, ["term", "size_k", "tenure_y"]) if LIT_COLS is None else (LIT_COLS["cat"], LIT_COLS["bool"], LIT_COLS["num"])
+    for f in cat_:
         for v in sorted(d[f].unique()): L += [f"{f} = '{v}'", f"{f} != '{v}'"]
-    for f in BOOL: L += [f, f"NOT {f}"]
-    for f in ["term", "size_k", "tenure_y"]:
+    for f in bool_: L += [f, f"NOT {f}"]
+    for f in num_:
         if f not in d: continue
         qs = sorted({float(np.round(np.quantile(d[f], q))) for q in np.arange(.1, 1, .1)} | ({100, 250, 500, 1000} if f == "size_k" else set()))
         for x in qs: L += [f"{f} > {x:g}", f"{f} <= {x:g}"]
@@ -190,8 +195,12 @@ def lit_only(h, d):
     return m
 
 
+CAPS = {"loosen": np.arange(16, 36, dtype=float), "tighten": np.arange(5, 15, dtype=float)}  # threshold grid on the policy variable
+LIT_COLS = None  # None = synthetic-firm columns; real datasets set dict(cat=[...], bool=[...], num=[...])
+
+
 def _beam_caps(kind):
-    return np.arange(16, 36, dtype=float) if kind == "loosen" else np.arange(5, 15, dtype=float)
+    return CAPS[kind]
 
 
 def _cap_bins(disc, good, caps):
@@ -202,25 +211,30 @@ def _cap_bins(disc, good, caps):
     return W
 
 
-def _best_cap(n_le, g_le, n_tot, g_tot, kind, nlits, min_support, min_prec):
+def _wilson_lb(g, n, z=1.96):
+    n = np.maximum(n, 1); p = g / n
+    return (p + z * z / (2 * n) - z * np.sqrt(p * (1 - p) / n + z * z / (4 * n * n))) / (1 + z * z / n)
+
+
+def _best_cap(n_le, g_le, n_tot, g_tot, kind, nlits, min_support, min_prec, wilson=False):
     """vectorised over candidates: n_le / g_le[i, j] = cases / good cases of candidate i with disc <= caps[j].
     returns (gain, cap index, n, g, has_cap) per candidate, first-best cap on ties as np.argmax"""
     n, g = (n_le, g_le) if kind == "loosen" else (n_tot[:, None] - n_le, g_tot[:, None] - g_le)
-    ok = (n >= min_support) & (g >= min_prec * np.maximum(n, 1))
+    ok = (n >= min_support) & ((_wilson_lb(g, n) >= min_prec) if wilson else (g >= min_prec * np.maximum(n, 1)))
     gain = np.where(ok, 2 * g - n - 3 * nlits, -1e9); j = gain.argmax(1); r = np.arange(len(j))
     return gain[r, j], j, n[r, j], g[r, j], ok.any(1)
 
 
-def _score_children(Lf, W, rows, cand, depth, kind, min_support, min_prec):
+def _score_children(Lf, W, rows, cand, depth, kind, min_support, min_prec, wilson=False):
     """score parent AND lit for every candidate lit at once: per-bin counts from one matmul, no sort per candidate"""
     H = np.rint(Lf[np.ix_(cand, rows)] @ W[rows]).astype(np.int64); nb = W.shape[1] // 2
     n_tot, g_tot = H[:, :nb].sum(1), H[:, nb:].sum(1); keep = n_tot >= min_support
     H, n_tot, g_tot = H[keep], n_tot[keep], g_tot[keep]
-    gain, j, n, g, has = _best_cap(H[:, :nb - 1].cumsum(1), H[:, nb:-1].cumsum(1), n_tot, g_tot, kind, depth, min_support, min_prec)
+    gain, j, n, g, has = _best_cap(H[:, :nb - 1].cumsum(1), H[:, nb:-1].cumsum(1), n_tot, g_tot, kind, depth, min_support, min_prec, wilson)
     return cand[keep], np.where(has, gain, -1e9), j, n, g, has, g_tot / n_tot
 
 
-def mine_beam(d, min_support=60, min_prec=.9, max_rules=14, max_lits=3, beam=25):
+def mine_beam(d, min_support=60, min_prec=.9, max_rules=14, max_lits=3, beam=25, wilson=False):
     """beam-search subgroup discovery over GENERIC literals built from the data (no hand-picked schema)"""
     lits = generic_literals(d); Lm = np.array([literal(l, d) for l in lits]); disc, appr = d.disc.values, d.approved.values
     after = [np.array([j for j, b in enumerate(lits) if b > a], int) for a in lits]  # combos grow in increasing string order
@@ -232,7 +246,7 @@ def mine_beam(d, min_support=60, min_prec=.9, max_rules=14, max_lits=3, beam=25)
             rows = np.flatnonzero(open_); Lo = Lm[:, rows]; W = _cap_bins(disc[rows], good[rows], caps); Lf = Lo.astype(W.dtype)
             best, frontier = None, [((), np.arange(len(rows)))]  # (combo of lit indices, open rows it covers)
             for depth in range(1, max_lits + 1):
-                parts = [(p, _score_children(Lf, W, pr, after[combo[-1]] if combo else np.arange(len(lits)), depth, kind, min_support, min_prec))
+                parts = [(p, _score_children(Lf, W, pr, after[combo[-1]] if combo else np.arange(len(lits)), depth, kind, min_support, min_prec, wilson))
                          for p, (combo, pr) in enumerate(frontier) if not combo or len(after[combo[-1]])]
                 if not parts: break
                 pid = np.concatenate([np.full(len(s[0]), p) for p, s in parts])
@@ -289,6 +303,7 @@ def mine_tree(d, Xd, covering, min_support=60, min_prec=.85, max_rules=15):
 def mine(d, Xd, miner):
     if miner == "schema": return mine_schema(d)
     if miner == "beam": return mine_beam(d)
+    if miner == "beam_power": return mine_beam(d, min_support=25, min_prec=.8, wilson=True)  # rare-but-clean rules survive
     return mine_tree(d, Xd, covering=(miner == "covering"))
 
 
@@ -328,9 +343,15 @@ def good_law(hs, hist, Xh, now, max_drop=.2, min_known=30):
     out = []
     for h in hs:
         if h["kind"] == "tighten": out.append(dict(h, outcome="n/a", outcome_lift=None)); continue
+        if LAW_REF == "scoped" and "lits" in h:  # same population, inside policy: isolates the effect of the EXCEPTION itself
+            pop = np.ones(len(hist), bool)
+            for l in h["lits"]: pop &= literal(l, hist)
+            rm = ref_m & pop
+            h_ref = hist.renewed.values[rm].mean() if rm.sum() >= min_known else ref
+        else: h_ref = ref
         m = fires(h, hist, Xh) & scope(h, hist) & hist.approved.values & known
-        if m.sum() < min_known or np.isnan(ref): out.append(dict(h, outcome="pending", outcome_lift=None, outcome_n=int(m.sum()))); continue
-        lift = float(hist.renewed.values[m].mean() - ref)
+        if m.sum() < min_known or np.isnan(h_ref): out.append(dict(h, outcome="pending", outcome_lift=None, outcome_n=int(m.sum()))); continue
+        lift = float(hist.renewed.values[m].mean() - h_ref)
         out.append(dict(h, outcome="bad" if lift < -max_drop else "good", outcome_lift=round(lift, 3), outcome_n=int(m.sum())))
     return out
 
@@ -360,20 +381,22 @@ def recovery(hs, fresh, Xf, purity_min=.8, cov_min=.6):
     return rec
 
 
-def run(seed, miner, bad_renew, world="easy"):
-    assert miner in {"schema", "tree", "covering", "beam"}, miner
+def run(seed, miner, bad_renew, world="easy", adm_months=2, rogue_effect="segment", law_ref="global"):
+    global ROGUE_EFFECT, LAW_REF
+    ROGUE_EFFECT, LAW_REF = rogue_effect, law_ref
+    assert miner in {"schema", "tree", "covering", "beam", "beam_power"}, miner
     set_world(world)
     rng = np.random.default_rng(seed)
     df = make_firm(rng, 120000, bad_renew); X = features(df)
     fresh = make_firm(np.random.default_rng(seed + 1000), 60000, bad_renew, month=TEST_START - 1); Xf = features(fresh)[X.columns]
     fresh_r1 = fresh  # month 35: R1 active, R6 active
-    methods = ["statute", "gbm_static", "gbm_monthly", "gbm_outcome", "gbm_uplift", "ccl", "ccl_goodlaw"]
+    methods = ["statute", "gbm_static", "gbm_monthly", "gbm_outcome", "gbm_uplift", "gbm_tlearner", "ccl", "ccl_goodlaw"]
     acc = {k: {"actual": [], "good": [], "n": []} for k in methods}
     static = HistGradientBoostingClassifier(random_state=0).fit(X[df.month < TEST_START], df.approved[df.month < TEST_START])
     log, snapshots = [], {}
     r1_name = LOOSEN[0][0]
     for m in range(TEST_START, MONTHS):
-        win = (df.month >= m - 12) & (df.month < m); mw = win & (df.month < m - 2); aw = win & (df.month >= m - 2)
+        win = (df.month >= m - 12) & (df.month < m); mw = win & (df.month < m - adm_months); aw = win & (df.month >= m - adm_months)
         hs = moot_court(mine(df[mw], X[mw], miner), df[aw], X[aw])
         hist = df.month < m
         judged = good_law(hs, df[hist], X[hist], now=m)
@@ -388,9 +411,13 @@ def run(seed, miner, bad_renew, world="easy"):
         kn = win24 & (df.outcome_known_month < m) & df.approved
         renew_model = HistGradientBoostingClassifier(random_state=0).fit(X[kn], df.renewed[kn])
         ref_m = kn & df.statute; ref = df.renewed[ref_m].mean()
+        # T-learner: tau(x) = P(renew | exception approval, x) - P(renew | in-policy approval, x); veto exceptions with tau < -0.20
+        t1 = HistGradientBoostingClassifier(random_state=0).fit(X[kn & ~df.statute], df.renewed[kn & ~df.statute])
+        t0 = HistGradientBoostingClassifier(random_state=0).fit(X[kn & df.statute], df.renewed[kn & df.statute])
         te = (df.month == m).values; dt, Xt = df[te], X[te]
         preds = {"statute": dt.statute.values, "gbm_static": static.predict(Xt), "gbm_monthly": gbm.predict(Xt), "gbm_outcome": gbm_o.predict(Xt),
                  "gbm_uplift": (lambda base: base & ~(base & ~dt.statute.values & (renew_model.predict_proba(Xt)[:, 1] < ref - 0.2)))(gbm.predict(Xt).astype(bool)),
+                 "gbm_tlearner": (lambda base: base & ~(base & ~dt.statute.values & (t1.predict_proba(Xt)[:, 1] - t0.predict_proba(Xt)[:, 1] < -0.2)))(gbm.predict(Xt).astype(bool)),
                  "ccl": apply(hs, dt, Xt)[0], "ccl_goodlaw": apply(good, dt, Xt)[0]}
         for k, p in preds.items():
             acc[k]["actual"].append(float((p == dt.approved.values).mean())); acc[k]["good"].append(float((p == dt.good_decision.values).mean())); acc[k]["n"].append(int(te.sum()))
@@ -402,15 +429,16 @@ def run(seed, miner, bad_renew, world="easy"):
                                 holdings=[dict(id=h["id"], kind=h["kind"], sql=to_sql(h), support=h["support"], replay_prec=h["replay_prec"],
                                                outcome=h["outcome"], outcome_lift=h.get("outcome_lift")) for h in judged])
     wavg = lambda v, n: float(np.average(v, weights=n))
-    return dict(seed=seed, miner=miner, bad_renew=bad_renew, world=world,
+    return dict(seed=seed, miner=miner, bad_renew=bad_renew, world=world, adm_months=adm_months, rogue_effect=rogue_effect, law_ref=law_ref,
                 accuracy={k: dict(vs_actual=round(wavg(a["actual"], a["n"]), 4), vs_good=round(wavg(a["good"], a["n"]), 4)) for k, a in acc.items()},
                 per_month={k: [round(x, 3) for x in a["actual"]] for k, a in acc.items()}, log=log, snapshots=snapshots)
 
 
 if __name__ == "__main__":
     ap = argparse.ArgumentParser(); ap.add_argument("--seed", type=int, default=7); ap.add_argument("--miner", default="schema")
-    ap.add_argument("--bad-renew", type=float, default=0.35); ap.add_argument("--world", default="easy"); ap.add_argument("--out", required=True)
+    ap.add_argument("--bad-renew", type=float, default=0.35); ap.add_argument("--world", default="easy"); ap.add_argument("--adm-months", type=int, default=2)
+    ap.add_argument("--rogue-effect", default="segment"); ap.add_argument("--law-ref", default="global"); ap.add_argument("--out", required=True)
     a = ap.parse_args()
-    res = run(a.seed, a.miner, a.bad_renew, a.world)
+    res = run(a.seed, a.miner, a.bad_renew, a.world, a.adm_months, a.rogue_effect, a.law_ref)
     with open(a.out, "w") as f: json.dump(res, f, indent=1)
     print(a.out, res["accuracy"]["ccl"], res["accuracy"]["ccl_goodlaw"])

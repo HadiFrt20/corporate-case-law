@@ -147,3 +147,25 @@ Background: CCL was born on 16 Oct from studying the CLM paper (arXiv 2609.04377
 **Decision.** The agent returns {decision, cites, because}. The checker re-executes the cited UC functions as the calling user (SQL API, OBO by construction) and compares the decision with the executable law; otherwise it falls back to the law.
 **Consequences.** 0 wrong decisions shipped even with a weak model that followed an injection. Agent "accuracy" measures compliance, by design.
 **Status.** Accepted.
+
+## ADR-026 · Power-aware mining and admission for rare rules
+**Context.** A real but rare rule (about 7 cases a month) fails fixed thresholds: raw precision >= 0.9, support >= 60, and at least 15 cases in a 2-month admission window.
+**Decision.** Optional `beam_power` miner (support >= 25, Wilson 95% lower bound >= 0.8) and a configurable admission window (`--adm-months`).
+**Consequences.** Both together recover the branch completely, but admit extra rules; the longer window alone gives the best overall accuracy. It's a tunable trade-off, not a free win.
+**Status.** Accepted (optional).
+
+## ADR-027 · Bad law must be causal: scoped reference
+**Context.** A global reference (all policy approvals) flags a rule whose beneficiaries churn for reasons unrelated to the discount. The T-learner baseline exposed this.
+**Decision.** Add `--law-ref scoped`: compare a holding's exception approvals with policy approvals from the same population (the holding's literals, inside the policy). Add `--rogue-effect exception|segment` to the simulator, so both worlds are tested.
+**Consequences.** Scoped is causally correct. Which to use depends on the business question ("does the discount hurt?" vs "do these customers renew badly?").
+**Status.** Accepted.
+
+## ADR-028 · Real data = HMDA, one lender, QM DTI cap as the statute
+**Context.** We need real decisions against a written policy, with dates and reason codes, downloadable without login.
+**Decision.** Use HMDA public LAR (CFPB data-browser API, follow redirects, at most 2 filters), one lender (public LEI), conventional first-lien owner-occupied purchases, 2018-2023, statute = DTI <= 43%. Never mine race, ethnicity, sex or age; audit each holding with a four-fifths ratio instead.
+**Consequences.** Real tacit rules are recovered; the bad-law filter can't run (no outcomes); credit scores are missing, so most within-policy denials can't be explained by any miner. Raw files are gitignored and re-downloadable.
+**Status.** Accepted.
+
+## ADR-029 · Publish a clean history
+**Decision.** The public repo is a single orphan commit (`public` branch → `main`) with workspace identifiers in env vars. The local `master` keeps the full private history.
+**Status.** Accepted.

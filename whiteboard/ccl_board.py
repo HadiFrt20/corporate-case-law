@@ -177,8 +177,74 @@ _V3 = json.load(open(os.path.join(HERE, "..", "summary_v3.json")))["worlds"]["ha
 _gain = 100 * (_V3["accuracy"]["ccl"]["vs_actual"] - _V3["accuracy"]["statute"]["vs_actual"]); _rec = _V3["exact"]
 _ok = _gain >= 10 and _rec >= 4
 E += note("k_kill", 2560, 3060, 540, 190, f"KILL rule: CCL >= policy + 10 pts\nAND >= 4 of 7 rules recovered\nv3 hard world: +{_gain:.1f} pts · {_rec:.1f} / 7\n-> {'SURVIVES (synthetic only)' if _ok else 'KILLED'}", -0.02, 19)
-E.append(T("k_close", 0, 3330, "CLM writes the firm's knowledge down. CCL digs it out of what the firm already decided,\nand makes every rule prove itself before an agent may use it.", 26, SL))
-E.append(T("k_foot", 0, 3430, "code + numbers: github.com/HadiFrt20/corporate-case-law (ccl_sim.py, aggregate_v3.py -> summary_v3.json, RESULTS_v3.md) · board numbers read from summary json · 19 Oct 2026", 15, MUTED))
+# ================= 9-11: what happened after v3 (all read from result files) =================
+import glob as _glob
+ROOT = os.path.join(HERE, "..")
+RL = json.load(open(os.path.join(ROOT, "dbx", "run_log.json")))["stages"]
+INJ = json.load(open(os.path.join(ROOT, "dbx", "injection_log_databricks-gpt-5-4-nano_False.json")))
+REAL = json.load(open(os.path.join(ROOT, "real", "hmda", "results.json")))
+V4 = json.load(open(os.path.join(ROOT, "summary_v4.json")))
+CZ = [json.load(open(f)) for f in _glob.glob(os.path.join(ROOT, "runs_causal", "*.json"))]
+Y0 = 3560
+E.append(Ln("k_div2", -20, Y0 - 50, [[0, 0], [3440, 0]], MUTED, 1, "dashed"))
+E.append(T("k_after", 0, Y0 - 40, "after v3: built on Databricks, tested on real decisions, two baselines fixed", 22, MUTED))
+
+# ---- 9. on Databricks ----
+E += num("k_n9", 0, Y0, 9, "built on Databricks (sandbox run)", "Delta time travel · UC functions · Lakebase branch per trial · Foundation Model API")
+steps = [("k_s1", "Delta decisions\none commit / month", "warn"), ("k_s2", "rules as\nUC SQL functions", "ok"),
+         ("k_s3", "moot court on a\nLakebase branch", "lava"), ("k_s4", "law registry\nin Lakebase", "blue"), ("k_s5", "agent + checker\n(re-runs UC fns)", "ai")]
+for k, (sid, lab, kind) in enumerate(steps):
+    E += H(B(sid, 20 + k * 215, Y0 + 100, 190, 80, lab, kind, 16))
+    if k: E.append(A(f"k_sa{k}", 20 + k * 215 - 23, Y0 + 140, [[0, 0], [21, 0]], SL, steps[k - 1][0], sid))
+A_ = RL["A_mine"]; B_ = RL["B_moot_court"]; P_ = RL["B_point_in_time"]; F1 = RL["F1_rationale"]; F2 = RL["F2_proposals"]; EA = RL["E_agent"]
+facts9 = [(f"{A_['facts_changed_since']:.1%} of past decisions have facts edited AFTER the decision", SL),
+          ("mining today's table misses a real rule: " + (A_["only_asof"][0] if A_["only_asof"] else "-"), RED),
+          (f"law built on today's table, judged on real facts: {P_['law_built_on_todays_table_judged_on_real_facts']:.4f} vs {P_['law_asof_judged_on_real_facts']:.4f}", SL),
+          (f"{B_['admitted']}/{B_['tried']} candidates admitted, Lakebase branch ready in {B_['median_branch_s']} s (median)", GRN),
+          (f"LLM 'because' matched the hidden reason {F1['matched']}/{F1['total']}; rogue rule judged incoherent", GRN),
+          (f"LLM proposed {len(F2['proposals'])} new rules: {sum(p['verdict'] == 'admitted' for p in F2['proposals'])} survived replay", RED),
+          (f"agent = executable law on {int(EA['agent_matches_law'] * EA['deals'])}/{EA['deals']} deals", GRN),
+          (f"injection, small model, no warning: followed {INJ['agent_followed_injection']}/10, checker blocked {INJ['checker_blocked']}, wrong shipped {INJ['shipped_wrong']}", GRN)]
+for k, (f, c) in enumerate(facts9): E.append(T(f"k_f9{k}", 20, Y0 + 210 + k * 30, f, 15, c))
+E += note("k_cap", 700, Y0 + 470, 380, 120, "Lakebase gotcha: ~21 active\nendpoints per project; disable each\ntrial's endpoint, keep the branch", -0.02, 15)
+
+# ---- 10. real decisions ----
+E += num("k_n10", 1180, Y0, 10, "real decisions: one US mortgage lender", "HMDA public data 2018-2023 · statute = QM debt-to-income cap 43% · race/sex never mined")
+E.append(T("k_rh10", 1200, Y0 + 90, "accuracy on the held-out year (axis starts at 0.70)", 16, SL))
+cols10 = [("statute", "policy", "neu"), ("always_approve", "always approve", "neu"), ("beam_power", "CCL", "ok"), ("gbm", "black box", "warn")]
+for i, (t, r) in enumerate(REAL["tests"].items()):
+    y = Y0 + 125 + i * 110
+    E.append(T(f"k_ry{i}", 1200, y + 30, str(t), 18, SL))
+    for k, (key, lab, kind) in enumerate(cols10):
+        v = r[key]["acc"]; E += B(f"k_rb10{i}{k}", 1290, y + k * 24, max(30, int((v - .70) * 2200)), 21, f"{lab} {v:.3f}", kind, 12, fill="hachure")
+top = REAL["tests"]["2022"]["beam_power"]["holdings"]
+loosen = next(h for h in top if h["kind"] == "loosen"); tight = next(h for h in top if h["kind"] == "tighten")
+tb = ", ".join(f"{k} {v:.0%}" for k, v in list(tight["because"].items())[:2])
+E += code("k_real_sql", 1200, Y0 + 470, 1040, 110, f"{loosen['sql'].replace('disc', 'dti')}\n   tacit: the lender approves up to 49% DTI, not 43%\n{tight['sql'].replace('disc', 'dti')}\n   because (denial codes): {tb}", 14)
+E += note("k_audit", 1700, Y0 + 600, 420, 110, f"fairness audit: stricter rules fail\nfour-fifths (race {tight['audit']['race']['ratio']}, sex {tight['audit']['sex']['ratio']})\n-> steward review, not the agent", 0.02, 15)
+E.append(T("k_real_c", 1200, Y0 + 610, "honest: always-approve is ~0.91;\nno credit score or outcome in HMDA", 15, RED))
+
+# ---- 11. rare rules + causal check ----
+E += num("k_n11", 2330, Y0, 11, "rare rules + is the discount the CAUSE?", "v4 simulation, 3 seeds")
+hw = V4["worlds"]["hard"]["miners"]; key = "H1b deal > 1M branch (non-ENT)"
+bars11 = [("beam/adm2", "v3 miner", "neu"), ("beam/adm4", "longer admission only", "warn"), ("beam_power/adm2", "power-aware mining only", "warn"), ("beam_power/adm4", "both", "ok")]
+E.append(T("k_h11", 2350, Y0 + 90, "the missing OR branch (deals > 1M): share decided right", 16, SL))
+for k, (mk, lab, kind) in enumerate(bars11):
+    v = hw[mk]["fidelity"][key]; y = Y0 + 120 + k * 38
+    E.append(T(f"k_l11{k}", 2350, y + 8, lab, 15, SL)); E += B(f"k_b11{k}", 2600, y, max(40, int(v * 600)), 30, f"{v:.2f}", kind, 15, fill="hachure")
+E.append(T("k_cost11", 2350, Y0 + 278, f"cost: power-aware mining admits extra rules (logged acc {hw['beam/adm2']['accuracy']['ccl']['vs_actual']:.3f} -> {hw['beam_power/adm4']['accuracy']['ccl']['vs_actual']:.3f})", 15, AMB))
+def cz(world, eff, ref, b, k):
+    rs = [r for r in CZ if r["world"] == world and r["rogue_effect"] == eff and r["law_ref"] == ref and abs(r["bad_renew"] - b) < 1e-9]
+    return sum(r["accuracy"][k]["vs_good"] for r in rs) / len(rs)
+E.append(T("k_h11b", 2350, Y0 + 320, "when the exception CAUSES churn (well-run target, easy world):", 16, SL))
+for k, (lab, mk, kind) in enumerate([("CCL bad-law filter", "ccl_goodlaw", "ok"), ("black box + renewal veto", "gbm_uplift", "warn"), ("black box + T-learner uplift", "gbm_tlearner", "warn")]):
+    v = cz("easy", "exception", "scoped", 0.35, mk); y = Y0 + 355 + k * 42
+    E.append(T(f"k_cl{k}", 2350, y + 7, lab, 15, SL)); E += B(f"k_cb{k}", 2650, y, max(40, int((v - .9) * 6000)), 32, f"{v:.3f}", kind, 15, fill="hachure")
+E.append(T("k_axis11", 3150, Y0 + 330, "axis from 0.90", 13, MUTED))
+E += note("k_causal", 2350, Y0 + 500, 560, 130, "when the segment churns anyway, the SCOPED filter\n(same population, inside policy) stays quiet: correct.\nv3's 'fair black box ties' came from a correlational sim", -0.015, 15)
+
+E.append(T("k_close", 0, Y0 + 760, "CLM writes the firm's knowledge down. CCL digs it out of what the firm already decided,\nand makes every rule prove itself before an agent may use it.", 26, SL))
+E.append(T("k_foot", 0, Y0 + 860, "code + numbers: github.com/HadiFrt20/corporate-case-law · every number on this board is read from the result files · 20 Oct 2026", 15, MUTED))
 
 E = [e for e in E if not (e["type"] == "text" and e["text"] == "")]
 _ids = {e["id"] for e in E}

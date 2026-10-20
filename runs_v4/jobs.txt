@@ -1,0 +1,39 @@
+--seed 7 --miner beam --world hard --adm-months 2 --out runs_v4/hard_beam_adm2_s7_b0.35.json
+--seed 7 --miner beam --world hard --adm-months 4 --out runs_v4/hard_beam_adm4_s7_b0.35.json
+--seed 7 --miner beam_power --world hard --adm-months 2 --out runs_v4/hard_beam_power_adm2_s7_b0.35.json
+--seed 7 --miner beam_power --world hard --adm-months 4 --out runs_v4/hard_beam_power_adm4_s7_b0.35.json
+--seed 7 --miner beam --world easy --adm-months 2 --out runs_v4/easy_beam_adm2_s7_b0.35.json
+--seed 7 --miner beam --world easy --adm-months 4 --out runs_v4/easy_beam_adm4_s7_b0.35.json
+--seed 7 --miner beam_power --world easy --adm-months 2 --out runs_v4/easy_beam_power_adm2_s7_b0.35.json
+--seed 7 --miner beam_power --world easy --adm-months 4 --out runs_v4/easy_beam_power_adm4_s7_b0.35.json
+--seed 7 --miner schema --world easy --bad-renew 0.35 --out runs_v4/easy_schema_adm2_s7_b0.35.json
+--seed 7 --miner schema --world easy --bad-renew 0.55 --out runs_v4/easy_schema_adm2_s7_b0.55.json
+--seed 7 --miner schema --world easy --bad-renew 0.70 --out runs_v4/easy_schema_adm2_s7_b0.70.json
+--seed 7 --miner schema --world easy --bad-renew 0.85 --out runs_v4/easy_schema_adm2_s7_b0.85.json
+--seed 7 --miner schema --world hard --out runs_v4/hard_schema_adm2_s7_b0.35.json
+--seed 11 --miner beam --world hard --adm-months 2 --out runs_v4/hard_beam_adm2_s11_b0.35.json
+--seed 11 --miner beam --world hard --adm-months 4 --out runs_v4/hard_beam_adm4_s11_b0.35.json
+--seed 11 --miner beam_power --world hard --adm-months 2 --out runs_v4/hard_beam_power_adm2_s11_b0.35.json
+--seed 11 --miner beam_power --world hard --adm-months 4 --out runs_v4/hard_beam_power_adm4_s11_b0.35.json
+--seed 11 --miner beam --world easy --adm-months 2 --out runs_v4/easy_beam_adm2_s11_b0.35.json
+--seed 11 --miner beam --world easy --adm-months 4 --out runs_v4/easy_beam_adm4_s11_b0.35.json
+--seed 11 --miner beam_power --world easy --adm-months 2 --out runs_v4/easy_beam_power_adm2_s11_b0.35.json
+--seed 11 --miner beam_power --world easy --adm-months 4 --out runs_v4/easy_beam_power_adm4_s11_b0.35.json
+--seed 11 --miner schema --world easy --bad-renew 0.35 --out runs_v4/easy_schema_adm2_s11_b0.35.json
+--seed 11 --miner schema --world easy --bad-renew 0.55 --out runs_v4/easy_schema_adm2_s11_b0.55.json
+--seed 11 --miner schema --world easy --bad-renew 0.70 --out runs_v4/easy_schema_adm2_s11_b0.70.json
+--seed 11 --miner schema --world easy --bad-renew 0.85 --out runs_v4/easy_schema_adm2_s11_b0.85.json
+--seed 11 --miner schema --world hard --out runs_v4/hard_schema_adm2_s11_b0.35.json
+--seed 23 --miner beam --world hard --adm-months 2 --out runs_v4/hard_beam_adm2_s23_b0.35.json
+--seed 23 --miner beam --world hard --adm-months 4 --out runs_v4/hard_beam_adm4_s23_b0.35.json
+--seed 23 --miner beam_power --world hard --adm-months 2 --out runs_v4/hard_beam_power_adm2_s23_b0.35.json
+--seed 23 --miner beam_power --world hard --adm-months 4 --out runs_v4/hard_beam_power_adm4_s23_b0.35.json
+--seed 23 --miner beam --world easy --adm-months 2 --out runs_v4/easy_beam_adm2_s23_b0.35.json
+--seed 23 --miner beam --world easy --adm-months 4 --out runs_v4/easy_beam_adm4_s23_b0.35.json
+--seed 23 --miner beam_power --world easy --adm-months 2 --out runs_v4/easy_beam_power_adm2_s23_b0.35.json
+--seed 23 --miner beam_power --world easy --adm-months 4 --out runs_v4/easy_beam_power_adm4_s23_b0.35.json
+--seed 23 --miner schema --world easy --bad-renew 0.35 --out runs_v4/easy_schema_adm2_s23_b0.35.json
+--seed 23 --miner schema --world easy --bad-renew 0.55 --out runs_v4/easy_schema_adm2_s23_b0.55.json
+--seed 23 --miner schema --world easy --bad-renew 0.70 --out runs_v4/easy_schema_adm2_s23_b0.70.json
+--seed 23 --miner schema --world easy --bad-renew 0.85 --out runs_v4/easy_schema_adm2_s23_b0.85.json
+--seed 23 --miner schema --world hard --out runs_v4/hard_schema_adm2_s23_b0.35.json

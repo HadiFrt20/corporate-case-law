@@ -1,0 +1,712 @@
+{
+ "lender": "6BYL5QZYBDK8S7L73M02",
+ "rows": {
+  "2018": 36473,
+  "2019": 38889,
+  "2020": 41185,
+  "2021": 41456,
+  "2022": 35200,
+  "2023": 28551
+ },
+ "approval_rate": {
+  "2018": 0.8482,
+  "2019": 0.8522,
+  "2020": 0.876,
+  "2021": 0.9101,
+  "2022": 0.906,
+  "2023": 0.9055
+ },
+ "residual_rate": {
+  "2018": 0.2203,
+  "2019": 0.2254,
+  "2020": 0.192,
+  "2021": 0.1793,
+  "2022": 0.2077,
+  "2023": 0.2617
+ },
+ "tests": {
+  "2021": {
+   "beam": {
+    "acc": 0.9069,
+    "n_holdings": 9,
+    "cited": 0.0999,
+    "holdings": [
+     {
+      "id": "H0",
+      "kind": "loosen",
+      "sql": "loan_k <= 335 AND ltv <= 96 AND disc <= 49  => APPROVE",
+      "support": 6433,
+      "replay_prec": 0.915,
+      "because": null,
+      "audit": {
+       "race": {
+        "rates": {
+         "White": 0.4524,
+         "Race Not Available": 0.3774,
+         "Asian": 0.249,
+         "Black or African American": 0.3484
+        },
+        "ratio": 0.55
+       },
+       "sex": {
+        "rates": {
+         "Joint": 0.3787,
+         "Male": 0.3953,
+         "Female": 0.4839,
+         "Sex Not Available": 0.4229
+        },
+        "ratio": 0.783
+       }
+      }
+     },
+     {
+      "id": "H1",
+      "kind": "loosen",
+      "sql": "aus = 'LP' AND income_k > 67 AND ltv <= 80 AND disc <= 49  => APPROVE",
+      "support": 762,
+      "replay_prec": 0.918,
+      "because": null,
+      "audit": {
+       "race": {
+        "rates": {
+         "White": 0.0224,
+         "Race Not Available": 0.0106,
+         "Asian": 0.035,
+         "Black or African American": 0.009
+        },
+        "ratio": 0.257
+       },
+       "sex": {
+        "rates": {
+         "Joint": 0.0278,
+         "Male": 0.021,
+         "Female": 0.0137,
+         "Sex Not Available": 0.0169
+        },
+        "ratio": 0.493
+       }
+      }
+     },
+     {
+      "id": "H2",
+      "kind": "loosen",
+      "sql": "income_k > 128 AND ltv <= 80 AND term_m > 349 AND disc <= 44  => APPROVE",
+      "support": 428,
+      "replay_prec": 0.93,
+      "because": null,
+      "audit": {
+       "race": {
+        "rates": {
+         "White": 0.047,
+         "Race Not Available": 0.0434,
+         "Asian": 0.0947,
+         "Black or African American": 0.0271
+        },
+        "ratio": 0.286
+       },
+       "sex": {
+        "rates": {
+         "Joint": 0.0788,
+         "Male": 0.0415,
+         "Female": 0.0311,
+         "Sex Not Available": 0.032
+        },
+        "ratio": 0.395
+       }
+      }
+     },
+     {
+      "id": "H3",
+      "kind": "loosen",
+      "sql": "aus = 'LP' AND loan_k <= 585 AND disc <= 44  => APPROVE",
+      "support": 296,
+      "replay_prec": 0.924,
+      "because": null,
+      "audit": {
+       "race": {
+        "rates": {
+         "White": 0.0254,
+         "Race Not Available": 0.0145,
+         "Asian": 0.013,
+         "Black or African American": 0.0317
+        },
+        "ratio": 0.41
+       },
+       "sex": {
+        "rates": {
+         "Joint": 0.0191,
+         "Male": 0.0264,
+         "Female": 0.028,
+         "Sex Not Available": 0.0113
+        },
+        "ratio": 0.404
+       }
+      }
+     },
+     {
+      "id": "H4",
+      "kind": "loosen",
+      "sql": "aus = 'DU' AND loan_k > 335 AND ltv > 90 AND disc <= 48  => APPROVE",
+      "support": 221,
+      "replay_prec": 0.898,
+      "because": null,
+      "audit": {
+       "race": {
+        "rates": {
+         "White": 0.0431,
+         "Race Not Available": 0.0569,
+         "Asian": 0.0428,
+         "Black or African American": 0.0271
+        },
+        "ratio": 0.476
+       },
+       "sex": {
+        "rates": {
+         "Joint": 0.0434,
+         "Male": 0.0511,
+         "Female": 0.0298,
+         "Sex Not Available": 0.0639
+        },
+        "ratio": 0.466
+       }
+      }
+     },
+     {
+      "id": "H5",
+      "kind": "loosen",
+      "sql": "aus = 'DU' AND ltv <= 76 AND disc <= 49  => APPROVE",
+      "support": 163,
+      "replay_prec": 0.944,
+      "because": null,
+      "audit": {
+       "race": {
+        "rates": {
+         "White": 0.1476,
+         "Race Not Available": 0.1274,
+         "Asian": 0.1855,
+         "Black or African American": 0.0317
+        },
+        "ratio": 0.171
+       },
+       "sex": {
+        "rates": {
+         "Joint": 0.1535,
+         "Male": 0.1085,
+         "Female": 0.1839,
+         "Sex Not Available": 0.1278
+        },
+        "ratio": 0.59
+       }
+      }
+     },
+     {
+      "id": "H6",
+      "kind": "loosen",
+      "sql": "loan_k > 585 AND ltv <= 64 AND score_model != '2' AND disc <= 49  => APPROVE",
+      "support": 132,
+      "replay_prec": 0.914,
+      "because": null,
+      "audit": {
+       "race": {
+        "rates": {
+         "White": 0.01,
+         "Race Not Available": 0.0183,
+         "Asian": 0.0182,
+         "Black or African American": 0.0
+        },
+        "ratio": 0.0
+       },
+       "sex": {
+        "rates": {
+         "Joint": 0.0127,
+         "Male": 0.0132,
+         "Female": 0.0087,
+         "Sex Not Available": 0.0113
+        },
+        "ratio": 0.659
+       }
+      }
+     },
+     {
+      "id": "H7",
+      "kind": "tighten",
+      "sql": "jumbo AND ltv > 90 AND disc > 25  => REJECT",
+      "support": 104,
+      "replay_prec": 0.965,
+      "because": {
+       "collateral": 0.663,
+       "debt-to-income": 0.145,
+       "other": 0.084
+      },
+      "audit": {
+       "race": {
+        "rates": {
+         "White": 0.0016,
+         "Race Not Available": 0.0018,
+         "Asian": 0.0026,
+         "Black or African American": 0.0025
+        },
+        "ratio": 0.615
+       },
+       "sex": {
+        "rates": {
+         "Joint": 0.0022,
+         "Male": 0.002,
+         "Female": 0.0014,
+         "Sex Not Available": 0.001
+        },
+        "ratio": 0.455
+       }
+      }
+     },
+     {
+      "id": "H8",
+      "kind": "loosen",
+      "sql": "income_k > 160 AND loan_k <= 445 AND loan_k > 335 AND disc <= 48  => APPROVE",
+      "support": 65,
+      "replay_prec": 0.934,
+      "because": null,
+      "audit": {
+       "race": {
+        "rates": {
+         "White": 0.0141,
+         "Race Not Available": 0.0106,
+         "Asian": 0.0078,
+         "Black or African American": 0.0181
+        },
+        "ratio": 0.431
+       },
+       "sex": {
+        "rates": {
+         "Joint": 0.0223,
+         "Male": 0.0073,
+         "Female": 0.0081,
+         "Sex Not Available": 0.0113
+        },
+        "ratio": 0.327
+       }
+      }
+     }
+    ]
+   },
+   "beam_power": {
+    "acc": 0.9332,
+    "n_holdings": 2,
+    "cited": 0.138,
+    "holdings": [
+     {
+      "id": "H0",
+      "kind": "loosen",
+      "sql": "aus != 'TOTAL' AND disc <= 49  => APPROVE",
+      "support": 11193,
+      "replay_prec": 0.881,
+      "because": null,
+      "audit": {
+       "race": {
+        "rates": {
+         "White": 0.7907,
+         "Race Not Available": 0.7461,
+         "Asian": 0.7925,
+         "Black or African American": 0.6923
+        },
+        "ratio": 0.874
+       },
+       "sex": {
+        "rates": {
+         "Joint": 0.7856,
+         "Male": 0.7784,
+         "Female": 0.7888,
+         "Sex Not Available": 0.7444
+        },
+        "ratio": 0.944
+       }
+      }
+     },
+     {
+      "id": "H1",
+      "kind": "tighten",
+      "sql": "jumbo AND ltv > 90 AND disc > 25  => REJECT",
+      "support": 104,
+      "replay_prec": 0.965,
+      "because": {
+       "collateral": 0.663,
+       "debt-to-income": 0.145,
+       "other": 0.084
+      },
+      "audit": {
+       "race": {
+        "rates": {
+         "White": 0.0016,
+         "Race Not Available": 0.0018,
+         "Asian": 0.0026,
+         "Black or African American": 0.0025
+        },
+        "ratio": 0.615
+       },
+       "sex": {
+        "rates": {
+         "Joint": 0.0022,
+         "Male": 0.002,
+         "Female": 0.0014,
+         "Sex Not Available": 0.001
+        },
+        "ratio": 0.455
+       }
+      }
+     }
+    ]
+   },
+   "statute": {
+    "acc": 0.8207
+   },
+   "gbm": {
+    "acc": 0.9401
+   },
+   "always_approve": {
+    "acc": 0.9101
+   }
+  },
+  "2022": {
+   "beam": {
+    "acc": 0.9216,
+    "n_holdings": 5,
+    "cited": 0.1536,
+    "holdings": [
+     {
+      "id": "H0",
+      "kind": "loosen",
+      "sql": "NOT jumbo AND aus != 'none' AND disc <= 49  => APPROVE",
+      "support": 9424,
+      "replay_prec": 0.932,
+      "because": null,
+      "audit": {
+       "race": {
+        "rates": {
+         "White": 0.7011,
+         "Asian": 0.5897,
+         "Race Not Available": 0.6535,
+         "Black or African American": 0.7163
+        },
+        "ratio": 0.823
+       },
+       "sex": {
+        "rates": {
+         "Joint": 0.635,
+         "Male": 0.658,
+         "Female": 0.7801,
+         "Sex Not Available": 0.6566
+        },
+        "ratio": 0.814
+       }
+      }
+     },
+     {
+      "id": "H1",
+      "kind": "loosen",
+      "sql": "loan_k > 635 AND ltv <= 80 AND disc <= 44  => APPROVE",
+      "support": 463,
+      "replay_prec": 0.945,
+      "because": null,
+      "audit": {
+       "race": {
+        "rates": {
+         "White": 0.047,
+         "Asian": 0.1389,
+         "Race Not Available": 0.0416,
+         "Black or African American": 0.0048
+        },
+        "ratio": 0.035
+       },
+       "sex": {
+        "rates": {
+         "Joint": 0.0721,
+         "Male": 0.0677,
+         "Female": 0.0301,
+         "Sex Not Available": 0.0402
+        },
+        "ratio": 0.417
+       }
+      }
+     },
+     {
+      "id": "H2",
+      "kind": "tighten",
+      "sql": "jumbo AND ltv > 90 AND disc > 25  => REJECT",
+      "support": 124,
+      "replay_prec": 0.958,
+      "because": {
+       "collateral": 0.714,
+       "debt-to-income": 0.176,
+       "credit history": 0.055
+      },
+      "audit": {
+       "race": {
+        "rates": {
+         "White": 0.002,
+         "Asian": 0.002,
+         "Race Not Available": 0.0006,
+         "Black or African American": 0.0024
+        },
+        "ratio": 0.25
+       },
+       "sex": {
+        "rates": {
+         "Joint": 0.002,
+         "Male": 0.0019,
+         "Female": 0.0017,
+         "Sex Not Available": 0.0008
+        },
+        "ratio": 0.4
+       }
+      }
+     },
+     {
+      "id": "H3",
+      "kind": "loosen",
+      "sql": "loan_k > 375 AND ltv <= 65 AND score_model = '3' AND disc <= 49  => APPROVE",
+      "support": 80,
+      "replay_prec": 0.918,
+      "because": null,
+      "audit": {
+       "race": {
+        "rates": {
+         "White": 0.0159,
+         "Asian": 0.0331,
+         "Race Not Available": 0.0128,
+         "Black or African American": 0.0
+        },
+        "ratio": 0.0
+       },
+       "sex": {
+        "rates": {
+         "Joint": 0.0218,
+         "Male": 0.0195,
+         "Female": 0.01,
+         "Sex Not Available": 0.0161
+        },
+        "ratio": 0.459
+       }
+      }
+     },
+     {
+      "id": "H5",
+      "kind": "loosen",
+      "sql": "loan_k > 375 AND ltv <= 76 AND score_model = '1' AND disc <= 45  => APPROVE",
+      "support": 60,
+      "replay_prec": 0.923,
+      "because": null,
+      "audit": {
+       "race": {
+        "rates": {
+         "White": 0.0196,
+         "Asian": 0.0374,
+         "Race Not Available": 0.0107,
+         "Black or African American": 0.0096
+        },
+        "ratio": 0.257
+       },
+       "sex": {
+        "rates": {
+         "Joint": 0.025,
+         "Male": 0.0241,
+         "Female": 0.0144,
+         "Sex Not Available": 0.006
+        },
+        "ratio": 0.24
+       }
+      }
+     }
+    ]
+   },
+   "beam_power": {
+    "acc": 0.9308,
+    "n_holdings": 3,
+    "cited": 0.1747,
+    "holdings": [
+     {
+      "id": "H0",
+      "kind": "loosen",
+      "sql": "aus != 'TOTAL' AND disc <= 49  => APPROVE",
+      "support": 11241,
+      "replay_prec": 0.907,
+      "because": null,
+      "audit": {
+       "race": {
+        "rates": {
+         "White": 0.8329,
+         "Asian": 0.8611,
+         "Race Not Available": 0.7889,
+         "Black or African American": 0.7404
+        },
+        "ratio": 0.86
+       },
+       "sex": {
+        "rates": {
+         "Joint": 0.8228,
+         "Male": 0.822,
+         "Female": 0.8559,
+         "Sex Not Available": 0.7892
+        },
+        "ratio": 0.922
+       }
+      }
+     },
+     {
+      "id": "H1",
+      "kind": "tighten",
+      "sql": "jumbo AND ltv > 90 AND disc > 15  => REJECT",
+      "support": 184,
+      "replay_prec": 0.963,
+      "because": {
+       "collateral": 0.752,
+       "debt-to-income": 0.152,
+       "credit history": 0.048
+      },
+      "audit": {
+       "race": {
+        "rates": {
+         "White": 0.0022,
+         "Asian": 0.0026,
+         "Race Not Available": 0.0014,
+         "Black or African American": 0.0024
+        },
+        "ratio": 0.538
+       },
+       "sex": {
+        "rates": {
+         "Joint": 0.0025,
+         "Male": 0.0022,
+         "Female": 0.0019,
+         "Sex Not Available": 0.0015
+        },
+        "ratio": 0.6
+       }
+      }
+     },
+     {
+      "id": "H2",
+      "kind": "tighten",
+      "sql": "score_model = '8' AND disc > 15  => REJECT",
+      "support": 59,
+      "replay_prec": 0.952,
+      "because": {
+       "credit history": 0.36,
+       "debt-to-income": 0.266,
+       "other": 0.209
+      },
+      "audit": {
+       "race": {
+        "rates": {
+         "White": 0.002,
+         "Asian": 0.0002,
+         "Race Not Available": 0.0027,
+         "Black or African American": 0.0012
+        },
+        "ratio": 0.074
+       },
+       "sex": {
+        "rates": {
+         "Joint": 0.0012,
+         "Male": 0.0017,
+         "Female": 0.0028,
+         "Sex Not Available": 0.0026
+        },
+        "ratio": 0.429
+       }
+      }
+     }
+    ]
+   },
+   "statute": {
+    "acc": 0.7923
+   },
+   "gbm": {
+    "acc": 0.9311
+   },
+   "always_approve": {
+    "acc": 0.906
+   }
+  },
+  "2023": {
+   "beam": {
+    "acc": 0.9226,
+    "n_holdings": 1,
+    "cited": 0.2171,
+    "holdings": [
+     {
+      "id": "H0",
+      "kind": "loosen",
+      "sql": "ltv <= 95 AND disc <= 49  => APPROVE",
+      "support": 10370,
+      "replay_prec": 0.901,
+      "because": null,
+      "audit": {
+       "race": {
+        "rates": {
+         "White": 0.8008,
+         "Asian": 0.8533,
+         "Race Not Available": 0.7637,
+         "Black or African American": 0.6714
+        },
+        "ratio": 0.787
+       },
+       "sex": {
+        "rates": {
+         "Joint": 0.8276,
+         "Male": 0.7801,
+         "Female": 0.7844,
+         "Sex Not Available": 0.7346
+        },
+        "ratio": 0.888
+       }
+      }
+     }
+    ]
+   },
+   "beam_power": {
+    "acc": 0.9333,
+    "n_holdings": 1,
+    "cited": 0.2313,
+    "holdings": [
+     {
+      "id": "H0",
+      "kind": "loosen",
+      "sql": "aus != 'TOTAL' AND disc <= 49  => APPROVE",
+      "support": 10935,
+      "replay_prec": 0.897,
+      "because": null,
+      "audit": {
+       "race": {
+        "rates": {
+         "White": 0.8404,
+         "Asian": 0.87,
+         "Race Not Available": 0.7998,
+         "Black or African American": 0.7703
+        },
+        "ratio": 0.885
+       },
+       "sex": {
+        "rates": {
+         "Joint": 0.8439,
+         "Male": 0.8246,
+         "Female": 0.8533,
+         "Sex Not Available": 0.7725
+        },
+        "ratio": 0.905
+       }
+      }
+     }
+    ]
+   },
+   "statute": {
+    "acc": 0.7383
+   },
+   "gbm": {
+    "acc": 0.9344
+   },
+   "always_approve": {
+    "acc": 0.9055
+   }
+  }
+ }
+}
