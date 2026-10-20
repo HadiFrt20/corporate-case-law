@@ -494,10 +494,10 @@ Every one of them is in the work log. The fix that mattered most was structural:
 
 What would change my mind toward "CCL is better", not just "CCL is different": an independent world where the harm is causal and the screen beats a case-level uplift model, or a governance study where reviewers catch more critical defects with CCL rules at no loss of accuracy.
 
-That was the last zone of the board. To close, here is the system itself without the whiteboard: only the components that actually ran, and what each one measured.
+That was the last zone of the board. To close, here is the system itself without the whiteboard: the components that were actually deployed and how they connect.
 
-![CCL on Databricks: the architecture that ran](img/b2_architecture.png)
-*Figure 26. The architecture that ran end to end. Top: a rule is mined from point-in-time Delta history, compiled, tried on its own Lakebase branch, screened against outcomes known at the time, then activated as a hash-named Unity Catalog function with an append-only log entry. Bottom: the clerk agent can only decide by citing those functions, and the checker re-executes them before a decision ships. One synthetic run; the App front end, end-user OBO passthrough and DDL lockdown were not built.*
+![CCL on Databricks: the deployed architecture](img/b2_architecture.png)
+*Figure 26. The deployed architecture. A local Python runner (generator, orchestrator, trusted compiler, checker) drives one Databricks workspace: a SQL warehouse over the Statement Execution API runs every query against Unity Catalog (a Volume, point-in-time Delta tables, and the law as hash-named UC functions); Lakebase Autoscaling holds the append-only law log and one branch per trial, over the Postgres wire; Model Serving provides Claude Sonnet 5.5 (writer and clerk agent) and GPT-5.5 (judge). A service principal with EXECUTE grants only runs the checker. One synthetic run; no App front end, end-user OBO passthrough or DDL lockdown.*
 
 ---
 
