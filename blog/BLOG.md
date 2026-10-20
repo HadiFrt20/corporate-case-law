@@ -22,8 +22,7 @@ After four rounds of external review, five seeds, 180 simulation runs, one real 
 
 The rest of this post goes down the pyramid: why the problem matters, the idea, the evidence, then the full technical detail for anyone who wants to rebuild it.
 
-![Board 2 overview: the whole Corporate Case Law study on one whiteboard](img/b2_overview.png)
-*Board 2: the whole study on one hand-drawn canvas. Every number on it is read from the result files.*
+**How to read the figures.** This work lives on two hand-drawn whiteboards. Board 1 is my study of the paper that started it; board 2 is Corporate Case Law. Neither is shown whole up front. Each figure is one zone, and the small map in its top-right corner tells you where you are: the red cell is the zone you are looking at, grey cells are zones you have already seen, white cells are still to come. Each full board appears only once you have walked all of it. Every number on board 2 is read from the result files.
 
 ---
 
@@ -41,24 +40,68 @@ None of that is in the policy PDF. Most of it is not in anyone's head as an expl
 
 ### The paper that started this
 
-This project started with a paper: *Corporate Language Model (CLM)* (arXiv 2609.04377, Avini and Trez). It argues that enterprise AI fails epistemically, not linguistically. The model can write; it just does not know how this firm decides. The fix it proposes is a "foundation" with five layers: memory, tactics, delivery, governance and security.
+This project started with a paper: **"Corporate Language Model (CLM)"** by Avini and Trez (Unisinos and Care Intelligence), arXiv 2609.04377, v1 posted 3 September 2026, 22 pages. It is a position paper: it proposes an architecture and reports one deployment, without a baseline, an ablation or a metric. I studied it the way I study anything I want to keep: on a whiteboard, one zone at a time. Board 1 is that study, and walking it is the fastest way to see both what CCL borrows and where it disagrees.
 
-![Board 1: the CLM paper on one whiteboard](img/b1_overview.png)
-*Board 1: my study of the CLM paper, built as a hand-drawn walkthrough.*
+![Board 1, header: the whole paper in one line](img/b1_z00_oneline.png)
 
-I like the diagnosis. The architecture has real ideas. The best one is **guarded generation**: the model drafts a typed, schema-bound object, a symbolic validator checks it against the ontology and the policy, and anything that fails is rejected, not down-ranked.
+**The whole paper in one line.** Organisational noise becomes typed memory, typed memory feeds composed skills, skills produce governed action, and audit plus learning loops back into memory. The loop is the paper's promise: the system gets better with use. The red note on the right is the question I wrote down on first reading and the seed of everything after it: *what if context were mined, not authored?*
 
-![Board 1, zone 3: guarded generation, the most buildable idea in the paper](img/b1_mesh.png)
+![Board 1, zone 1: the problem](img/b1_z01_problem.png)
 
-Its signature construct is the **Skill Graph**: typed nodes for skills, personas, objections, goals and funnel stages, and a hand-weighted score (0.4 × fit + 0.4 × effectiveness − 0.2 × risk) to pick and combine tactics. In the paper's own example, a CFO raises a price objection late in a negotiation, and the graph composes three tactics. The claim is that "the path is the explanation".
+**Zone 1, the problem.** The paper's diagnosis is that enterprise AI fails *epistemically*, not linguistically: the model writes fine, it just does not know how this firm decides. It names five problems. Tacit knowledge is never written down (it lives in WhatsApp threads, calls and PDF margins). The model knows nothing about your ontology ("qualified opportunity" means something specific here). There is no audit path, so legal rejects it or someone signs blind. Sovereignty is law (LGPD, GDPR, HIPAA). Playbooks cannot adapt, and agents cannot be audited. The core move is to treat all five as design constraints from day one, not as a feature backlog. It also dismisses three common answers: RAG (depends on corpus quality, cannot act), prompt engineering and fine-tuning (helps at the margins, fine-tuning freezes statistics) and static playbooks (faithful but rigid, out of date the day the business changes).
 
-![Board 1, zone 4: the Skill Graph, with the paper's own CFO example](img/b1_skillgraph.png)
+![Board 1, zone 2: the architecture in five planes](img/b1_z02_planes.png)
+
+**Zone 2, the architecture.** Four stacked planes plus one that wraps them all. *Foundation* is what is known: ingest, extract, bind to the ontology, with memory that carries provenance, access control and types (explicitly "not a vector store"). *Tactical* is how to act: the Skill Graph and Living Twins, with no free-form prompts ever. *Wisdom-Out* is how to deliver: persona voice, routing to the funnel stage, calling legacy systems over MCP. *Governance* is why we trust it: audit trail, ROI, rollback, with every output traceable to a Skill, Objection, Persona, Goal path. *Deep Security* wraps every plane. Each plane needs the one below, which is why the paper says stages cannot be skipped. (A small detail: the paper's Figure 1 labels the Tactical plane "why we trust it" too, which looks like a typo.)
+
+![Board 1, zone 3: guarded generation, the most buildable idea in the paper](img/b1_z03_mesh.png)
+
+**Zone 3, pillar 1: the Neurosymbolic Mesh.** This is the best idea in the paper and the only part with real mechanics: **guarded generation**. The model drafts a typed, schema-bound object (JSON-LD derived from the ontology). A symbolic validator asks: does the entity exist, is the relation legal, does policy allow it for this tenant, is provenance attached? Anything that fails is *rejected*, not down-ranked, and goes back for repair. The contrast with classic RAG is the point: RAG puts retrieved text *in* and lets the model write freely; the Mesh constrains what comes *out*. The paper is honest that this is not constrained decoding everywhere, only on high-stakes paths. CCL keeps this idea and changes what the validator checks against.
+
+![Board 1, zone 4: the Skill Graph, with the paper's own CFO example](img/b1_z04_skillgraph.png)
+
+**Zone 4, pillar 2: the Skill Graph.** The paper's signature construct. A detected context vector (here: objection = price surface, persona = CFO, stage = late negotiation, goal = margin preservation) filters typed nodes, and a score picks and composes tactics: value reframing, concession boundary and social proof, while "discount now" is rejected. The score is Score(s|c) = 0.4 × fit + 0.4 × effectiveness − 0.2 × risk, where effectiveness is an exponential moving average (α = 0.3) of outcomes over the last 500 events. The claim is that "the path is the explanation". Two things matter for later. The weights are hand-set in code, not learned: auditable, but arbitrary. And the real graph in the paper is small: 41 nodes, 100 edges, two objections, matched by keyword substring.
+
+![Board 1, zone 5: Living Digital Twins](img/b1_z05_twins.png)
+
+**Zone 5, pillar 3: Living Digital Twins.** A twin here is a surrogate for how a *function* decides (commercial, finance, operations, customer success, the founder), not how a machine behaves. In the paper's words, a manufacturing twin models a machine under load; a CLM twin models how a CFO reasons under margin pressure. Each twin is a set of typed parameters (incentives, evidence thresholds, style) updated as evidence accumulates. Every request runs four steps: hydrate only relevant, permitted, current context; simulate second-order effects on the Skill Graph; re-weight conflicting views; adjust the register. The reality check: twin session state lives in process memory and is lost on restart.
+
+![Board 1, zone 6: Deep Security as three rings](img/b1_z06_security.png)
+
+**Zone 6, pillar 4: Deep Security.** Three rings around the generator, which reaches the real world only through all of them. *Sovereignty*: data (and models where feasible) stay inside, tenants are isolated, rollback is declared up front. *Human in the loop*: approval before legacy write-back, money or contract changes, with approvals logged and learned from. *Governance*: provenance on every artifact, secret scanning, a prompt-injection firewall checked against the ontology. The hospital deployment is the proof point: de-identification runs locally upstream and nothing leaves the perimeter.
+
+![Board 1, zone 7: Spec-as-Code](img/b1_z07_spec.png)
+
+**Zone 7, Spec-as-Code.** The paper's fix for "semantic fall off the cliff" (good advice with no path to action). A typed intent, for example generating a discharge summary aligned with hospital accreditation, with constraints such as on-premise deployment and required human approval, is compiled into four artifacts: a business spec, BDD scenarios with tests, interface contracts and a technical spec. One derivation chain makes them "consistent by construction". Two notes: the intent is written by the hospital's quality committee, not engineers, and the compiler's heuristics are proprietary, so the claim cannot be checked.
+
+![Board 1, zone 8: the six-stage rollout](img/b1_z08_rollout.png)
+
+**Zone 8, rollout: six stages, no skipping.** Capture and grounding, reliable retrieval, twins, domain small models, Spec-as-Code, governed actuation. Each stage is useful alone and needs the one before. The paper claims that trying stage 6 without stages 2 and 3 is the root cause of most failed enterprise AI projects; that is asserted, with no data. In the paper's own snapshot (26 April 2026), stages 1 to 3 are in production, stage 4 is in test, and stages 5 and 6 are still designs. The hospital go-live was scheduled for 29 April, three days *after* the evidence snapshot.
+
+![Board 1, zone 9: the Wisdom Listener flywheel](img/b1_z09_flywheel.png)
+
+**Zone 9, the "Wisdom Listener" effect.** The paper's new term for compounding value: more tacit knowledge is captured, so skill selection sharpens, twins become more accurate, outputs improve, and humans delegate more work, which captures more tacit knowledge. It leans on real theory (Teece's dynamic capabilities, Argote's learning curves, Nonaka's SECI model). But zero production signals were stored. The flywheel is a hypothesis with a name. This zone matters most for CCL: a flywheel you cannot measure is exactly what CCL tries to replace with a number.
+
+![Board 1, zone 10: what the paper claims vs what it shows](img/b1_z10_reality.png)
+
+**Zone 10, reality check: claimed vs shown.** Line by line. "Tacit knowledge captured continuously": the mechanism is never described, and the skills are hand-coded. "Explainable by construction": it explains which skill was picked, not whether the model's final text is faithful to it. "Value compounds": zero outcome signals, a single April snapshot. "Four artifacts consistent by construction": the compiler is proprietary. "Beats RAG, GraphRAG and platforms" (the paper's Table 1): self-graded, CLM says "yes" on all six rows. "Deployed in an accredited hospital": only plane 1, de-identification and one spec, while the Skill Graph demo is a *sales* example. The paper also does not cite its closest ancestors: 1980s expert systems (and their knowledge-acquisition bottleneck), Palantir's Ontology, constrained decoding, SHACL. The authors are the founders of the company that sells it, and the paper discloses it was written with Claude. Verdict: good vocabulary and one buildable pattern (guarded generation). Not evidence.
+
+![Board 1, zone 11: the paper mapped onto Databricks](img/b1_z11_databricks.png)
+
+**Zone 11, on Databricks (my mapping).** Every CLM layer has a governed primitive on Databricks: the Foundation plane maps to Unity Catalog, lineage and metric views; the Skill Graph to UC skills and UC functions used as Genie trusted assets; twin session state to Lakebase (which fixes "lost on restart"); guarded generation to structured outputs, UC functions and MLflow 3 judges; governed legacy tools to UC HTTP connections and managed MCP; the security rings to Unity AI Gateway policies, budgets and audit, plus Apps on-behalf-of auth. The one honest gap is the sovereignty floor: in-region with customer-managed governance, not air-gapped. This mapping is what made a real build possible later (section 7).
+
+![Board 1, zone 12: explain it back](img/b1_z12_selftest.png)
+
+**Zone 12, explain it back.** The board ends with six questions to answer out loud before moving on. Try them; if you can answer all six, you have the paper. Why is CLM not just GraphRAG plus agents plus a compliance wrapper? Walk the CFO price objection: which edges, which score? What does "explainable by construction" *not* explain? Why can't you jump straight to stage 6? Which experiment would convince you the flywheel is real? A French hospital asks for this on Databricks: what is your honest gap?
+
+Here is board 1 whole, now that you have walked it:
+
+![Board 1, complete](img/b1_recap.png)
+*Board 1: the CLM paper on one canvas, zones 1 to 12.*
 
 ### Where it stops short
 
-The paper's core claim is that it captures tacit knowledge. When you read the evidence, there is no capture mechanism. The "skills" are written by hand in code. That is the 1980s expert-system knowledge-acquisition bottleneck under a new name. Its "explainable by construction" claim explains *which* skill was picked, not whether the generated text is faithful to it. The compounding "flywheel" has zero production signals.
-
-![Board 1, zone 10: what the paper claims vs what it shows](img/b1_reality.png)
+Put zones 1, 9 and 10 side by side and the gap is plain. The paper's first problem is tacit knowledge, its promise is a flywheel that captures it, and its evidence contains no capture mechanism at all: the skills are typed by hand. That is the expert-system knowledge-acquisition bottleneck under a new name. And the flywheel, the one thing that would prove the system learns, has no number attached.
 
 So the question I actually wanted to answer was narrower and harder:
 
@@ -68,7 +111,17 @@ So the question I actually wanted to answer was narrower and harder:
 
 ## 2. The idea in one picture
 
-![Board 2, zone 2: tacit knowledge is the residual of policy](img/b2_residual.png)
+Board 2 picks up exactly where board 1 stops. Its first zone takes the three holes I found in the paper and gives each one an answer.
+
+![Board 2, zone 1: CLM's three holes and CCL's answers](img/b2_z01_holes.png)
+
+1. **Skills are written by hand** (board 1, zones 4 and 10). CCL instead **mines the gap** between written policy and logged decisions.
+2. **"The path is the explanation"** explains the selection, not the answer. CCL **makes every rule executable** (a SQL predicate), so a decision cites rules that a checker can re-run, instead of a reasoning path you have to trust.
+3. **The flywheel has no number** (board 1, zone 9). CCL **admits rules by replay**: a candidate only enters the law if replaying past decisions, on the facts as they were at the time, gets more of them right without breaking any existing rule. That gives you a number to watch.
+
+The first answer carries the whole idea, and zone 2 draws it.
+
+![Board 2, zone 2: tacit knowledge is the residual of policy](img/b2_z02_residual.png)
 
 Plot every logged discount decision against the requested discount. The written policy is a vertical line at 15%. Green dots are approvals, red dots are rejections.
 
@@ -77,14 +130,6 @@ Plot every logged discount decision against the requested discount. The written 
 - For German SMB deals, red starts at 10%. **That is a stricter rule nobody wrote down either.**
 
 The tacit rule is the residual of the written policy. You do not have to interview anyone to find it. You have to look where the decisions disagree with the statute.
-
-That gives CCL three moves, each one answering a hole in the CLM paper:
-
-![Board 2, zone 1: CLM's three holes and CCL's answers](img/b2_holes.png)
-
-1. **Mine the gap** between written policy and logged decisions, instead of typing skills by hand.
-2. **Make every rule executable** (a SQL predicate), so a decision cites rules that a checker can re-run, instead of a reasoning path you have to trust.
-3. **Admit rules by replay.** A candidate only enters the law if replaying past decisions, on the facts as they were at the time, gets more of them right without breaking any existing rule. That gives you a number to watch, which the paper's flywheel never had.
 
 I borrowed the vocabulary of common law because it fits:
 
@@ -100,7 +145,7 @@ I borrowed the vocabulary of common law because it fits:
 
 Partly. The pieces are old, and the framing is taken. A Foundation Capital essay on "context graphs" already argues that decision traces (the exceptions, overrides and precedents that live in deal desks and escalation calls) are the missing layer of enterprise AI. Decision-trace schemas for governance are being published. Case-based reasoning has had a retrieve, reuse, revise, retain loop since 1994. Concept drift detection covers rules going stale.
 
-![Board 2, zone 7: what is already taken and what looked unclaimed](img/b2_novelty.png)
+![Board 2, zone 7: what is already taken and what looked unclaimed](img/b2_z07_novelty.png)
 
 What looked unclaimed, as far as a search and a prior-art agent could find, is the combination: **replay as the admission test for agent context**, mining the residual against the written policy, and outcome-weighted precedent. The honest summary is "CI/CD for corporate context". A systems contribution to test, not a new theory.
 
@@ -130,7 +175,7 @@ The single most important finding is the one that hurt: **a rule-level screen le
 
 A holding is not a prompt and not a paragraph. It is a governed function with its evidence attached.
 
-![Board 2, zone 5: a holding as a Unity Catalog function, and a checkable answer](img/b2_code.png)
+![Board 2, zone 5: a holding as a Unity Catalog function, and a checkable answer](img/b2_z05_code.png)
 *The card on the board is an illustration from an earlier run; the live functions are hash-named, as described in section 7.2.*
 
 ```sql
@@ -145,7 +190,7 @@ When an agent decides, it must cite the holdings it relied on. A checker re-runs
 
 ### 4.2 Replay on the facts as they were
 
-![Board 2, zone 3: replay uses facts as of the decision date](img/b2_replay.png)
+![Board 2, zone 3: replay uses facts as of the decision date](img/b2_z03_replay.png)
 
 The admission test only means something if it uses the information the firm actually had. CRM records change after decisions: a churn flag gets corrected, a competitor withdraws. Replaying on today's table quietly leaks the future into the past.
 
@@ -159,7 +204,7 @@ Every past decision becomes a unit test for the corporate context. A candidate h
 
 ### 4.3 The pipeline: CI/CD for corporate context
 
-![Board 2, zone 4: the full pipeline](img/b2_pipeline.png)
+![Board 2, zone 4: the full pipeline](img/b2_z04_pipeline.png)
 
 1. **Docket.** Every logged decision with its point-in-time facts.
 2. **Gap miner.** Search for conditions where decisions systematically disagree with the policy.
@@ -223,7 +268,7 @@ Agreement with the logged decisions rewards copying the rogue approver. So the m
 
 ### 5.5 Results
 
-![Board 2, zone 6: v5 results with equal information](img/b2_results.png)
+![Board 2, zone 6: v5 results with equal information](img/b2_z06_results.png)
 
 **Hard world, when the exception itself causes churn** (5 seeds, 95% intervals):
 
@@ -256,7 +301,7 @@ Here the renewal veto wrongly blocks deals whose churn has nothing to do with th
 
 ### 5.6 The rare rule and the cost of finding it
 
-![Board 2, zone 11: the rare OR branch and the causal check](img/b2_rare_causal.png)
+![Board 2, zone 11: the rare OR branch and the causal check](img/b2_z11_rare_causal.png)
 
 The hard world's OR rule has a rare branch: deals over 1M that are not enterprise, about 7 qualifying deals a month. The standard miner gets only 0.54 of those cases right (0.46 to 0.58 across seeds). That turned out to be a power problem: the branch was too small to pass a 0.9 precision bar, and too small to show up in a 2-month admission window.
 
@@ -268,7 +313,7 @@ Two changes recover it: judge precision by its Wilson lower bound with a lower s
 
 Simulations prove mechanics. They cannot prove relevance. So I needed real decisions against a written policy.
 
-![Board 2, zone 10: real decisions from one US mortgage lender](img/b2_hmda.png)
+![Board 2, zone 10: real decisions from one US mortgage lender](img/b2_z10_hmda.png)
 
 ### 6.1 The data
 
@@ -315,7 +360,7 @@ On the final system's decisions by race, CCL's approval-rate ratio is 0.962 in 2
 
 The idea only matters if it runs where the data lives. So I built the whole pipeline on a Databricks workspace.
 
-![Board 2, zone 9: the Databricks build](img/b2_dbx.png)
+![Board 2, zone 9: the Databricks build](img/b2_z09_dbx.png)
 
 ### 7.1 Delta time travel, done right (on the second try)
 
@@ -422,10 +467,15 @@ Every one of them is in the work log. The fix that mattered most was structural:
 - **A case-level outcome check inside CCL.** The leak in section 5.5 is a design limit, not a bug.
 - **Engineering gaps:** SQL's three-valued null logic is not mirrored in Python; only the simulator file is hashed, not its dependencies; no DDL ownership lockdown.
 
-![Board 2, zone 8: next experiments and the kill rule](img/b2_kill.png)
+![Board 2, zone 8: next experiments and the kill rule](img/b2_z08_kill.png)
 *The kill rule I set before the hard world: CCL must beat the written policy by 10 points and recover at least 4 of 7 rules. It passes, and it still does not beat equally informed baselines. A kill rule that only compares against the weakest baseline is not enough.*
 
 What would change my mind toward "CCL is better", not just "CCL is different": an independent world where the harm is causal and the screen beats a case-level uplift model, or a governance study where reviewers catch more critical defects with CCL rules at no loss of accuracy.
+
+That was the last zone. Here is board 2 whole:
+
+![Board 2, complete](img/b2_recap.png)
+*Board 2: Corporate Case Law on one canvas, zones 1 to 11. The closing line at the bottom is the one-sentence version: "CLM writes the firm's knowledge down. CCL digs it out of what the firm already decided, and makes every rule prove itself before an agent may use it."*
 
 ---
 
