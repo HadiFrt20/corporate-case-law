@@ -1,0 +1,249 @@
+{
+ "seed": 23,
+ "accuracy_months_18_23": {
+  "statute": 0.808,
+  "gbm_static": 0.9322,
+  "gbm_monthly": 0.9527,
+  "ccl_nodecay": 0.9083,
+  "ccl": 0.9131,
+  "ccl_goodlaw": 0.8627
+ },
+ "per_month": {
+  "statute": [
+   0.798,
+   0.809,
+   0.803,
+   0.812,
+   0.814,
+   0.813
+  ],
+  "gbm_static": [
+   0.927,
+   0.93,
+   0.934,
+   0.934,
+   0.937,
+   0.932
+  ],
+  "gbm_monthly": [
+   0.932,
+   0.946,
+   0.96,
+   0.957,
+   0.964,
+   0.958
+  ],
+  "ccl_nodecay": [
+   0.901,
+   0.904,
+   0.91,
+   0.908,
+   0.916,
+   0.912
+  ],
+  "ccl": [
+   0.901,
+   0.9,
+   0.919,
+   0.91,
+   0.915,
+   0.934
+  ],
+  "ccl_goodlaw": [
+   0.848,
+   0.853,
+   0.867,
+   0.86,
+   0.866,
+   0.882
+  ]
+ },
+ "log": [
+  {
+   "month": 18,
+   "admitted": 10,
+   "bad_law": 5,
+   "cited_share": 0.10737179487179487
+  },
+  {
+   "month": 19,
+   "admitted": 10,
+   "bad_law": 5,
+   "cited_share": 0.09852216748768473
+  },
+  {
+   "month": 20,
+   "admitted": 12,
+   "bad_law": 5,
+   "cited_share": 0.12930011862396204
+  },
+  {
+   "month": 21,
+   "admitted": 11,
+   "bad_law": 5,
+   "cited_share": 0.10513833992094862
+  },
+  {
+   "month": 22,
+   "admitted": 10,
+   "bad_law": 4,
+   "cited_share": 0.1047844998022934
+  },
+  {
+   "month": 23,
+   "admitted": 13,
+   "bad_law": 6,
+   "cited_share": 0.13371616078753076
+  }
+ ],
+ "recovery": {
+  "R1 renewal+3yr+quarter-end -> 25% (retired month 18)": {
+   "coverage": 0.07,
+   "purity": 0.01,
+   "best_holding": "region != 'US' AND competitor AND segment != 'ENT' AND region = 'UK' AND disc <= 28.1",
+   "flagged_bad_law": false
+  },
+  "R2 enterprise vs competitor -> 30%": {
+   "coverage": 0.39,
+   "purity": 1.0,
+   "best_holding": "region != 'US' AND competitor AND segment = 'ENT' AND disc <= 30.1 AND term <= 1.5",
+   "flagged_bad_law": false
+  },
+  "R4 churn-risk renewal -> 22%": {
+   "coverage": 0.07,
+   "purity": 0.06,
+   "best_holding": "region != 'US' AND competitor AND segment != 'ENT' AND region = 'UK' AND disc <= 28.1",
+   "flagged_bad_law": false
+  },
+  "R5 deal > 500k -> 20%": {
+   "coverage": 0.08,
+   "purity": 0.02,
+   "best_holding": "region != 'US' AND competitor AND segment != 'ENT' AND region = 'UK' AND disc <= 28.1",
+   "flagged_bad_law": false
+  },
+  "R6 UK vs competitor -> 28% (new from month 12)": {
+   "coverage": 0.79,
+   "purity": 1.0,
+   "best_holding": "region != 'US' AND competitor AND segment != 'ENT' AND region = 'UK' AND disc <= 28.1",
+   "flagged_bad_law": false
+  },
+  "R7 US mid-market rogue approver -> 35% (BAD outcomes)": {
+   "coverage": 0.4,
+   "purity": 1.0,
+   "best_holding": "region = 'US' AND segment = 'MM' AND disc > 18.1 AND size_k > 27.5 AND size_k <= 115.5",
+   "flagged_bad_law": true
+  },
+  "R3 Germany SMB stricter -> 10%": {
+   "coverage": 0.47,
+   "purity": 1.0,
+   "best_holding": "region = 'DE' AND segment = 'SMB' AND NOT quarter_end AND disc > 10.1 AND size_k > 68.0",
+   "flagged_bad_law": false
+  }
+ },
+ "final_holdings": [
+  {
+   "id": "H0",
+   "kind": "loosen",
+   "sql": "region != 'US' AND competitor AND segment != 'ENT' AND region = 'UK' AND disc <= 28.1",
+   "support": 733,
+   "replay_prec": 0.946,
+   "outcome_lift": -0.039
+  },
+  {
+   "id": "H1",
+   "kind": "loosen",
+   "sql": "region = 'US' AND segment = 'MM' AND disc > 18.1 AND size_k > 27.5 AND size_k <= 115.5",
+   "support": 574,
+   "replay_prec": 0.982,
+   "outcome_lift": -0.511
+  },
+  {
+   "id": "H2",
+   "kind": "loosen",
+   "sql": "region != 'US' AND competitor AND segment = 'ENT' AND disc <= 30.1 AND term <= 1.5",
+   "support": 352,
+   "replay_prec": 1.0,
+   "outcome_lift": 0.0
+  },
+  {
+   "id": "H3",
+   "kind": "loosen",
+   "sql": "region != 'US' AND competitor AND segment = 'ENT' AND term > 1.5 AND disc <= 30.1",
+   "support": 326,
+   "replay_prec": 0.984,
+   "outcome_lift": -0.024
+  },
+  {
+   "id": "H4",
+   "kind": "loosen",
+   "sql": "region = 'US' AND segment = 'MM' AND disc > 18.1 AND size_k > 115.5 AND disc <= 27.3",
+   "support": 299,
+   "replay_prec": 0.968,
+   "outcome_lift": -0.482
+  },
+  {
+   "id": "H5",
+   "kind": "tighten",
+   "sql": "region = 'DE' AND segment = 'SMB' AND NOT quarter_end AND disc > 10.1 AND size_k > 68.0",
+   "support": 237,
+   "replay_prec": 0.977,
+   "outcome_lift": -0.132
+  },
+  {
+   "id": "H6",
+   "kind": "loosen",
+   "sql": "region = 'US' AND segment = 'MM' AND disc > 27.3 AND size_k > 115.5",
+   "support": 229,
+   "replay_prec": 0.919,
+   "outcome_lift": -0.504
+  },
+  {
+   "id": "H7",
+   "kind": "loosen",
+   "sql": "region = 'US' AND segment != 'MM' AND segment != 'SMB' AND competitor AND disc <= 30.1",
+   "support": 212,
+   "replay_prec": 0.975,
+   "outcome_lift": -0.025
+  },
+  {
+   "id": "H8",
+   "kind": "loosen",
+   "sql": "region = 'US' AND segment = 'MM' AND disc > 18.1 AND size_k <= 27.5",
+   "support": 132,
+   "replay_prec": 0.852,
+   "outcome_lift": -0.503
+  },
+  {
+   "id": "H9",
+   "kind": "tighten",
+   "sql": "region = 'DE' AND segment = 'SMB' AND quarter_end AND disc > 10.1 AND size_k > 68.0",
+   "support": 101,
+   "replay_prec": 0.947,
+   "outcome_lift": -0.128
+  },
+  {
+   "id": "H10",
+   "kind": "tighten",
+   "sql": "region = 'DE' AND segment = 'SMB' AND disc > 10.1 AND size_k > 27.5 AND size_k <= 68.0",
+   "support": 95,
+   "replay_prec": 1.0,
+   "outcome_lift": -0.032
+  },
+  {
+   "id": "H11",
+   "kind": "loosen",
+   "sql": "region = 'US' AND segment = 'MM' AND quarter_end AND disc <= 18.1",
+   "support": 75,
+   "replay_prec": 0.947,
+   "outcome_lift": -0.52
+  },
+  {
+   "id": "H12",
+   "kind": "loosen",
+   "sql": "region = 'US' AND segment = 'MM' AND NOT quarter_end AND disc <= 16.7",
+   "support": 72,
+   "replay_prec": 0.96,
+   "outcome_lift": -0.483
+  }
+ ]
+}

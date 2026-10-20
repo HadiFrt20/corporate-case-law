@@ -1,0 +1,713 @@
+{
+ "n_runs": 33,
+ "worlds": {
+  "easy": {
+   "miners": {
+    "schema": {
+     "seeds": [
+      7,
+      11,
+      23
+     ],
+     "accuracy": {
+      "statute": {
+       "vs_actual": 0.8045666666666667,
+       "vs_good": 0.8876
+      },
+      "gbm_monthly": {
+       "vs_actual": 0.9576333333333333,
+       "vs_good": 0.9405333333333333
+      },
+      "gbm_outcome": {
+       "vs_actual": 0.9529666666666667,
+       "vs_good": 0.9361
+      },
+      "gbm_uplift": {
+       "vs_actual": 0.9030999999999999,
+       "vs_good": 0.9911
+      },
+      "ccl": {
+       "vs_actual": 0.9593000000000002,
+       "vs_good": 0.9424
+      },
+      "ccl_goodlaw": {
+       "vs_actual": 0.9067666666666666,
+       "vs_good": 0.9987333333333334
+      }
+     },
+     "exact": 7.0,
+     "n_rules": 7,
+     "per_rule": {
+      "R1 renewal+3yr+quarter-end <=25% (retired at month 40)": {
+       "exact": 1.0,
+       "union": 1.0,
+       "example": "term = 3 AND renewal AND quarter_end AND disc <= 25  => APPROVE"
+      },
+      "R2 enterprise vs competitor <=30%": {
+       "exact": 1.0,
+       "union": 1.0,
+       "example": "segment = 'ENT' AND competitor AND disc <= 30  => APPROVE"
+      },
+      "R4 churn-risk renewal <=22%": {
+       "exact": 1.0,
+       "union": 1.0,
+       "example": "renewal AND churn_high AND disc <= 22  => APPROVE"
+      },
+      "R5 deal > 500k <=20%": {
+       "exact": 1.0,
+       "union": 1.0,
+       "example": "size_k > 500 AND disc <= 20  => APPROVE"
+      },
+      "R6 UK vs competitor <=28% (from month 24)": {
+       "exact": 1.0,
+       "union": 1.0,
+       "example": "region = 'UK' AND competitor AND disc <= 28  => APPROVE"
+      },
+      "R7 US mid-market rogue approver <=35% (bad outcomes)": {
+       "exact": 1.0,
+       "union": 1.0,
+       "example": "segment = 'MM' AND region = 'US' AND disc <= 35  => APPROVE"
+      },
+      "R3 Germany SMB stricter >10% rejected": {
+       "exact": 1.0,
+       "union": 1.0,
+       "example": "segment = 'SMB' AND region = 'DE' AND disc > 10  => REJECT"
+      }
+     },
+     "holdings": 7.0,
+     "fidelity": {
+      "R1 renewal+3yr+quarter-end <=25% (retired at month 40)": 1.0,
+      "R2 enterprise vs competitor <=30%": 1.0,
+      "R4 churn-risk renewal <=22%": 1.0,
+      "R5 deal > 500k <=20%": 1.0,
+      "R6 UK vs competitor <=28% (from month 24)": 1.0,
+      "R7 US mid-market rogue approver <=35% (bad outcomes)": 1.0,
+      "R3 Germany SMB stricter >10% rejected": 1.0
+     }
+    },
+    "beam": {
+     "seeds": [
+      7,
+      11,
+      23
+     ],
+     "accuracy": {
+      "statute": {
+       "vs_actual": 0.8045666666666667,
+       "vs_good": 0.8876
+      },
+      "gbm_monthly": {
+       "vs_actual": 0.9576333333333333,
+       "vs_good": 0.9405333333333333
+      },
+      "gbm_outcome": {
+       "vs_actual": 0.9529666666666667,
+       "vs_good": 0.9361
+      },
+      "gbm_uplift": {
+       "vs_actual": 0.9030999999999999,
+       "vs_good": 0.9911
+      },
+      "ccl": {
+       "vs_actual": 0.9593000000000002,
+       "vs_good": 0.9424
+      },
+      "ccl_goodlaw": {
+       "vs_actual": 0.9067666666666666,
+       "vs_good": 0.9987333333333334
+      }
+     },
+     "exact": 7.0,
+     "n_rules": 7,
+     "per_rule": {
+      "R1 renewal+3yr+quarter-end <=25% (retired at month 40)": {
+       "exact": 1.0,
+       "union": 1.0,
+       "example": "quarter_end AND renewal AND term > 2 AND disc <= 25  => APPROVE"
+      },
+      "R2 enterprise vs competitor <=30%": {
+       "exact": 1.0,
+       "union": 1.0,
+       "example": "competitor AND segment = 'ENT' AND disc <= 30  => APPROVE"
+      },
+      "R4 churn-risk renewal <=22%": {
+       "exact": 1.0,
+       "union": 1.0,
+       "example": "churn_high AND renewal AND disc <= 22  => APPROVE"
+      },
+      "R5 deal > 500k <=20%": {
+       "exact": 1.0,
+       "union": 1.0,
+       "example": "size_k > 500 AND disc <= 20  => APPROVE"
+      },
+      "R6 UK vs competitor <=28% (from month 24)": {
+       "exact": 1.0,
+       "union": 1.0,
+       "example": "competitor AND region = 'UK' AND disc <= 28  => APPROVE"
+      },
+      "R7 US mid-market rogue approver <=35% (bad outcomes)": {
+       "exact": 1.0,
+       "union": 1.0,
+       "example": "region = 'US' AND segment = 'MM' AND disc <= 35  => APPROVE"
+      },
+      "R3 Germany SMB stricter >10% rejected": {
+       "exact": 1.0,
+       "union": 1.0,
+       "example": "region = 'DE' AND segment = 'SMB' AND disc > 10  => REJECT"
+      }
+     },
+     "holdings": 7.0,
+     "fidelity": {
+      "R1 renewal+3yr+quarter-end <=25% (retired at month 40)": 1.0,
+      "R2 enterprise vs competitor <=30%": 1.0,
+      "R4 churn-risk renewal <=22%": 1.0,
+      "R5 deal > 500k <=20%": 1.0,
+      "R6 UK vs competitor <=28% (from month 24)": 1.0,
+      "R7 US mid-market rogue approver <=35% (bad outcomes)": 1.0,
+      "R3 Germany SMB stricter >10% rejected": 1.0
+     }
+    },
+    "tree": {
+     "seeds": [
+      7,
+      11,
+      23
+     ],
+     "accuracy": {
+      "statute": {
+       "vs_actual": 0.8045666666666667,
+       "vs_good": 0.8876
+      },
+      "gbm_monthly": {
+       "vs_actual": 0.9576333333333333,
+       "vs_good": 0.9405333333333333
+      },
+      "gbm_outcome": {
+       "vs_actual": 0.9529666666666667,
+       "vs_good": 0.9361
+      },
+      "gbm_uplift": {
+       "vs_actual": 0.9030999999999999,
+       "vs_good": 0.9911
+      },
+      "ccl": {
+       "vs_actual": 0.9248666666666666,
+       "vs_good": 0.9253
+      },
+      "ccl_goodlaw": {
+       "vs_actual": 0.8795999999999999,
+       "vs_good": 0.9693333333333335
+      }
+     },
+     "exact": 1.0,
+     "n_rules": 7,
+     "per_rule": {
+      "R1 renewal+3yr+quarter-end <=25% (retired at month 40)": {
+       "exact": 0.0,
+       "union": 0.0,
+       "example": "competitor AND region = 'UK' AND segment != 'MM' AND disc <= 25.7  => APPROVE"
+      },
+      "R2 enterprise vs competitor <=30%": {
+       "exact": 0.3333333333333333,
+       "union": 0.7763333333333334,
+       "example": "competitor AND region != 'UK' AND segment = 'ENT' AND disc <= 28.2 AND size_k <= 309.5  => APPROVE"
+      },
+      "R4 churn-risk renewal <=22%": {
+       "exact": 0.0,
+       "union": 0.161,
+       "example": "competitor AND region = 'UK' AND segment != 'MM' AND disc <= 25.7  => APPROVE"
+      },
+      "R5 deal > 500k <=20%": {
+       "exact": 0.0,
+       "union": 0.0,
+       "example": "competitor AND region = 'UK' AND segment != 'MM' AND disc <= 25.7  => APPROVE"
+      },
+      "R6 UK vs competitor <=28% (from month 24)": {
+       "exact": 0.0,
+       "union": 0.735,
+       "example": "competitor AND region = 'UK' AND segment != 'MM' AND disc <= 25.7  => APPROVE"
+      },
+      "R7 US mid-market rogue approver <=35% (bad outcomes)": {
+       "exact": 0.0,
+       "union": 0.7959999999999999,
+       "example": "NOT competitor AND region = 'US' AND segment = 'MM' AND size_k > 22.5 AND size_k <= 481.5  => APPROVE"
+      },
+      "R3 Germany SMB stricter >10% rejected": {
+       "exact": 0.6666666666666666,
+       "union": 0.9956666666666667,
+       "example": "region = 'DE' AND segment = 'SMB' AND disc > 14.2  => REJECT"
+      }
+     },
+     "holdings": 12.333333333333334,
+     "fidelity": {
+      "R1 renewal+3yr+quarter-end <=25% (retired at month 40)": 0.2460125273168221,
+      "R2 enterprise vs competitor <=30%": 0.9014837683599962,
+      "R4 churn-risk renewal <=22%": 0.37732235149534366,
+      "R5 deal > 500k <=20%": 0.1995065194979595,
+      "R6 UK vs competitor <=28% (from month 24)": 0.8129753802000085,
+      "R7 US mid-market rogue approver <=35% (bad outcomes)": 0.7957665187377349,
+      "R3 Germany SMB stricter >10% rejected": 0.9790070074246103
+     }
+    },
+    "covering": {
+     "seeds": [
+      7,
+      11,
+      23
+     ],
+     "accuracy": {
+      "statute": {
+       "vs_actual": 0.8045666666666667,
+       "vs_good": 0.8876
+      },
+      "gbm_monthly": {
+       "vs_actual": 0.9576333333333333,
+       "vs_good": 0.9405333333333333
+      },
+      "gbm_outcome": {
+       "vs_actual": 0.9529666666666667,
+       "vs_good": 0.9361
+      },
+      "gbm_uplift": {
+       "vs_actual": 0.9030999999999999,
+       "vs_good": 0.9911
+      },
+      "ccl": {
+       "vs_actual": 0.9266333333333333,
+       "vs_good": 0.9156333333333334
+      },
+      "ccl_goodlaw": {
+       "vs_actual": 0.8754666666666667,
+       "vs_good": 0.9648333333333333
+      }
+     },
+     "exact": 3.3333333333333335,
+     "n_rules": 7,
+     "per_rule": {
+      "R1 renewal+3yr+quarter-end <=25% (retired at month 40)": {
+       "exact": 0.0,
+       "union": 0.0,
+       "example": "competitor AND region = 'UK' AND disc <= 28.2  => APPROVE"
+      },
+      "R2 enterprise vs competitor <=30%": {
+       "exact": 0.3333333333333333,
+       "union": 0.3333333333333333,
+       "example": "competitor AND segment != 'SMB' AND region = 'US'  => APPROVE"
+      },
+      "R4 churn-risk renewal <=22%": {
+       "exact": 0.3333333333333333,
+       "union": 0.3333333333333333,
+       "example": "competitor AND region = 'UK' AND disc <= 28.2  => APPROVE"
+      },
+      "R5 deal > 500k <=20%": {
+       "exact": 0.0,
+       "union": 0.19799999999999998,
+       "example": "competitor AND region = 'UK' AND disc <= 28.2  => APPROVE"
+      },
+      "R6 UK vs competitor <=28% (from month 24)": {
+       "exact": 0.6666666666666666,
+       "union": 0.6666666666666666,
+       "example": "competitor AND region = 'UK' AND disc <= 28.2  => APPROVE"
+      },
+      "R7 US mid-market rogue approver <=35% (bad outcomes)": {
+       "exact": 1.0,
+       "union": 0.765,
+       "example": "NOT competitor AND region = 'US' AND segment = 'MM'  => APPROVE"
+      },
+      "R3 Germany SMB stricter >10% rejected": {
+       "exact": 1.0,
+       "union": 0.9956666666666667,
+       "example": "region = 'DE' AND segment = 'SMB' AND disc > 10.1  => REJECT"
+      }
+     },
+     "holdings": 4.333333333333333,
+     "fidelity": {
+      "R1 renewal+3yr+quarter-end <=25% (retired at month 40)": 0.22771216601039504,
+      "R2 enterprise vs competitor <=30%": 0.4915873015873016,
+      "R4 churn-risk renewal <=22%": 0.42725557153127247,
+      "R5 deal > 500k <=20%": 0.3081939251040347,
+      "R6 UK vs competitor <=28% (from month 24)": 0.6666666666666666,
+      "R7 US mid-market rogue approver <=35% (bad outcomes)": 0.8837981407702523,
+      "R3 Germany SMB stricter >10% rejected": 0.9790070074246103
+     }
+    }
+   },
+   "sweep": {
+    "0.35": {
+     "n": 3,
+     "flagged": 1.0,
+     "ccl_vs_good": 0.9424,
+     "ccl_goodlaw_vs_good": 0.9987333333333334,
+     "gbm_monthly_vs_good": 0.9405333333333333,
+     "gbm_uplift_vs_good": 0.9911
+    },
+    "0.55": {
+     "n": 3,
+     "flagged": 1.0,
+     "ccl_vs_good": 0.9424,
+     "ccl_goodlaw_vs_good": 0.9987333333333334,
+     "gbm_monthly_vs_good": 0.9405333333333333,
+     "gbm_uplift_vs_good": 0.9749
+    },
+    "0.7": {
+     "n": 3,
+     "flagged": 0.0,
+     "ccl_vs_good": 0.9424,
+     "ccl_goodlaw_vs_good": 0.9424,
+     "gbm_monthly_vs_good": 0.9405333333333333,
+     "gbm_uplift_vs_good": 0.9495999999999999
+    },
+    "0.85": {
+     "n": 3,
+     "flagged": 0.0,
+     "ccl_vs_good": 0.9424,
+     "ccl_goodlaw_vs_good": 0.9424,
+     "gbm_monthly_vs_good": 0.9405333333333333,
+     "gbm_uplift_vs_good": 0.9390666666666667
+    }
+   }
+  },
+  "hard": {
+   "miners": {
+    "schema": {
+     "seeds": [
+      7,
+      11,
+      23
+     ],
+     "accuracy": {
+      "statute": {
+       "vs_actual": 0.6907666666666668,
+       "vs_good": 0.7472666666666666
+      },
+      "gbm_monthly": {
+       "vs_actual": 0.9579,
+       "vs_good": 0.9570666666666666
+      },
+      "gbm_outcome": {
+       "vs_actual": 0.9571000000000001,
+       "vs_good": 0.9595666666666666
+      },
+      "gbm_uplift": {
+       "vs_actual": 0.9027666666666666,
+       "vs_good": 0.9759333333333333
+      },
+      "ccl": {
+       "vs_actual": 0.9251666666666667,
+       "vs_good": 0.9214333333333333
+      },
+      "ccl_goodlaw": {
+       "vs_actual": 0.8843333333333333,
+       "vs_good": 0.9571
+      }
+     },
+     "exact": 3.6666666666666665,
+     "n_rules": 7,
+     "per_rule": {
+      "H1 enterprise OR deal > 1M <=30% (OR-rule)": {
+       "exact": 1.0,
+       "union": 0.9683333333333333,
+       "example": "segment = 'ENT' AND disc <= 30  => APPROVE"
+      },
+      "H2 renewal 2-3yr: cap 15+3*term, +5 if churn risk (interaction)": {
+       "exact": 0.6666666666666666,
+       "union": 0.677,
+       "example": "term = 3 AND renewal AND churn_high AND disc <= 29  => APPROVE"
+      },
+      "H3 deal > 340k <=20% (odd threshold)": {
+       "exact": 0.0,
+       "union": 0.47000000000000003,
+       "example": "size_k > 500 AND disc <= 21  => APPROVE"
+      },
+      "H4 customer tenure >= 11y <=22% (field unused in v2)": {
+       "exact": 0.0,
+       "union": 0.0,
+       "example": "segment = 'ENT' AND disc <= 30  => APPROVE"
+      },
+      "H5 competitor outside France <=26% (negation)": {
+       "exact": 0.0,
+       "union": 0.868,
+       "example": "region = 'UK' AND competitor AND disc <= 26  => APPROVE"
+      },
+      "H6 US mid-market rogue approver <=35% (bad outcomes)": {
+       "exact": 1.0,
+       "union": 1.0,
+       "example": "segment = 'MM' AND region = 'US' AND disc <= 35  => APPROVE"
+      },
+      "R3 Germany SMB stricter >10% rejected": {
+       "exact": 1.0,
+       "union": 1.0,
+       "example": "segment = 'SMB' AND region = 'DE' AND disc > 10  => REJECT"
+      }
+     },
+     "holdings": 8.333333333333334,
+     "fidelity": {
+      "H1 enterprise OR deal > 1M <=30% (OR-rule)": 0.9847360295105165,
+      "H2 renewal 2-3yr: cap 15+3*term, +5 if churn risk (interaction)": 0.8314663496667841,
+      "H3 deal > 340k <=20% (odd threshold)": 0.7628568342020451,
+      "H4 customer tenure >= 11y <=22% (field unused in v2)": 0.566717363660624,
+      "H5 competitor outside France <=26% (negation)": 0.9165307232191409,
+      "H6 US mid-market rogue approver <=35% (bad outcomes)": 1.0,
+      "R3 Germany SMB stricter >10% rejected": 1.0
+     }
+    },
+    "beam": {
+     "seeds": [
+      7,
+      11,
+      23
+     ],
+     "accuracy": {
+      "statute": {
+       "vs_actual": 0.6907666666666668,
+       "vs_good": 0.7472666666666666
+      },
+      "gbm_monthly": {
+       "vs_actual": 0.9579,
+       "vs_good": 0.9570666666666666
+      },
+      "gbm_outcome": {
+       "vs_actual": 0.9571000000000001,
+       "vs_good": 0.9595666666666666
+      },
+      "gbm_uplift": {
+       "vs_actual": 0.9027666666666666,
+       "vs_good": 0.9759333333333333
+      },
+      "ccl": {
+       "vs_actual": 0.9289333333333333,
+       "vs_good": 0.9575333333333335
+      },
+      "ccl_goodlaw": {
+       "vs_actual": 0.9047000000000001,
+       "vs_good": 0.9795333333333334
+      }
+     },
+     "exact": 6.666666666666667,
+     "n_rules": 7,
+     "per_rule": {
+      "H1 enterprise OR deal > 1M <=30% (OR-rule)": {
+       "exact": 1.0,
+       "union": 0.9683333333333333,
+       "example": "segment = 'ENT' AND disc <= 30  => APPROVE"
+      },
+      "H2 renewal 2-3yr: cap 15+3*term, +5 if churn risk (interaction)": {
+       "exact": 1.0,
+       "union": 0.8993333333333333,
+       "example": "renewal AND term > 1 AND disc <= 22  => APPROVE"
+      },
+      "H3 deal > 340k <=20% (odd threshold)": {
+       "exact": 1.0,
+       "union": 0.915,
+       "example": "size_k > 355 AND disc <= 20  => APPROVE"
+      },
+      "H4 customer tenure >= 11y <=22% (field unused in v2)": {
+       "exact": 1.0,
+       "union": 0.7993333333333333,
+       "example": "tenure_y > 11 AND disc <= 22  => APPROVE"
+      },
+      "H5 competitor outside France <=26% (negation)": {
+       "exact": 0.6666666666666666,
+       "union": 0.6666666666666666,
+       "example": "segment = 'ENT' AND disc <= 30  => APPROVE"
+      },
+      "H6 US mid-market rogue approver <=35% (bad outcomes)": {
+       "exact": 1.0,
+       "union": 1.0,
+       "example": "region = 'US' AND segment = 'MM' AND disc <= 35  => APPROVE"
+      },
+      "R3 Germany SMB stricter >10% rejected": {
+       "exact": 1.0,
+       "union": 1.0,
+       "example": "region = 'DE' AND segment = 'SMB' AND disc > 10  => REJECT"
+      }
+     },
+     "holdings": 8.0,
+     "fidelity": {
+      "H1 enterprise OR deal > 1M <=30% (OR-rule)": 0.9849039651550084,
+      "H2 renewal 2-3yr: cap 15+3*term, +5 if churn risk (interaction)": 0.9377420351644755,
+      "H3 deal > 340k <=20% (odd threshold)": 0.9707910677812333,
+      "H4 customer tenure >= 11y <=22% (field unused in v2)": 0.9225772810738255,
+      "H5 competitor outside France <=26% (negation)": 0.8539578645939865,
+      "H6 US mid-market rogue approver <=35% (bad outcomes)": 1.0,
+      "R3 Germany SMB stricter >10% rejected": 1.0
+     }
+    },
+    "tree": {
+     "seeds": [
+      7,
+      11,
+      23
+     ],
+     "accuracy": {
+      "statute": {
+       "vs_actual": 0.6907666666666668,
+       "vs_good": 0.7472666666666666
+      },
+      "gbm_monthly": {
+       "vs_actual": 0.9579,
+       "vs_good": 0.9570666666666666
+      },
+      "gbm_outcome": {
+       "vs_actual": 0.9571000000000001,
+       "vs_good": 0.9595666666666666
+      },
+      "gbm_uplift": {
+       "vs_actual": 0.9027666666666666,
+       "vs_good": 0.9759333333333333
+      },
+      "ccl": {
+       "vs_actual": 0.8777666666666666,
+       "vs_good": 0.8846333333333334
+      },
+      "ccl_goodlaw": {
+       "vs_actual": 0.8389666666666667,
+       "vs_good": 0.9085
+      }
+     },
+     "exact": 0.3333333333333333,
+     "n_rules": 7,
+     "per_rule": {
+      "H1 enterprise OR deal > 1M <=30% (OR-rule)": {
+       "exact": 0.0,
+       "union": 0.9333333333333332,
+       "example": "segment = 'ENT' AND NOT churn_high AND disc <= 23.2 AND size_k <= 407.0  => APPROVE"
+      },
+      "H2 renewal 2-3yr: cap 15+3*term, +5 if churn risk (interaction)": {
+       "exact": 0.0,
+       "union": 0.0,
+       "example": "segment = 'ENT' AND NOT churn_high AND disc <= 23.2 AND size_k <= 407.0  => APPROVE"
+      },
+      "H3 deal > 340k <=20% (odd threshold)": {
+       "exact": 0.0,
+       "union": 0.0,
+       "example": "segment != 'ENT' AND region = 'US' AND segment = 'MM' AND disc <= 17.7  => APPROVE"
+      },
+      "H4 customer tenure >= 11y <=22% (field unused in v2)": {
+       "exact": 0.0,
+       "union": 0.0,
+       "example": "segment = 'ENT' AND NOT churn_high AND disc <= 23.2 AND size_k <= 407.0  => APPROVE"
+      },
+      "H5 competitor outside France <=26% (negation)": {
+       "exact": 0.3333333333333333,
+       "union": 0.42799999999999994,
+       "example": "segment != 'ENT' AND region = 'US' AND segment != 'MM' AND competitor AND disc <= 25.9  => APPROVE"
+      },
+      "H6 US mid-market rogue approver <=35% (bad outcomes)": {
+       "exact": 0.0,
+       "union": 0.7999999999999999,
+       "example": "segment != 'ENT' AND region = 'US' AND segment = 'MM' AND disc > 17.7 AND disc <= 25.9  => APPROVE"
+      },
+      "R3 Germany SMB stricter >10% rejected": {
+       "exact": 0.0,
+       "union": 0.9956666666666667,
+       "example": "region = 'DE' AND segment = 'SMB' AND disc > 10.1 AND size_k > 76.5  => REJECT"
+      }
+     },
+     "holdings": 15.666666666666666,
+     "fidelity": {
+      "H1 enterprise OR deal > 1M <=30% (OR-rule)": 0.9383691945950243,
+      "H2 renewal 2-3yr: cap 15+3*term, +5 if churn risk (interaction)": 0.3810310710552791,
+      "H3 deal > 340k <=20% (odd threshold)": 0.3334653731327133,
+      "H4 customer tenure >= 11y <=22% (field unused in v2)": 0.3845642000244807,
+      "H5 competitor outside France <=26% (negation)": 0.7413679324101996,
+      "H6 US mid-market rogue approver <=35% (bad outcomes)": 0.8645015384880649,
+      "R3 Germany SMB stricter >10% rejected": 0.9790070074246103
+     }
+    },
+    "covering": {
+     "seeds": [
+      7,
+      11,
+      23
+     ],
+     "accuracy": {
+      "statute": {
+       "vs_actual": 0.6907666666666668,
+       "vs_good": 0.7472666666666666
+      },
+      "gbm_monthly": {
+       "vs_actual": 0.9579,
+       "vs_good": 0.9570666666666666
+      },
+      "gbm_outcome": {
+       "vs_actual": 0.9571000000000001,
+       "vs_good": 0.9595666666666666
+      },
+      "gbm_uplift": {
+       "vs_actual": 0.9027666666666666,
+       "vs_good": 0.9759333333333333
+      },
+      "ccl": {
+       "vs_actual": 0.8890333333333333,
+       "vs_good": 0.8846000000000002
+      },
+      "ccl_goodlaw": {
+       "vs_actual": 0.842,
+       "vs_good": 0.9114
+      }
+     },
+     "exact": 2.0,
+     "n_rules": 7,
+     "per_rule": {
+      "H1 enterprise OR deal > 1M <=30% (OR-rule)": {
+       "exact": 0.6666666666666666,
+       "union": 0.8943333333333333,
+       "example": "segment = 'ENT' AND NOT churn_high AND disc <= 25.9  => APPROVE"
+      },
+      "H2 renewal 2-3yr: cap 15+3*term, +5 if churn risk (interaction)": {
+       "exact": 0.0,
+       "union": 0.0,
+       "example": "region = 'US' AND segment != 'SMB' AND disc <= 24.3  => APPROVE"
+      },
+      "H3 deal > 340k <=20% (odd threshold)": {
+       "exact": 0.0,
+       "union": 0.0,
+       "example": "segment = 'ENT' AND NOT churn_high AND disc <= 25.9  => APPROVE"
+      },
+      "H4 customer tenure >= 11y <=22% (field unused in v2)": {
+       "exact": 0.3333333333333333,
+       "union": 0.2786666666666667,
+       "example": "region = 'US' AND segment != 'SMB' AND disc <= 24.3  => APPROVE"
+      },
+      "H5 competitor outside France <=26% (negation)": {
+       "exact": 0.0,
+       "union": 0.0,
+       "example": "region = 'US' AND segment != 'SMB' AND disc <= 24.3  => APPROVE"
+      },
+      "H6 US mid-market rogue approver <=35% (bad outcomes)": {
+       "exact": 0.0,
+       "union": 0.44966666666666666,
+       "example": "region = 'US' AND segment = 'MM' AND disc > 24.3  => APPROVE"
+      },
+      "R3 Germany SMB stricter >10% rejected": {
+       "exact": 1.0,
+       "union": 0.9956666666666667,
+       "example": "region = 'DE' AND segment = 'SMB' AND disc > 10.1  => REJECT"
+      }
+     },
+     "holdings": 6.666666666666667,
+     "fidelity": {
+      "H1 enterprise OR deal > 1M <=30% (OR-rule)": 0.9118764645482881,
+      "H2 renewal 2-3yr: cap 15+3*term, +5 if churn risk (interaction)": 0.3473580395458092,
+      "H3 deal > 340k <=20% (odd threshold)": 0.3763627967738284,
+      "H4 customer tenure >= 11y <=22% (field unused in v2)": 0.49801283984199357,
+      "H5 competitor outside France <=26% (negation)": 0.3733100924079391,
+      "H6 US mid-market rogue approver <=35% (bad outcomes)": 0.9278707917413046,
+      "R3 Germany SMB stricter >10% rejected": 0.9790070074246103
+     }
+    }
+   },
+   "sweep": {
+    "0.35": {
+     "n": 3,
+     "flagged": 1.0,
+     "ccl_vs_good": 0.9214333333333333,
+     "ccl_goodlaw_vs_good": 0.9571,
+     "gbm_monthly_vs_good": 0.9570666666666666,
+     "gbm_uplift_vs_good": 0.9759333333333333
+    }
+   }
+  }
+ }
+}

@@ -1,0 +1,33 @@
+--seed 7 --miner tree --world hard --out runs_v3/hard_tree_s7_b0.35.json
+--seed 7 --miner tree --world easy --out runs_v3/easy_tree_s7_b0.35.json
+--seed 7 --miner schema --world hard --out runs_v3/hard_schema_s7_b0.35.json
+--seed 7 --miner schema --world easy --bad-renew 0.85 --out runs_v3/easy_schema_s7_b0.85.json
+--seed 7 --miner schema --world easy --bad-renew 0.70 --out runs_v3/easy_schema_s7_b0.70.json
+--seed 7 --miner schema --world easy --bad-renew 0.55 --out runs_v3/easy_schema_s7_b0.55.json
+--seed 7 --miner schema --world easy --bad-renew 0.35 --out runs_v3/easy_schema_s7_b0.35.json
+--seed 7 --miner covering --world hard --out runs_v3/hard_covering_s7_b0.35.json
+--seed 7 --miner covering --world easy --out runs_v3/easy_covering_s7_b0.35.json
+--seed 7 --miner beam --world hard --out runs_v3/hard_beam_s7_b0.35.json
+--seed 7 --miner beam --world easy --out runs_v3/easy_beam_s7_b0.35.json
+--seed 23 --miner tree --world hard --out runs_v3/hard_tree_s23_b0.35.json
+--seed 23 --miner tree --world easy --out runs_v3/easy_tree_s23_b0.35.json
+--seed 23 --miner schema --world hard --out runs_v3/hard_schema_s23_b0.35.json
+--seed 23 --miner schema --world easy --bad-renew 0.85 --out runs_v3/easy_schema_s23_b0.85.json
+--seed 23 --miner schema --world easy --bad-renew 0.70 --out runs_v3/easy_schema_s23_b0.70.json
+--seed 23 --miner schema --world easy --bad-renew 0.55 --out runs_v3/easy_schema_s23_b0.55.json
+--seed 23 --miner schema --world easy --bad-renew 0.35 --out runs_v3/easy_schema_s23_b0.35.json
+--seed 23 --miner covering --world hard --out runs_v3/hard_covering_s23_b0.35.json
+--seed 23 --miner covering --world easy --out runs_v3/easy_covering_s23_b0.35.json
+--seed 23 --miner beam --world hard --out runs_v3/hard_beam_s23_b0.35.json
+--seed 23 --miner beam --world easy --out runs_v3/easy_beam_s23_b0.35.json
+--seed 11 --miner tree --world hard --out runs_v3/hard_tree_s11_b0.35.json
+--seed 11 --miner tree --world easy --out runs_v3/easy_tree_s11_b0.35.json
+--seed 11 --miner schema --world hard --out runs_v3/hard_schema_s11_b0.35.json
+--seed 11 --miner schema --world easy --bad-renew 0.85 --out runs_v3/easy_schema_s11_b0.85.json
+--seed 11 --miner schema --world easy --bad-renew 0.70 --out runs_v3/easy_schema_s11_b0.70.json
+--seed 11 --miner schema --world easy --bad-renew 0.55 --out runs_v3/easy_schema_s11_b0.55.json
+--seed 11 --miner schema --world easy --bad-renew 0.35 --out runs_v3/easy_schema_s11_b0.35.json
+--seed 11 --miner covering --world hard --out runs_v3/hard_covering_s11_b0.35.json
+--seed 11 --miner covering --world easy --out runs_v3/easy_covering_s11_b0.35.json
+--seed 11 --miner beam --world hard --out runs_v3/hard_beam_s11_b0.35.json
+--seed 11 --miner beam --world easy --out runs_v3/easy_beam_s11_b0.35.json

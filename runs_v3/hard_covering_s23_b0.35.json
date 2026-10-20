@@ -1,0 +1,477 @@
+{
+ "seed": 23,
+ "miner": "covering",
+ "bad_renew": 0.35,
+ "world": "hard",
+ "accuracy": {
+  "statute": {
+   "vs_actual": 0.6923,
+   "vs_good": 0.7477
+  },
+  "gbm_static": {
+   "vs_actual": 0.9588,
+   "vs_good": 0.9594
+  },
+  "gbm_monthly": {
+   "vs_actual": 0.9571,
+   "vs_good": 0.9575
+  },
+  "gbm_outcome": {
+   "vs_actual": 0.9565,
+   "vs_good": 0.959
+  },
+  "gbm_uplift": {
+   "vs_actual": 0.9028,
+   "vs_good": 0.9756
+  },
+  "ccl": {
+   "vs_actual": 0.8927,
+   "vs_good": 0.8909
+  },
+  "ccl_goodlaw": {
+   "vs_actual": 0.8463,
+   "vs_good": 0.9164
+  }
+ },
+ "per_month": {
+  "statute": [
+   0.69,
+   0.694,
+   0.685,
+   0.701,
+   0.696,
+   0.684,
+   0.7,
+   0.693,
+   0.703,
+   0.693,
+   0.685,
+   0.684
+  ],
+  "gbm_static": [
+   0.967,
+   0.957,
+   0.951,
+   0.959,
+   0.956,
+   0.952,
+   0.965,
+   0.963,
+   0.956,
+   0.957,
+   0.957,
+   0.964
+  ],
+  "gbm_monthly": [
+   0.966,
+   0.954,
+   0.949,
+   0.958,
+   0.956,
+   0.95,
+   0.964,
+   0.961,
+   0.954,
+   0.957,
+   0.955,
+   0.962
+  ],
+  "gbm_outcome": [
+   0.965,
+   0.956,
+   0.948,
+   0.958,
+   0.956,
+   0.949,
+   0.963,
+   0.961,
+   0.952,
+   0.955,
+   0.954,
+   0.961
+  ],
+  "gbm_uplift": [
+   0.907,
+   0.903,
+   0.892,
+   0.904,
+   0.904,
+   0.892,
+   0.912,
+   0.905,
+   0.895,
+   0.912,
+   0.901,
+   0.906
+  ],
+  "ccl": [
+   0.846,
+   0.908,
+   0.891,
+   0.903,
+   0.918,
+   0.902,
+   0.919,
+   0.862,
+   0.882,
+   0.876,
+   0.915,
+   0.888
+  ],
+  "ccl_goodlaw": [
+   0.799,
+   0.873,
+   0.841,
+   0.853,
+   0.881,
+   0.849,
+   0.88,
+   0.807,
+   0.838,
+   0.834,
+   0.873,
+   0.826
+  ]
+ },
+ "log": [
+  {
+   "month": 36,
+   "admitted": 7,
+   "bad": 2,
+   "pending": 0,
+   "r1_holding_admitted": true,
+   "rogue_flagged": true
+  },
+  {
+   "month": 37,
+   "admitted": 10,
+   "bad": 2,
+   "pending": 0,
+   "r1_holding_admitted": false,
+   "rogue_flagged": true
+  },
+  {
+   "month": 38,
+   "admitted": 9,
+   "bad": 2,
+   "pending": 0,
+   "r1_holding_admitted": true,
+   "rogue_flagged": true
+  },
+  {
+   "month": 39,
+   "admitted": 8,
+   "bad": 2,
+   "pending": 0,
+   "r1_holding_admitted": false,
+   "rogue_flagged": true
+  },
+  {
+   "month": 40,
+   "admitted": 9,
+   "bad": 1,
+   "pending": 0,
+   "r1_holding_admitted": false,
+   "rogue_flagged": true
+  },
+  {
+   "month": 41,
+   "admitted": 8,
+   "bad": 2,
+   "pending": 0,
+   "r1_holding_admitted": false,
+   "rogue_flagged": true
+  },
+  {
+   "month": 42,
+   "admitted": 10,
+   "bad": 2,
+   "pending": 0,
+   "r1_holding_admitted": true,
+   "rogue_flagged": true
+  },
+  {
+   "month": 43,
+   "admitted": 6,
+   "bad": 2,
+   "pending": 0,
+   "r1_holding_admitted": true,
+   "rogue_flagged": true
+  },
+  {
+   "month": 44,
+   "admitted": 7,
+   "bad": 2,
+   "pending": 0,
+   "r1_holding_admitted": false,
+   "rogue_flagged": true
+  },
+  {
+   "month": 45,
+   "admitted": 6,
+   "bad": 2,
+   "pending": 0,
+   "r1_holding_admitted": true,
+   "rogue_flagged": true
+  },
+  {
+   "month": 46,
+   "admitted": 10,
+   "bad": 2,
+   "pending": 0,
+   "r1_holding_admitted": false,
+   "rogue_flagged": true
+  },
+  {
+   "month": 47,
+   "admitted": 6,
+   "bad": 2,
+   "pending": 0,
+   "r1_holding_admitted": false,
+   "rogue_flagged": true
+  }
+ ],
+ "snapshots": {
+  "36": {
+   "recovery": {
+    "H1 enterprise OR deal > 1M <=30% (OR-rule)": {
+     "n_applies": 6183,
+     "coverage": 0.676,
+     "purity": 1.0,
+     "holding": "segment = 'ENT' AND disc <= 25.3  => APPROVE",
+     "exact": true,
+     "union_coverage": 0.926
+    },
+    "H2 renewal 2-3yr: cap 15+3*term, +5 if churn risk (interaction)": {
+     "n_applies": 3552,
+     "coverage": 0.209,
+     "purity": 0.178,
+     "holding": "segment = 'ENT' AND disc <= 25.3  => APPROVE",
+     "exact": false,
+     "union_coverage": 0.0
+    },
+    "H3 deal > 340k <=20% (odd threshold)": {
+     "n_applies": 979,
+     "coverage": 0.237,
+     "purity": 0.056,
+     "holding": "segment = 'ENT' AND disc <= 25.3  => APPROVE",
+     "exact": false,
+     "union_coverage": 0.0
+    },
+    "H4 customer tenure >= 11y <=22% (field unused in v2)": {
+     "n_applies": 3907,
+     "coverage": 0.224,
+     "purity": 0.21,
+     "holding": "segment = 'ENT' AND disc <= 25.3  => APPROVE",
+     "exact": false,
+     "union_coverage": 0.0
+    },
+    "H5 competitor outside France <=26% (negation)": {
+     "n_applies": 4904,
+     "coverage": 0.237,
+     "purity": 0.279,
+     "holding": "segment = 'ENT' AND disc <= 25.3  => APPROVE",
+     "exact": false,
+     "union_coverage": 0.0
+    },
+    "H6 US mid-market rogue approver <=35% (bad outcomes)": {
+     "n_applies": 3514,
+     "coverage": 0.373,
+     "purity": 1.0,
+     "holding": "region = 'US' AND segment = 'MM' AND disc > 27.8  => APPROVE",
+     "exact": false,
+     "union_coverage": 0.373
+    },
+    "R3 Germany SMB stricter >10% rejected": {
+     "n_applies": 1174,
+     "coverage": 1.0,
+     "purity": 0.211,
+     "holding": "region = 'DE' AND segment = 'SMB' AND disc > 10.1  => REJECT",
+     "exact": false,
+     "union_coverage": 0.0
+    }
+   },
+   "holdings": [
+    {
+     "id": "H0",
+     "kind": "loosen",
+     "sql": "segment = 'ENT' AND disc <= 26.2 AND size_k <= 117.5  => APPROVE",
+     "support": 1066,
+     "replay_prec": 0.986,
+     "outcome": "good",
+     "outcome_lift": 0.053
+    },
+    {
+     "id": "H1",
+     "kind": "loosen",
+     "sql": "segment != 'SMB' AND region = 'US' AND disc <= 23.9  => APPROVE",
+     "support": 819,
+     "replay_prec": 0.98,
+     "outcome": "bad",
+     "outcome_lift": -0.269
+    },
+    {
+     "id": "H2",
+     "kind": "loosen",
+     "sql": "segment = 'ENT' AND disc <= 25.3  => APPROVE",
+     "support": 602,
+     "replay_prec": 0.969,
+     "outcome": "good",
+     "outcome_lift": 0.043
+    },
+    {
+     "id": "H3",
+     "kind": "loosen",
+     "sql": "region = 'US' AND segment = 'MM' AND disc > 27.8  => APPROVE",
+     "support": 528,
+     "replay_prec": 0.967,
+     "outcome": "bad",
+     "outcome_lift": -0.47
+    },
+    {
+     "id": "H4",
+     "kind": "tighten",
+     "sql": "region = 'DE' AND segment = 'SMB' AND disc > 10.1  => REJECT",
+     "support": 451,
+     "replay_prec": 0.956,
+     "outcome": "n/a",
+     "outcome_lift": null
+    },
+    {
+     "id": "H5",
+     "kind": "loosen",
+     "sql": "segment = 'ENT' AND disc > 27.8 AND disc <= 30.1  => APPROVE",
+     "support": 376,
+     "replay_prec": 0.985,
+     "outcome": "good",
+     "outcome_lift": 0.034
+    },
+    {
+     "id": "H6",
+     "kind": "loosen",
+     "sql": "NOT competitor AND segment = 'ENT' AND disc <= 27.8  => APPROVE",
+     "support": 232,
+     "replay_prec": 0.976,
+     "outcome": "good",
+     "outcome_lift": 0.051
+    }
+   ]
+  },
+  "47": {
+   "recovery": {
+    "H1 enterprise OR deal > 1M <=30% (OR-rule)": {
+     "n_applies": 6183,
+     "coverage": 0.545,
+     "purity": 1.0,
+     "holding": "segment = 'ENT' AND region != 'US' AND disc <= 26.1  => APPROVE",
+     "exact": false,
+     "union_coverage": 0.807
+    },
+    "H2 renewal 2-3yr: cap 15+3*term, +5 if churn risk (interaction)": {
+     "n_applies": 3552,
+     "coverage": 0.191,
+     "purity": 0.208,
+     "holding": "tenure_y > 10.5 AND region != 'DE' AND disc <= 22.1  => APPROVE",
+     "exact": false,
+     "union_coverage": 0.0
+    },
+    "H3 deal > 340k <=20% (odd threshold)": {
+     "n_applies": 979,
+     "coverage": 0.248,
+     "purity": 0.075,
+     "holding": "tenure_y > 10.5 AND region != 'DE' AND disc <= 22.1  => APPROVE",
+     "exact": false,
+     "union_coverage": 0.0
+    },
+    "H4 customer tenure >= 11y <=22% (field unused in v2)": {
+     "n_applies": 3907,
+     "coverage": 0.833,
+     "purity": 1.0,
+     "holding": "tenure_y > 10.5 AND region != 'DE' AND disc <= 22.1  => APPROVE",
+     "exact": true,
+     "union_coverage": 0.833
+    },
+    "H5 competitor outside France <=26% (negation)": {
+     "n_applies": 4904,
+     "coverage": 0.207,
+     "purity": 0.247,
+     "holding": "region = 'US' AND segment != 'SMB' AND disc <= 30.2  => APPROVE",
+     "exact": false,
+     "union_coverage": 0.0
+    },
+    "H6 US mid-market rogue approver <=35% (bad outcomes)": {
+     "n_applies": 3514,
+     "coverage": 0.5,
+     "purity": 1.0,
+     "holding": "region = 'US' AND segment = 'MM' AND disc > 25.2  => APPROVE",
+     "exact": false,
+     "union_coverage": 0.5
+    },
+    "R3 Germany SMB stricter >10% rejected": {
+     "n_applies": 1174,
+     "coverage": 1.0,
+     "purity": 0.211,
+     "holding": "region = 'DE' AND segment = 'SMB' AND disc > 10.1  => REJECT",
+     "exact": false,
+     "union_coverage": 0.0
+    }
+   },
+   "holdings": [
+    {
+     "id": "H0",
+     "kind": "loosen",
+     "sql": "region = 'US' AND segment != 'SMB' AND disc <= 30.2  => APPROVE",
+     "support": 1677,
+     "replay_prec": 0.944,
+     "outcome": "bad",
+     "outcome_lift": -0.262
+    },
+    {
+     "id": "H1",
+     "kind": "loosen",
+     "sql": "segment = 'ENT' AND region != 'US' AND disc <= 26.1  => APPROVE",
+     "support": 1434,
+     "replay_prec": 0.949,
+     "outcome": "good",
+     "outcome_lift": 0.04
+    },
+    {
+     "id": "H2",
+     "kind": "loosen",
+     "sql": "tenure_y > 10.5 AND region != 'DE' AND disc <= 22.1  => APPROVE",
+     "support": 908,
+     "replay_prec": 0.961,
+     "outcome": "good",
+     "outcome_lift": -0.004
+    },
+    {
+     "id": "H3",
+     "kind": "loosen",
+     "sql": "segment = 'ENT' AND disc > 25.2 AND disc <= 30.1  => APPROVE",
+     "support": 521,
+     "replay_prec": 0.95,
+     "outcome": "good",
+     "outcome_lift": 0.051
+    },
+    {
+     "id": "H4",
+     "kind": "tighten",
+     "sql": "region = 'DE' AND segment = 'SMB' AND disc > 10.1  => REJECT",
+     "support": 469,
+     "replay_prec": 0.983,
+     "outcome": "n/a",
+     "outcome_lift": null
+    },
+    {
+     "id": "H5",
+     "kind": "loosen",
+     "sql": "region = 'US' AND segment = 'MM' AND disc > 25.2  => APPROVE",
+     "support": 362,
+     "replay_prec": 0.946,
+     "outcome": "bad",
+     "outcome_lift": -0.45
+    }
+   ]
+  }
+ }
+}

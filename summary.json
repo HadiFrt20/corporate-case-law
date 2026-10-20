@@ -1,0 +1,394 @@
+{
+ "n_runs": 18,
+ "miners": {
+  "schema": {
+   "seeds": [
+    11,
+    23,
+    7
+   ],
+   "accuracy": {
+    "statute": {
+     "vs_actual": 0.8045666666666667,
+     "vs_good": 0.8876
+    },
+    "gbm_static": {
+     "vs_actual": 0.9312666666666667,
+     "vs_good": 0.9119333333333333
+    },
+    "gbm_monthly": {
+     "vs_actual": 0.9576333333333333,
+     "vs_good": 0.9405333333333333
+    },
+    "gbm_outcome": {
+     "vs_actual": 0.9529666666666667,
+     "vs_good": 0.9361
+    },
+    "ccl": {
+     "vs_actual": 0.9548000000000001,
+     "vs_good": 0.9376333333333333
+    },
+    "ccl_goodlaw": {
+     "vs_actual": 0.9022333333333332,
+     "vs_good": 0.9938666666666668
+    }
+   },
+   "gap_closed_vs_actual": {
+    "ccl": 0.981,
+    "ccl_goodlaw": 0.638
+   },
+   "exact_recovered": 6.666666666666667,
+   "n_rules": 7,
+   "per_rule": {
+    "R1 renewal+3yr+quarter-end <=25% (retired at month 40)": {
+     "exact": 1.0,
+     "union_coverage": 1.0,
+     "example": "term = 3 AND renewal AND quarter_end AND disc <= 25  => APPROVE"
+    },
+    "R2 enterprise vs competitor <=30%": {
+     "exact": 1.0,
+     "union_coverage": 1.0,
+     "example": "segment = 'ENT' AND competitor AND disc <= 30  => APPROVE"
+    },
+    "R4 churn-risk renewal <=22%": {
+     "exact": 1.0,
+     "union_coverage": 1.0,
+     "example": "renewal AND churn_high AND disc <= 22  => APPROVE"
+    },
+    "R5 deal > 500k <=20%": {
+     "exact": 0.6666666666666666,
+     "union_coverage": 0.6666666666666666,
+     "example": "size_k > 500 AND disc <= 20  => APPROVE"
+    },
+    "R6 UK vs competitor <=28% (from month 24)": {
+     "exact": 1.0,
+     "union_coverage": 1.0,
+     "example": "region = 'UK' AND competitor AND disc <= 28  => APPROVE"
+    },
+    "R7 US mid-market rogue approver <=35% (bad outcomes)": {
+     "exact": 1.0,
+     "union_coverage": 1.0,
+     "example": "segment = 'MM' AND region = 'US' AND disc <= 35  => APPROVE"
+    },
+    "R3 Germany SMB stricter >10% rejected": {
+     "exact": 1.0,
+     "union_coverage": 1.0,
+     "example": "segment = 'SMB' AND region = 'DE' AND disc > 10  => REJECT"
+    }
+   },
+   "n_holdings": 6.666666666666667
+  },
+  "tree": {
+   "seeds": [
+    11,
+    23,
+    7
+   ],
+   "accuracy": {
+    "statute": {
+     "vs_actual": 0.8045666666666667,
+     "vs_good": 0.8876
+    },
+    "gbm_static": {
+     "vs_actual": 0.9312666666666667,
+     "vs_good": 0.9119333333333333
+    },
+    "gbm_monthly": {
+     "vs_actual": 0.9576333333333333,
+     "vs_good": 0.9405333333333333
+    },
+    "gbm_outcome": {
+     "vs_actual": 0.9529666666666667,
+     "vs_good": 0.9361
+    },
+    "ccl": {
+     "vs_actual": 0.9234,
+     "vs_good": 0.9237000000000001
+    },
+    "ccl_goodlaw": {
+     "vs_actual": 0.8782,
+     "vs_good": 0.9677333333333333
+    }
+   },
+   "gap_closed_vs_actual": {
+    "ccl": 0.776,
+    "ccl_goodlaw": 0.481
+   },
+   "exact_recovered": 0.6666666666666666,
+   "n_rules": 7,
+   "per_rule": {
+    "R1 renewal+3yr+quarter-end <=25% (retired at month 40)": {
+     "exact": 0.0,
+     "union_coverage": 0.0,
+     "example": "competitor AND region = 'UK' AND segment != 'MM' AND disc <= 25.7  => APPROVE"
+    },
+    "R2 enterprise vs competitor <=30%": {
+     "exact": 0.3333333333333333,
+     "union_coverage": 0.7746666666666666,
+     "example": "competitor AND region != 'UK' AND segment = 'ENT' AND disc <= 28.2 AND size_k <= 309.5  => APPROVE"
+    },
+    "R4 churn-risk renewal <=22%": {
+     "exact": 0.0,
+     "union_coverage": 0.161,
+     "example": "competitor AND region = 'UK' AND segment != 'MM' AND disc <= 25.7  => APPROVE"
+    },
+    "R5 deal > 500k <=20%": {
+     "exact": 0.0,
+     "union_coverage": 0.0,
+     "example": "competitor AND region = 'UK' AND segment != 'MM' AND disc <= 25.7  => APPROVE"
+    },
+    "R6 UK vs competitor <=28% (from month 24)": {
+     "exact": 0.0,
+     "union_coverage": 0.7333333333333334,
+     "example": "competitor AND region = 'UK' AND segment != 'MM' AND disc <= 25.7  => APPROVE"
+    },
+    "R7 US mid-market rogue approver <=35% (bad outcomes)": {
+     "exact": 0.0,
+     "union_coverage": 0.7963333333333334,
+     "example": "NOT competitor AND region = 'US' AND segment = 'MM' AND size_k > 22.5 AND size_k <= 481.5  => APPROVE"
+    },
+    "R3 Germany SMB stricter >10% rejected": {
+     "exact": 0.3333333333333333,
+     "union_coverage": 0.899,
+     "example": "region = 'DE' AND segment = 'SMB' AND NOT competitor AND disc > 10.1 AND disc <= 14.2  => REJECT"
+    }
+   },
+   "n_holdings": 11.666666666666666
+  },
+  "covering": {
+   "seeds": [
+    11,
+    23,
+    7
+   ],
+   "accuracy": {
+    "statute": {
+     "vs_actual": 0.8045666666666667,
+     "vs_good": 0.8876
+    },
+    "gbm_static": {
+     "vs_actual": 0.9312666666666667,
+     "vs_good": 0.9119333333333333
+    },
+    "gbm_monthly": {
+     "vs_actual": 0.9576333333333333,
+     "vs_good": 0.9405333333333333
+    },
+    "gbm_outcome": {
+     "vs_actual": 0.9529666666666667,
+     "vs_good": 0.9361
+    },
+    "ccl": {
+     "vs_actual": 0.9261333333333334,
+     "vs_good": 0.9150666666666667
+    },
+    "ccl_goodlaw": {
+     "vs_actual": 0.8749666666666668,
+     "vs_good": 0.9642666666666667
+    }
+   },
+   "gap_closed_vs_actual": {
+    "ccl": 0.794,
+    "ccl_goodlaw": 0.46
+   },
+   "exact_recovered": 3.3333333333333335,
+   "n_rules": 7,
+   "per_rule": {
+    "R1 renewal+3yr+quarter-end <=25% (retired at month 40)": {
+     "exact": 0.0,
+     "union_coverage": 0.0,
+     "example": "competitor AND region = 'UK' AND disc <= 28.2  => APPROVE"
+    },
+    "R2 enterprise vs competitor <=30%": {
+     "exact": 0.3333333333333333,
+     "union_coverage": 0.3333333333333333,
+     "example": "competitor AND segment != 'SMB' AND region = 'US'  => APPROVE"
+    },
+    "R4 churn-risk renewal <=22%": {
+     "exact": 0.3333333333333333,
+     "union_coverage": 0.3333333333333333,
+     "example": "competitor AND region = 'UK' AND disc <= 28.2  => APPROVE"
+    },
+    "R5 deal > 500k <=20%": {
+     "exact": 0.0,
+     "union_coverage": 0.19799999999999998,
+     "example": "competitor AND region = 'UK' AND disc <= 28.2  => APPROVE"
+    },
+    "R6 UK vs competitor <=28% (from month 24)": {
+     "exact": 0.6666666666666666,
+     "union_coverage": 0.6666666666666666,
+     "example": "competitor AND region = 'UK' AND disc <= 28.2  => APPROVE"
+    },
+    "R7 US mid-market rogue approver <=35% (bad outcomes)": {
+     "exact": 1.0,
+     "union_coverage": 0.765,
+     "example": "NOT competitor AND region = 'US' AND segment = 'MM'  => APPROVE"
+    },
+    "R3 Germany SMB stricter >10% rejected": {
+     "exact": 1.0,
+     "union_coverage": 1.0,
+     "example": "region = 'DE' AND segment = 'SMB' AND disc > 10.1  => REJECT"
+    }
+   },
+   "n_holdings": 4.333333333333333
+  }
+ },
+ "sweep": {
+  "0.35": {
+   "seeds": 3,
+   "flagged_month_share": 1.0,
+   "first_flag_month": [
+    36,
+    36,
+    36
+   ],
+   "ccl_goodlaw_vs_good": 0.9938666666666668,
+   "ccl_vs_good": 0.9376333333333333,
+   "gbm_vs_good": 0.9405333333333333,
+   "gbm_outcome_vs_good": 0.9361,
+   "pending_mean": 0.13888888888888887
+  },
+  "0.55": {
+   "seeds": 3,
+   "flagged_month_share": 1.0,
+   "first_flag_month": [
+    36,
+    36,
+    36
+   ],
+   "ccl_goodlaw_vs_good": 0.9938666666666668,
+   "ccl_vs_good": 0.9376333333333333,
+   "gbm_vs_good": 0.9405333333333333,
+   "gbm_outcome_vs_good": 0.9357666666666667,
+   "pending_mean": 0.13888888888888887
+  },
+  "0.7": {
+   "seeds": 3,
+   "flagged_month_share": 0.0,
+   "first_flag_month": [
+    null,
+    null,
+    null
+   ],
+   "ccl_goodlaw_vs_good": 0.9376333333333333,
+   "ccl_vs_good": 0.9376333333333333,
+   "gbm_vs_good": 0.9405333333333333,
+   "gbm_outcome_vs_good": 0.9356,
+   "pending_mean": 0.13888888888888887
+  },
+  "0.85": {
+   "seeds": 3,
+   "flagged_month_share": 0.0,
+   "first_flag_month": [
+    null,
+    null,
+    null
+   ],
+   "ccl_goodlaw_vs_good": 0.9376333333333333,
+   "ccl_vs_good": 0.9376333333333333,
+   "gbm_vs_good": 0.9405333333333333,
+   "gbm_outcome_vs_good": 0.9354666666666667,
+   "pending_mean": 0.13888888888888887
+  }
+ },
+ "decay": {
+  "schema": {
+   "36": 1.0,
+   "37": 1.0,
+   "38": 1.0,
+   "39": 1.0,
+   "40": 1.0,
+   "41": 0.0,
+   "42": 0.0,
+   "43": 0.0,
+   "44": 0.0,
+   "45": 0.0,
+   "46": 0.0,
+   "47": 0.0
+  },
+  "tree": {
+   "36": 0.0,
+   "37": 0.0,
+   "38": 0.0,
+   "39": 0.0,
+   "40": 0.0,
+   "41": 0.0,
+   "42": 0.0,
+   "43": 0.0,
+   "44": 0.0,
+   "45": 0.0,
+   "46": 0.0,
+   "47": 0.0
+  },
+  "covering": {
+   "36": 0.0,
+   "37": 0.0,
+   "38": 0.0,
+   "39": 0.0,
+   "40": 0.0,
+   "41": 0.0,
+   "42": 0.0,
+   "43": 0.0,
+   "44": 0.0,
+   "45": 0.0,
+   "46": 0.0,
+   "47": 0.0
+  }
+ },
+ "example_holdings_seed7_m36": [
+  {
+   "id": "H0",
+   "kind": "loosen",
+   "sql": "segment = 'MM' AND region = 'US' AND disc <= 35  => APPROVE",
+   "support": 1399,
+   "replay_prec": 0.962,
+   "outcome": "bad",
+   "outcome_lift": -0.451
+  },
+  {
+   "id": "H1",
+   "kind": "loosen",
+   "sql": "region = 'UK' AND competitor AND disc <= 28  => APPROVE",
+   "support": 948,
+   "replay_prec": 0.947,
+   "outcome": "good",
+   "outcome_lift": 0.048
+  },
+  {
+   "id": "H2",
+   "kind": "loosen",
+   "sql": "segment = 'ENT' AND competitor AND disc <= 30  => APPROVE",
+   "support": 722,
+   "replay_prec": 0.929,
+   "outcome": "good",
+   "outcome_lift": 0.048
+  },
+  {
+   "id": "H3",
+   "kind": "loosen",
+   "sql": "renewal AND churn_high AND disc <= 22  => APPROVE",
+   "support": 458,
+   "replay_prec": 0.874,
+   "outcome": "good",
+   "outcome_lift": -0.0
+  },
+  {
+   "id": "H4",
+   "kind": "tighten",
+   "sql": "segment = 'SMB' AND region = 'DE' AND disc > 10  => REJECT",
+   "support": 420,
+   "replay_prec": 0.951,
+   "outcome": "n/a",
+   "outcome_lift": null
+  },
+  {
+   "id": "H5",
+   "kind": "loosen",
+   "sql": "term = 3 AND renewal AND quarter_end AND disc <= 25  => APPROVE",
+   "support": 165,
+   "replay_prec": 0.882,
+   "outcome": "pending",
+   "outcome_lift": null
+  }
+ ]
+}

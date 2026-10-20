@@ -1,0 +1,9 @@
+__pycache__/
+*.png
+ecc_review.err
+runs_err.log
+dbx/data/
+.claude/
+ecc_perf.err
+ecc_review.err
+dbx/*.log

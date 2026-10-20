@@ -1,0 +1,194 @@
+{
+ "0": {
+  "decisions": 3,
+  "outcomes": 1
+ },
+ "1": {
+  "decisions": 6,
+  "outcomes": 2
+ },
+ "2": {
+  "decisions": 9,
+  "outcomes": 3
+ },
+ "3": {
+  "decisions": 12,
+  "outcomes": 4
+ },
+ "4": {
+  "decisions": 15,
+  "outcomes": 5
+ },
+ "5": {
+  "decisions": 18,
+  "outcomes": 6
+ },
+ "6": {
+  "decisions": 21,
+  "outcomes": 7
+ },
+ "7": {
+  "decisions": 24,
+  "outcomes": 8
+ },
+ "8": {
+  "decisions": 27,
+  "outcomes": 9
+ },
+ "9": {
+  "decisions": 30,
+  "outcomes": 10
+ },
+ "10": {
+  "decisions": 33,
+  "outcomes": 11
+ },
+ "11": {
+  "decisions": 36,
+  "outcomes": 12
+ },
+ "12": {
+  "decisions": 39,
+  "outcomes": 13
+ },
+ "13": {
+  "decisions": 42,
+  "outcomes": 14
+ },
+ "14": {
+  "decisions": 45,
+  "outcomes": 15
+ },
+ "15": {
+  "decisions": 48,
+  "outcomes": 16
+ },
+ "16": {
+  "decisions": 51,
+  "outcomes": 17
+ },
+ "17": {
+  "decisions": 54,
+  "outcomes": 18
+ },
+ "18": {
+  "decisions": 57,
+  "outcomes": 19
+ },
+ "19": {
+  "decisions": 60,
+  "outcomes": 20
+ },
+ "20": {
+  "decisions": 63,
+  "outcomes": 21
+ },
+ "21": {
+  "decisions": 66,
+  "outcomes": 22
+ },
+ "22": {
+  "decisions": 69,
+  "outcomes": 23
+ },
+ "23": {
+  "decisions": 72,
+  "outcomes": 24
+ },
+ "24": {
+  "decisions": 75,
+  "outcomes": 25
+ },
+ "25": {
+  "decisions": 78,
+  "outcomes": 26
+ },
+ "26": {
+  "decisions": 81,
+  "outcomes": 27
+ },
+ "27": {
+  "decisions": 84,
+  "outcomes": 28
+ },
+ "28": {
+  "decisions": 87,
+  "outcomes": 29
+ },
+ "29": {
+  "decisions": 90,
+  "outcomes": 30
+ },
+ "30": {
+  "decisions": 93,
+  "outcomes": 31
+ },
+ "31": {
+  "decisions": 96,
+  "outcomes": 32
+ },
+ "32": {
+  "decisions": 99,
+  "outcomes": 33
+ },
+ "33": {
+  "decisions": 102,
+  "outcomes": 34
+ },
+ "34": {
+  "decisions": 105,
+  "outcomes": 35
+ },
+ "35": {
+  "decisions": 108,
+  "outcomes": 36
+ },
+ "36": {
+  "decisions": 111,
+  "outcomes": 37
+ },
+ "37": {
+  "decisions": 114,
+  "outcomes": 38
+ },
+ "38": {
+  "decisions": 117,
+  "outcomes": 39
+ },
+ "39": {
+  "decisions": 120,
+  "outcomes": 40
+ },
+ "40": {
+  "decisions": 123,
+  "outcomes": 41
+ },
+ "41": {
+  "decisions": 126,
+  "outcomes": 42
+ },
+ "42": {
+  "decisions": 129,
+  "outcomes": 43
+ },
+ "43": {
+  "decisions": 132,
+  "outcomes": 44
+ },
+ "44": {
+  "decisions": 135,
+  "outcomes": 45
+ },
+ "45": {
+  "decisions": 138,
+  "outcomes": 46
+ },
+ "46": {
+  "decisions": 141,
+  "outcomes": 47
+ },
+ "47": {
+  "decisions": 144,
+  "outcomes": 48
+ }
+}
