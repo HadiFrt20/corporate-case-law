@@ -1,0 +1,16 @@
+{
+ "run_id": "20261020T131740",
+ "checked": [
+  "g0",
+  "m0",
+  "m1",
+  "m3",
+  "m4",
+  "m5",
+  "m6",
+  "m7",
+  "m8"
+ ],
+ "failures": [],
+ "signature_tamper": "detected"
+}

@@ -13,13 +13,14 @@ v2 fixes (from the ECC python-review, 2026-10-19):
   4. round-number deal-size literals, so a "> 500k" rule is reachable
   + regression-safe admission, decay tracked on a rule that is mined then retired, miner recorded in output
 """
-import argparse, json
+import argparse, hashlib, json, os
 from itertools import combinations
 import numpy as np, pandas as pd
 from sklearn.tree import DecisionTreeClassifier
 from sklearn.ensemble import HistGradientBoostingClassifier
 
 STATUTE_CAP, NOISE, MONTHS, TEST_START = 15.0, 0.04, 48, 36
+CODE_SHA = hashlib.sha256(open(os.path.abspath(__file__), "rb").read()).hexdigest()[:16]  # recorded in every run
 CAT, BOOL, NUM = ["segment", "region"], ["renewal", "quarter_end", "competitor", "churn_high"], ["term", "size_k", "disc"]
 LOOSEN = [  # planted tacit rules: name, mask, cap
     ("R1 renewal+3yr+quarter-end <=25% (retired at month 40)", lambda d: d.renewal & (d.term == 3) & d.quarter_end & (d.month < 40), 25),
@@ -46,9 +47,21 @@ WORLD = "easy"
 ROGUE_EFFECT = "segment"   # "segment": the rogue approver's whole book renews badly (v1-v4 default)
                            # "exception": only the above-policy approvals renew badly (the discount CAUSES the churn)
 LAW_REF = "global"         # bad-law reference: "global" = all policy approvals; "scoped" = policy approvals in the holding's own population
+HARM_DROP = 0.2  # business policy: an exception whose approval lowers renewal by >= 0.20 is harmful (same threshold as the bad-law screen)
+
+
+def reset_config():
+    """undo any dataset-specific configuration (e.g. the HMDA study) so simulation runs are order-independent"""
+    global STATUTE_CAP, CAPS, LIT_COLS
+    STATUTE_CAP = 15.0
+    CAPS = {"loosen": np.arange(16, 36, dtype=float), "tighten": np.arange(5, 15, dtype=float)}
+    LIT_COLS = None
+
+
 def set_world(w):
     global LOOSEN, TIGHT, ROGUE, WORLD
     assert w in {"easy", "hard"}, w
+    reset_config()
     LOOSEN, TIGHT = EASY if w == "easy" else HARD; ROGUE = LOOSEN[-1][0]; WORLD = w
 def cap_of(c, d):
     return np.asarray(c(d), float) if callable(c) else np.full(len(d), float(c))
@@ -75,10 +88,16 @@ def make_firm(rng, n, bad_renew, month=None):
     t = TIGHT[1](d).values; cap[t] = TIGHT[2]; cap_good[t] = TIGHT[2]; binding[t] = TIGHT[0]
     truth = d.disc.values <= cap
     d["approved"] = np.where(rng.random(n) < NOISE, ~truth, truth)
-    d["good_decision"] = d.disc.values <= cap_good  # policy-consistent, noiseless: what a well-run firm decides
+    d["truth"] = truth  # noiseless decision of the firm's (hidden) rules, incl. the rogue rule
+    d["good_decision"] = d.disc.values <= cap_good  # LEGACY 'nonrogue-rule oracle': drops the rogue rule regardless of its effect
     d["binding"] = binding
     rogue = (binding == ROGUE) & d.approved.values
     if ROGUE_EFFECT == "exception": rogue &= d.disc.values > STATUTE_CAP
+    # harm-aware oracle: approve what the firm's rules allow, EXCEPT approvals that CAUSE a renewal drop >= HARM_DROP.
+    # In the 'segment' world approval causes nothing (those customers renew badly either way), so nothing is harmful.
+    causes_harm = (ROGUE_EFFECT == "exception") and (round(0.85 - bad_renew, 9) >= HARM_DROP)  # rounded: 0.85 - 0.65 must count as 0.20
+    d["harmful_if_approved"] = (binding == ROGUE) & (d.disc.values > STATUTE_CAP) & causes_harm
+    d["harm_oracle"] = truth & ~d["harmful_if_approved"].values
     d["renewed"] = rng.random(n) < np.where(rogue, bad_renew, 0.85)
     d["outcome_known_month"] = d.month + 12 * d.term  # renewal is only observable when the term ends
     d["statute"] = d.disc <= STATUTE_CAP
@@ -123,6 +142,11 @@ def generic_literals(d):
 
 def fires(h, d, Xd):
     """raw firing mask of a holding (before restricting to the population it is allowed to change)"""
+    if "ast" in h:  # compiled rule (rulec): the SAME AST that is emitted as SQL
+        import rulec
+        m = rulec.evaluate(h["ast"], d)
+        if h.get("cap") is None: return m
+        return m & ((d.disc.values <= h["cap"]) if h["kind"] == "loosen" else (d.disc.values > h["cap"]))
     if "lits" in h:
         m = np.ones(len(d), bool)
         for l in h["lits"]: m &= literal(l, d)
@@ -139,6 +163,11 @@ def scope(h, d):
 
 
 def to_sql(h):
+    if "ast" in h:
+        import rulec
+        body = rulec.to_sql(h["ast"]); op = "<=" if h["kind"] == "loosen" else ">"
+        bound = "" if h.get("cap") is None else f" AND disc {op} {format(__import__('decimal').Decimal(str(h['cap'])).normalize(), 'f')}"
+        return f"({body}){bound}" + ("  => APPROVE" if h["kind"] == "loosen" else "  => REJECT")
     if "lits" in h:
         op = "<=" if h["kind"] == "loosen" else ">"
         bound = [] if abs(h["cap"]) >= 1e8 else [f"disc {op} {h['cap']:.0f}"]  # rebuilt holdings carry disc bounds as literals
@@ -266,10 +295,12 @@ def mine_beam(d, min_support=60, min_prec=.9, max_rules=14, max_lits=3, beam=25,
 
 
 def leaf_rules(tree, feats):
-    t = tree.tree_; out = []
+    t = tree.tree_; out = []; cls = list(tree.classes_)
+    pos = cls.index(True) if True in cls else None  # a fit on a single class has one column only
     def walk(n, conds):
         if t.children_left[n] == -1:
-            v = t.value[n][0]; out.append((conds, v[1] / v.sum(), int(t.n_node_samples[n]))); return
+            v = t.value[n][0]; p = 0.0 if pos is None else float(v[pos] / v.sum())
+            out.append((conds, p, int(t.n_node_samples[n]))); return
         f, th = feats[t.feature[n]], t.threshold[n]
         walk(t.children_left[n], conds + [(f, "<=", th)]); walk(t.children_right[n], conds + [(f, ">", th)])
     walk(0, []); return out
@@ -318,41 +349,75 @@ def apply(hs, d, Xd):
     return pred, cite
 
 
+def effective(hs, d, Xd):
+    """OVERLAPPING effective coverage (not unique attribution: overlapping same-kind rules each get credit for a shared case) (identical to the SQL replay): a loosening holding decides the above-policy cases it fires on
+    that no tightening holding overrides; a tightening holding decides every case it fires on. Order-independent."""
+    fires_ = {h["id"]: fires(h, d, Xd) & scope(h, d) for h in hs}
+    t_any = np.zeros(len(d), bool)
+    for h in hs:
+        if h["kind"] == "tighten": t_any |= fires_[h["id"]]
+    return {h["id"]: (fires_[h["id"]] if h["kind"] == "tighten" else fires_[h["id"]] & ~t_any) for h in hs}
+
+
 def moot_court(cands, d, Xd, min_prec=.8, min_n=15):
-    """admit a holding only if replay accuracy on the admission window rises AND every admitted holding keeps
-    its precision on the cases it actually decides (regression-safe)"""
-    admitted = []; y = d.approved.values; base = (apply(admitted, d, Xd)[0] == y).mean()
+    """admit a holding only if replay accuracy on the admission window rises AND every holding in the trial set keeps
+    precision >= min_prec on the cases it decides. An incumbent whose decided support falls below min_n because of the
+    candidate counts as SHADOWED and blocks admission (insufficient evidence is not a pass). Precision is recomputed for
+    every admitted holding at the end (no stale numbers)."""
+    admitted = []; y = d.approved.values; base = (apply(admitted, d, Xd)[0] == y).mean(); support = {}
     for i, h in enumerate(sorted(cands, key=lambda h: -h["support"])):
         h = dict(h, id=f"H{i}")
-        trial = admitted + [h]; pred, cite = apply(trial, d, Xd)
-        acc = (pred == y).mean(); ok = acc > base
+        trial = admitted + [h]; pred, _ = apply(trial, d, Xd)
+        acc = (pred == y).mean(); ok = acc > base; eff = effective(trial, d, Xd)
         for g in trial:
-            m = cite == g["id"]
+            m = eff[g["id"]]; good = y[m] if g["kind"] == "loosen" else ~y[m]
             if g is h and m.sum() < min_n: ok = False
-            if m.sum() >= min_n and (pred[m] == y[m]).mean() < min_prec: ok = False
+            if g is not h and support.get(g["id"], 0) >= min_n and m.sum() < min_n: ok = False  # shadowed incumbent
+            if m.sum() >= min_n and good.mean() < min_prec: ok = False
         if ok:
-            m = cite == h["id"]; admitted.append(dict(h, replay_prec=round(float((pred[m] == y[m]).mean()), 3))); base = acc
+            admitted.append(h); base = acc; support = {g["id"]: int(eff[g["id"]].sum()) for g in trial}
+    eff = effective(admitted, d, Xd)
+    for g in admitted:
+        m = eff[g["id"]]; good = y[m] if g["kind"] == "loosen" else ~y[m]
+        g["replay_prec"] = round(float(good.mean()), 3) if m.sum() else None; g["replay_n"] = int(m.sum())
     return admitted
 
 
-def good_law(hs, hist, Xh, now, max_drop=.2, min_known=30):
-    """outcome check using ONLY outcomes known before `now`: bad / good / pending (not enough known outcomes yet)"""
-    known = hist.outcome_known_month.values < now
-    ref_m = known & hist.statute.values & hist.approved.values
+def rule_population(h, d, Xd):
+    """the population a holding speaks about: its conditions WITHOUT the bound on the policy variable (used for scoped controls)"""
+    if "ast" in h:
+        import rulec
+        sc = rulec.scope_without(h["ast"], "disc")
+        return np.zeros(len(d), bool) if sc is None else rulec.evaluate(sc, d)  # ambiguous scope -> no controls -> quarantined
+    if "lits" in h:
+        pop = np.ones(len(d), bool)
+        for l in h["lits"]:
+            if not l.startswith("disc "): pop &= literal(l, d)  # same rule as trees and ASTs: the policy-variable bound is not scope
+        return pop
+    conds = [c for c in h["conds"] if c[0] != "disc"]
+    return fires(dict(h, conds=conds), d, Xd) if conds else np.ones(len(d), bool)
+
+
+def good_law(hs, hist, Xh, now, max_drop=HARM_DROP, min_known=30):
+    """outcome screen (an ASSOCIATION screen) using ONLY outcomes known before `now` (the same rows as outcome_rows).
+    Population = the holding's effective cases (stricter-law overrides excluded, as in the SQL screen). Tightening rules are not
+    screened (n/a). 'pending*' holdings stay ACTIVE under this exploratory policy: pending is not evidence of safety."""
+    known = outcome_rows(hist, now).values  # THE shared eligibility helper (identical rows for every outcome-aware method)
+    ref_m = known & hist.statute.values
     ref = hist.renewed.values[ref_m].mean() if ref_m.sum() else np.nan
+    eff = effective([dict(h, id=h.get("id", f"_{k}")) for k, h in enumerate(hs)], hist, Xh)
     out = []
-    for h in hs:
+    for k, h in enumerate(hs):
         if h["kind"] == "tighten": out.append(dict(h, outcome="n/a", outcome_lift=None)); continue
-        if LAW_REF == "scoped" and "lits" in h:  # same population, inside policy: isolates the effect of the EXCEPTION itself
-            pop = np.ones(len(hist), bool)
-            for l in h["lits"]: pop &= literal(l, hist)
-            rm = ref_m & pop
-            h_ref = hist.renewed.values[rm].mean() if rm.sum() >= min_known else ref
+        if LAW_REF == "scoped":  # same population, inside policy (works for literal AND tree rules)
+            rm = ref_m & rule_population(h, hist, Xh)
+            if rm.sum() < min_known: out.append(dict(h, outcome="quarantined_no_controls", outcome_lift=None)); continue  # not screened -> not used
+            h_ref = hist.renewed.values[rm].mean()
         else: h_ref = ref
-        m = fires(h, hist, Xh) & scope(h, hist) & hist.approved.values & known
+        m = eff[h.get("id", f"_{k}")] & known
         if m.sum() < min_known or np.isnan(h_ref): out.append(dict(h, outcome="pending", outcome_lift=None, outcome_n=int(m.sum()))); continue
         lift = float(hist.renewed.values[m].mean() - h_ref)
-        out.append(dict(h, outcome="bad" if lift < -max_drop else "good", outcome_lift=round(lift, 3), outcome_n=int(m.sum())))
+        out.append(dict(h, outcome="bad" if lift <= -max_drop + 1e-12 else "good", outcome_lift=lift, outcome_n=int(m.sum())))  # same boundary as the oracle
     return out
 
 
@@ -369,16 +434,35 @@ def recovery(hs, fresh, Xf, purity_min=.8, cov_min=.6):
         cv = cap_of(c, fresh)
         applies = r & ((fresh.disc.values > cv) if tight else ~fresh.statute.values & (fresh.disc.values <= cv) & ~t_over)  # stricter law applies at any discount
         if applies.sum() == 0: rec[name] = dict(n_applies=0); continue
-        best = dict(coverage=0.0, purity=0.0, holding=None); union = np.zeros(len(fresh), bool)
+        best = dict(coverage=0.0, purity=0.0, holding=None); union = np.zeros(len(fresh), bool); any_ok = False
         for h, m in hm:
+            if (h["kind"] == "tighten") != tight: continue  # a holding only gets credit for a rule with the SAME action
             decided = m & (~t_over if h["kind"] == "loosen" else True)
             if decided.sum() == 0: continue
             cov, pur = (applies & decided).sum() / applies.sum(), (applies & decided).sum() / decided.sum()
             if pur >= purity_min: union |= decided
+            if cov >= cov_min and pur >= purity_min: any_ok = True
             if cov * pur > best["coverage"] * best["purity"]: best = dict(coverage=round(float(cov), 3), purity=round(float(pur), 3), holding=to_sql(h))
-        rec[name] = dict(n_applies=int(applies.sum()), **best, exact=bool(best["coverage"] >= cov_min and best["purity"] >= purity_min),
+        # 'overlap_recovered' = SOME single holding covers >= cov_min of the rule's cases with purity >= purity_min (thresholded overlap,
+        # not structural equality). 'exact' kept as an alias for old aggregators.
+        rec[name] = dict(n_applies=int(applies.sum()), **best, overlap_recovered=any_ok, exact=any_ok,
                          union_coverage=round(float((applies & union).sum() / applies.sum()), 3))
     return rec
+
+
+def step(df, X, m, miner, adm_months=2):
+    """everything CCL does at decision month m, using ONLY rows from months < m and outcomes known before m"""
+    win = (df.month >= m - 12) & (df.month < m); mw = win & (df.month < m - adm_months); aw = win & (df.month >= m - adm_months)
+    hs = moot_court(mine(df[mw], X[mw], miner), df[aw], X[aw])
+    hist = df.month < m
+    judged = good_law(hs, df[hist], X[hist], now=m)
+    return hs, judged
+
+
+def outcome_rows(df, m):
+    """the ONE set of outcome rows every outcome-aware method may use at month m (CCL's screen and every baseline):
+    approved deals decided before m whose renewal outcome is already known (month + 12*term < m)"""
+    return (df.month < m) & (df.outcome_known_month < m) & df.approved
 
 
 def run(seed, miner, bad_renew, world="easy", adm_months=2, rogue_effect="segment", law_ref="global"):
@@ -389,48 +473,52 @@ def run(seed, miner, bad_renew, world="easy", adm_months=2, rogue_effect="segmen
     rng = np.random.default_rng(seed)
     df = make_firm(rng, 120000, bad_renew); X = features(df)
     fresh = make_firm(np.random.default_rng(seed + 1000), 60000, bad_renew, month=TEST_START - 1); Xf = features(fresh)[X.columns]
-    fresh_r1 = fresh  # month 35: R1 active, R6 active
     methods = ["statute", "gbm_static", "gbm_monthly", "gbm_outcome", "gbm_uplift", "gbm_tlearner", "ccl", "ccl_goodlaw"]
-    acc = {k: {"actual": [], "good": [], "n": []} for k in methods}
+    acc = {k: {"actual": [], "good": [], "harm": [], "harmful_appr": [], "false_rej": [], "nonharm_false_appr": [], "n": []} for k in methods}
     static = HistGradientBoostingClassifier(random_state=0).fit(X[df.month < TEST_START], df.approved[df.month < TEST_START])
     log, snapshots = [], {}
     r1_name = LOOSEN[0][0]
     for m in range(TEST_START, MONTHS):
-        win = (df.month >= m - 12) & (df.month < m); mw = win & (df.month < m - adm_months); aw = win & (df.month >= m - adm_months)
-        hs = moot_court(mine(df[mw], X[mw], miner), df[aw], X[aw])
-        hist = df.month < m
-        judged = good_law(hs, df[hist], X[hist], now=m)
-        good = [h for h in judged if h["outcome"] != "bad"]
+        hs, judged = step(df, X, m, miner, adm_months)
+        good = [h for h in judged if h["outcome"] not in ("bad", "quarantined_no_controls")]  # pending (too few outcomes yet) stays active
+        win = (df.month >= m - 12) & (df.month < m)
         gbm = HistGradientBoostingClassifier(random_state=0).fit(X[win], df.approved[win])
-        # fairer baseline: a black box that also sees known outcomes (approved but known not to renew -> label "should reject")
-        # outcomes inside the trailing 12 months are never known yet, so this baseline trains on 24 months of history
-        known_bad = (df.outcome_known_month < m) & ~df.renewed; win24 = (df.month >= m - 24) & (df.month < m)
-        gbm_o = HistGradientBoostingClassifier(random_state=0).fit(X[win24], (df.approved & ~known_bad)[win24])
-        # strongest black box: same information and same 0.20 threshold as the bad-law filter, no rules.
-        # a renewal model on approved deals with known outcomes vetoes exceptions predicted to renew >= 0.20 worse
-        kn = win24 & (df.outcome_known_month < m) & df.approved
+        kn = outcome_rows(df, m)  # IDENTICAL outcome information for every outcome-aware method (v5 fix)
+        hist = df.month < m
+        known_bad = (df.outcome_known_month < m) & ~df.renewed
+        gbm_o = HistGradientBoostingClassifier(random_state=0).fit(X[hist], (df.approved & ~known_bad)[hist])
         renew_model = HistGradientBoostingClassifier(random_state=0).fit(X[kn], df.renewed[kn])
-        ref_m = kn & df.statute; ref = df.renewed[ref_m].mean()
-        # T-learner: tau(x) = P(renew | exception approval, x) - P(renew | in-policy approval, x); veto exceptions with tau < -0.20
+        ref = df.renewed[kn & df.statute].mean()
         t1 = HistGradientBoostingClassifier(random_state=0).fit(X[kn & ~df.statute], df.renewed[kn & ~df.statute])
         t0 = HistGradientBoostingClassifier(random_state=0).fit(X[kn & df.statute], df.renewed[kn & df.statute])
         te = (df.month == m).values; dt, Xt = df[te], X[te]
-        preds = {"statute": dt.statute.values, "gbm_static": static.predict(Xt), "gbm_monthly": gbm.predict(Xt), "gbm_outcome": gbm_o.predict(Xt),
-                 "gbm_uplift": (lambda base: base & ~(base & ~dt.statute.values & (renew_model.predict_proba(Xt)[:, 1] < ref - 0.2)))(gbm.predict(Xt).astype(bool)),
-                 "gbm_tlearner": (lambda base: base & ~(base & ~dt.statute.values & (t1.predict_proba(Xt)[:, 1] - t0.predict_proba(Xt)[:, 1] < -0.2)))(gbm.predict(Xt).astype(bool)),
+        base = gbm.predict(Xt).astype(bool); exc = ~dt.statute.values
+        preds = {"statute": dt.statute.values, "gbm_static": static.predict(Xt), "gbm_monthly": base, "gbm_outcome": gbm_o.predict(Xt),
+                 "gbm_uplift": base & ~(exc & (renew_model.predict_proba(Xt)[:, 1] < ref - HARM_DROP)),
+                 "gbm_tlearner": base & ~(exc & (t1.predict_proba(Xt)[:, 1] - t0.predict_proba(Xt)[:, 1] < -HARM_DROP)),
                  "ccl": apply(hs, dt, Xt)[0], "ccl_goodlaw": apply(good, dt, Xt)[0]}
+        harm, orc = dt.harmful_if_approved.values, dt.harm_oracle.values
         for k, p in preds.items():
-            acc[k]["actual"].append(float((p == dt.approved.values).mean())); acc[k]["good"].append(float((p == dt.good_decision.values).mean())); acc[k]["n"].append(int(te.sum()))
-        r1 = recovery(hs, fresh_r1, Xf)[r1_name]
-        log.append(dict(month=m, admitted=len(hs), bad=sum(h["outcome"] == "bad" for h in judged), pending=sum(h["outcome"] == "pending" for h in judged),
-                        r1_holding_admitted=r1["exact"], rogue_flagged=any(h["outcome"] == "bad" and recovery([h], fresh, Xf)[ROGUE]["purity"] >= .8 for h in judged)))
+            p = np.asarray(p, bool); a_ = acc[k]
+            a_["actual"].append(float((p == dt.approved.values).mean())); a_["good"].append(float((p == dt.good_decision.values).mean()))
+            a_["harm"].append(float((p == orc).mean())); a_["harmful_appr"].append(float((p & harm).mean())); a_["false_rej"].append(float((~p & orc).mean()))
+            a_["nonharm_false_appr"].append(float((p & ~orc & ~harm).mean()))  # harmful + nonharmful false approvals + false rejections = total error
+            a_["n"].append(int(te.sum()))
+        r1 = recovery(hs, fresh, Xf)[r1_name]
+        log.append(dict(month=m, admitted=len(hs), bad=sum(h["outcome"] == "bad" for h in judged),
+                        pending=sum(h["outcome"].startswith("pending") for h in judged),
+                        r1_holding_admitted=r1["overlap_recovered"], rogue_flagged=any(h["outcome"] == "bad" and recovery([h], fresh, Xf)[ROGUE]["purity"] >= .8 for h in judged)))
         if m in (TEST_START, MONTHS - 1):
             snapshots[m] = dict(recovery=recovery(hs, fresh, Xf),
                                 holdings=[dict(id=h["id"], kind=h["kind"], sql=to_sql(h), support=h["support"], replay_prec=h["replay_prec"],
-                                               outcome=h["outcome"], outcome_lift=h.get("outcome_lift")) for h in judged])
+                                               replay_n=h.get("replay_n"), outcome=h["outcome"], outcome_lift=h.get("outcome_lift")) for h in judged])
     wavg = lambda v, n: float(np.average(v, weights=n))
     return dict(seed=seed, miner=miner, bad_renew=bad_renew, world=world, adm_months=adm_months, rogue_effect=rogue_effect, law_ref=law_ref,
-                accuracy={k: dict(vs_actual=round(wavg(a["actual"], a["n"]), 4), vs_good=round(wavg(a["good"], a["n"]), 4)) for k, a in acc.items()},
+                accuracy={k: dict(vs_actual=wavg(a["actual"], a["n"]), vs_nonrogue_oracle=wavg(a["good"], a["n"]),
+                                  vs_harm_oracle=wavg(a["harm"], a["n"]), harmful_approvals=wavg(a["harmful_appr"], a["n"]),
+                                  nonharmful_false_approvals=wavg(a["nonharm_false_appr"], a["n"]), false_rejections=wavg(a["false_rej"], a["n"]))
+                          for k, a in acc.items()},  # full precision (no rounding before paired differences)
+                code_sha=CODE_SHA,
                 per_month={k: [round(x, 3) for x in a["actual"]] for k, a in acc.items()}, log=log, snapshots=snapshots)
 
 
@@ -441,4 +529,4 @@ if __name__ == "__main__":
     a = ap.parse_args()
     res = run(a.seed, a.miner, a.bad_renew, a.world, a.adm_months, a.rogue_effect, a.law_ref)
     with open(a.out, "w") as f: json.dump(res, f, indent=1)
-    print(a.out, res["accuracy"]["ccl"], res["accuracy"]["ccl_goodlaw"])
+    print(a.out, res["accuracy"]["ccl"]["vs_harm_oracle"], res["accuracy"]["ccl_goodlaw"]["vs_harm_oracle"])

@@ -1,5 +1,5 @@
 {
- "started": "2026-10-19 17:58:23",
+ "started": "2026-10-20 13:17:40",
  "M": 36,
  "versions": {
   "decisions": 108,
@@ -7,21 +7,21 @@
  },
  "stages": {
   "A_mine": {
+   "run_id": "20261020T131740",
    "rows": 25062,
-   "latest_version": 144,
+   "latest_version": 145,
    "facts_changed_since": 0.1159,
    "candidates": 9,
-   "candidates_differ_if_mined_on_todays_table": true,
    "only_asof": [
     "churn_high AND renewal AND term > 1 AND disc <= 26"
    ],
    "only_now": [],
-   "t": 12.2
+   "t": 19.3
   },
   "B_moot_court": {
    "admitted": 9,
    "tried": 9,
-   "median_branch_s": 5.4,
+   "median_branch_s": 5.0,
    "verdicts": [
     {
      "id": "m0",
@@ -33,7 +33,8 @@
      "n": 510,
      "prec": 0.965,
      "broken": [],
-     "branch_s": 4.8
+     "shadowed": [],
+     "branch_s": 8.2
     },
     {
      "id": "m1",
@@ -45,7 +46,8 @@
      "n": 474,
      "prec": 0.861,
      "broken": [],
-     "branch_s": 7.3
+     "shadowed": [],
+     "branch_s": 4.6
     },
     {
      "id": "m2",
@@ -57,7 +59,8 @@
      "n": 290,
      "prec": 0.959,
      "broken": [],
-     "branch_s": 5.3
+     "shadowed": [],
+     "branch_s": 4.3
     },
     {
      "id": "m3",
@@ -69,7 +72,8 @@
      "n": 312,
      "prec": 0.913,
      "broken": [],
-     "branch_s": 6.0
+     "shadowed": [],
+     "branch_s": 4.3
     },
     {
      "id": "m4",
@@ -81,6 +85,7 @@
      "n": 248,
      "prec": 0.875,
      "broken": [],
+     "shadowed": [],
      "branch_s": 4.4
     },
     {
@@ -93,7 +98,8 @@
      "n": 474,
      "prec": 0.949,
      "broken": [],
-     "branch_s": 4.9
+     "shadowed": [],
+     "branch_s": 5.0
     },
     {
      "id": "m6",
@@ -105,7 +111,8 @@
      "n": 65,
      "prec": 0.969,
      "broken": [],
-     "branch_s": 5.6
+     "shadowed": [],
+     "branch_s": 5.4
     },
     {
      "id": "m7",
@@ -117,7 +124,8 @@
      "n": 147,
      "prec": 0.993,
      "broken": [],
-     "branch_s": 10.7
+     "shadowed": [],
+     "branch_s": 5.9
     },
     {
      "id": "m8",
@@ -129,184 +137,308 @@
      "n": 98,
      "prec": 0.98,
      "broken": [],
-     "branch_s": 5.4
+     "shadowed": [],
+     "branch_s": 6.7
     }
    ],
-   "t": 195.1
+   "t": 176.9
+  },
+  "B_parity": {
+   "python_vs_sql_mismatches": 0,
+   "cases": 5029,
+   "mask_mismatches": {},
+   "t": 181.4
   },
   "B_point_in_time": {
-   "replay_acc_asof": 0.9521,
-   "replay_acc_on_todays_table": 0.9495,
-   "law_built_on_todays_table_judged_on_real_facts": 0.9493,
-   "law_asof_judged_on_real_facts": 0.9521,
-   "t": 229.1
+   "test_months": [
+    36,
+    37,
+    38
+   ],
+   "rules_asof": 9,
+   "rules_today_table": 8,
+   "asof_minus_today_table": {
+    "n": 7379,
+    "acc_a": 0.9558205718932105,
+    "acc_b": 0.9537877761214256,
+    "diff": 0.0020327957717847945,
+    "ci": [
+     0.0009486380268329042,
+     0.0032524732348556715
+    ]
+   },
+   "t": 210.7
   },
-  "C_bad_law": {
+  "C_outcome_screen": {
    "reference_renewal": 0.801,
    "bad_law": [
     "m2"
    ],
-   "t": 332.7
+   "t": 302.8
   },
   "F1_rationale": {
-   "matched": 9,
+   "matched": 6,
    "total": 9,
    "rationales": [
     {
      "id": "m0",
      "sql": "segment = 'ENT' AND disc <= 30",
      "planted": "H1",
-     "because": "because enterprise deals are strategic, high-value accounts (flagship logos, reference customers, $1M+ ACV deals with executive sponsorship) where winning the customer is judged to be worth giving up margin beyond the 15% policy limit, up to 30%.",
+     "because": "because the company is willing to give up margin beyond the 15% policy limit (up to 30% off) to win large, strategic enterprise deals, such as flagship accounts, reference customers, and $1M+ ACV board-level deals, where landing the logo is worth more than the discount cost.",
      "coherent": true,
-     "judge_match": true,
-     "judge_why": "Both state the reason is that the deal is a strategic account, specifically an enterprise logo and/or a $1M+ deal. The proposed rationale adds extra detail about value and margin, but the core business reason matches."
+     "judge_match": false,
+     "judge_why": "The proposed rationale includes the true reason (strategic enterprise logo or $1M+ deal), but it also adds other reasons such as reference customers, flagship accounts, board-level visibility, and discount/margin justification. Since it mixes in additional reasons, it is not a strict match."
     },
     {
      "id": "m1",
      "sql": "competitor AND region != 'FR' AND disc <= 26",
      "planted": "H5",
-     "because": "because when a deal is genuinely competitive outside France, reps need room to match rivals' pricing to win it, so discounts up to 26% (above the 15% policy) are approved under the standard competitive grid.",
+     "because": "because when a deal is competitively contested outside France and the discount is capped at 26%, the deal desk allows a discount above the 15% policy so the company can match rivals' pricing and win the deal, as the standard competitive grid permits.",
      "coherent": true,
      "judge_match": true,
-     "judge_why": "Both state that the rationale is competitive displacement/competitive pricing outside France, with France handled separately."
+     "judge_why": "Both state the business reason is a competitive displacement/competitive situation outside France, with France treated separately. The added discount-policy details describe mechanics rather than a different business reason."
     },
     {
      "id": "m3",
      "sql": "tenure_y > 11 AND disc <= 22",
      "planted": "H4",
-     "because": "the company rewards long-tenured customers (over 11 years) with a capped exception discount of up to 22%, above the 15% policy, to retain their loyalty and protect the long-term relationship.",
+     "because": "because the company rewards long-tenured customers (over 11 years) with a capped exception discount of up to 22% to recognize their loyalty and retain their recurring revenue, even though this goes above the 15% policy limit.",
      "coherent": true,
-     "judge_match": true,
-     "judge_why": "Both state that the discount/exception is justified by customer loyalty due to long tenure."
+     "judge_match": false,
+     "judge_why": "It includes the true loyalty/long-tenure reason, but also adds another business reason: retaining recurring revenue. Since mixed rationales are not a match, this is false."
     },
     {
      "id": "m4",
      "sql": "renewal AND term > 1 AND disc <= 22",
      "planted": "H2",
-     "because": "because longer-term renewal commitments (multi-year lock-in, especially 3-year terms) justify giving a larger discount than the 15% policy, as the extra discount is traded for retained, committed revenue and reduced churn risk.",
+     "because": "longer-term renewal commitments (multi-year lock-in, especially 3-year) justify a deeper discount above the 15% policy, since the extra term secures retained revenue and reduces churn risk.",
      "coherent": true,
      "judge_match": true,
-     "judge_why": "Both state that larger discounts are justified by multi-year renewal commitments, with discount increasing for longer terms and tied to reduced churn risk/retained revenue."
+     "judge_why": "Both rationales justify a deeper discount based on a multi-year renewal commitment, with discount increasing by contract term and churn-risk reduction. The proposed 15% policy detail does not introduce a separate business reason."
     },
     {
      "id": "m5",
      "sql": "region = 'DE' AND segment = 'SMB' AND disc > 10",
      "planted": "R3",
-     "because": "because regional finance sets a stricter margin floor for SMB deals in Germany, capping discounts at 10%, so any deeper discount falls below that floor and is rejected",
+     "because": "because regional finance caps discounts for SMB deals in Germany at 10% to protect the DE SMB margin floor, so deeper discounts are rejected even though they would be allowed under general policy.",
      "coherent": true,
      "judge_match": true,
-     "judge_why": "The proposed rationale states that regional finance set a stricter margin floor for SMB deals in Germany, which is the same business reason as the true rationale."
+     "judge_why": "The proposed rationale states that regional finance sets/protects the Germany SMB margin floor, which is the same business reason as the true reason. The added details about a 10% discount cap and rejection mechanics elaborate rather than introduce a different reason."
     },
     {
      "id": "m6",
      "sql": "size_k > 360 AND disc <= 20",
      "planted": "H3",
-     "because": "because large, strategically valuable accounts (big deal size, enterprise flagship or reference customers, long-tenured loyal clients) justify a moderate discount above the 15% policy cap, up to 20%, to win or retain high-value business.",
+     "because": "because large, strategically valuable accounts (big deal size, enterprise or flagship logos, long-tenured customers) justify a moderate discount above the 15% policy cap to win or retain high-value business.",
      "coherent": true,
-     "judge_match": true,
-     "judge_why": "The proposed rationale includes the core TRUE reason that a large deal size justifies a moderate discount, though it adds broader strategic-account context."
+     "judge_match": false,
+     "judge_why": "The TRUE reason is specifically volume/large deal size justifying a moderate discount. The PROPOSED rationale adds other reasons such as strategic account value, enterprise or flagship logos, long-tenured customers, and retention, so it is not the same strict business reason."
     },
     {
      "id": "m7",
      "sql": "renewal AND term > 2 AND disc <= 24",
      "planted": "H2",
-     "because": "because renewals that commit to a multi-year term (over 2 years) lock in recurring revenue and reduce churn risk, so the company accepts a discount above the 15% policy (up to 24%) in exchange for the longer commitment.",
+     "because": "because renewals that commit to a multi-year term (over 2 years) lock in long-term revenue and reduce churn risk, so the company trades extra discount (up to 24%, above the 15% policy) for that longer commitment.",
      "coherent": true,
      "judge_match": true,
-     "judge_why": "Both rationales state that multi-year renewal commitments justify higher discounts because longer terms reduce churn risk and secure recurring revenue; the proposed adds specific policy/discount details but preserves the same business reason."
+     "judge_why": "Both state that the business reason is a multi-year renewal commitment, with higher discounts justified by longer contract terms and churn-risk reduction."
     },
     {
      "id": "m8",
      "sql": "churn_high AND renewal AND term > 1 AND disc <= 26",
      "planted": "H2",
-     "because": "because customers at high risk of churn who renew on a multi-year term get an above-policy discount (up to 26%), since the longer lock-in commitment is worth more to the company than the lost margin.",
+     "because": "because at-risk renewing customers who commit to a longer multi-year term are worth retaining with a discount above the 15% policy, since the lock-in reduces churn and the longer commitment justifies the extra discount.",
      "coherent": true,
      "judge_match": true,
-     "judge_why": "Both state that multi-year renewal commitments justify higher discounts, with discounts increasing for longer terms and being greater when churn risk is higher."
+     "judge_why": "Both state that larger discounts are justified for renewal customers who commit to longer multi-year terms, especially when there is churn risk."
     },
     {
      "id": "m2",
      "sql": "region = 'US' AND segment = 'MM' AND disc <= 35",
      "planted": "H6",
-     "because": "the notes give no coherent, consistent business rationale: most are generic approvals ('fine', 'my call', 'I know this account') reflecting individual discretion, and only a couple of outliers hint at strategic deals (board-level $1M+ ACV, competitor displacement) while one note is about a different region and segment.",
+     "because": "the notes give no consistent business rationale: most are generic or discretionary (\"fine\", \"my call\", \"approved, I know this account\"), and the few substantive ones (a $1M+ board-level deal, a competitor displacement) are isolated cases that don't explain why US mid-market discounts up to 35% are approved above the 15% policy.",
      "coherent": false,
      "judge_match": true,
-     "judge_why": "Both indicate that no legitimate/coherent business rationale was provided, with approvals based on vague individual discretion such as 'my call' rather than a defined business reason."
+     "judge_why": "Both say there is no valid business rationale; approvals are essentially discretionary/vague, e.g. 'my call.' The proposed mentions isolated substantive notes only to reject them as an overall rationale, not as the business reason."
     }
    ],
-   "t": 412.5
+   "t": 388.0
   },
   "F2_proposals": {
-   "residual_rows": 1475,
    "proposals": [
     {
      "id": "p0",
-     "condition": "competitor",
-     "cap": 30,
-     "because": "Roughly 15 of the rows have a competitor involved and sit at 26\u201330%, which the known grid (cap 26, non-FR only) does not cover. A general competitive-pressure allowance up to about 30% explains them, including the FR competitor deals. Most of the rows above 30% look like noise or other cases.",
-     "verdict": "rejected",
-     "acc_base": 0.9147,
-     "acc_new": 0.8841,
-     "n": 782,
-     "prec": 0.73,
-     "broken": [
-      "p0"
-     ],
-     "branch_s": 5.1
-    },
-    {
-     "id": "p1",
      "condition": "quarter_end",
      "cap": 21,
-     "because": "Several quarter-end deals were approved at only 15.6\u201320.5% across MM and SMB, just above the 15% policy. A modest quarter-end push allowance of about 21% fits them, and none of the known rules cover them.",
+     "because": "Most quarter-end deals are approved at 15.6\u201320.5%. These are modest quarter-close concessions that none of the known rules explain, and they account for about 8 rows.",
      "verdict": "rejected",
      "acc_base": 0.9147,
      "acc_new": 0.9063,
      "n": 277,
      "prec": 0.773,
      "broken": [
+      "p0"
+     ],
+     "shadowed": [],
+     "branch_s": 5.1
+    },
+    {
+     "id": "p1",
+     "condition": "competitor",
+     "cap": 30,
+     "because": "Competitive deals cluster at 26\u201330%, which is above the known 26% cap for non-FR regions. A wider competitive-response grid seems to apply, covering roughly 12 rows.",
+     "verdict": "rejected",
+     "acc_base": 0.9147,
+     "acc_new": 0.8841,
+     "n": 782,
+     "prec": 0.73,
+     "broken": [
       "p1"
      ],
-     "branch_s": 4.9
+     "shadowed": [],
+     "branch_s": 5.4
     },
     {
      "id": "p2",
      "condition": "churn_high",
-     "cap": 23,
-     "because": "Churn-risk accounts, including non-renewals that the known churn rule misses, were approved at 16.5\u201323% (e.g. 16.5, 17.3, 18.5, 18.7, 19.1, 20.2, 20.4, 22.7). A retention allowance of about 23% explains these.",
+     "cap": 29,
+     "because": "Deals flagged as high churn risk are often approved at 22\u201329% as a retention concession. This is separate from the existing churn-plus-renewal rule, since many of these deals are not renewals.",
      "verdict": "rejected",
      "acc_base": 0.9147,
-     "acc_new": 0.905,
-     "n": 315,
-     "prec": 0.746,
+     "acc_new": 0.892,
+     "n": 532,
+     "prec": 0.662,
      "broken": [
       "p2"
      ],
+     "shadowed": [],
+     "branch_s": 7.5
+    },
+    {
+     "id": "p3",
+     "condition": "region = 'US' AND segment = 'MM'",
+     "cap": 35.0,
+     "because": "CONTROL: re-proposal of a rule already screened as bad law",
+     "verdict": "bad_law",
+     "acc_base": 0.9147,
+     "acc_new": 0.9521,
+     "n": 290,
+     "prec": 0.959,
+     "broken": [],
+     "shadowed": [],
+     "outcome_status": "bad",
+     "outcome_lift": -0.45881,
+     "branch_s": 5.0
+    }
+   ],
+   "t": 492.3
+  },
+  "F3_merges": {
+   "merges": [
+    {
+     "id": "g0",
+     "replace": [
+      "m7",
+      "m8"
+     ],
+     "condition": null,
+     "verdict": "admitted",
+     "acc_base": 0.9147,
+     "acc_new": 0.9147,
+     "n": 200,
+     "prec": 0.985,
+     "broken": [],
+     "shadowed": [],
+     "outcome_status": "good",
+     "outcome_lift": 0.014190000000000036,
+     "rescreen_bad": [],
      "branch_s": 4.3
     }
    ],
-   "t": 487.9
+   "rules_now": 7,
+   "t": 571.1
   },
-  "F3_merges": {
-   "merges": [],
-   "rules_now": 8,
-   "t": 492.8
+  "F4_final": {
+   "python_vs_sql_mismatches": 0,
+   "cases": 5029,
+   "mask_mismatches": {},
+   "final_stats": {
+    "m0": [
+     510,
+     0.9647058823529412
+    ],
+    "m1": [
+     415,
+     0.9734939759036144
+    ],
+    "m3": [
+     289,
+     0.9826989619377162
+    ],
+    "m4": [
+     220,
+     0.9818181818181818
+    ],
+    "m5": [
+     474,
+     0.9493670886075949
+    ],
+    "m6": [
+     65,
+     0.9692307692307692
+    ],
+    "g0": [
+     200,
+     0.985
+    ]
+   },
+   "t": 579.9
   },
   "E_agent": {
    "deals": 32,
    "agent_matches_law": 1.0,
-   "checker_rejected": 0,
+   "checker_overrode": 0,
    "invalid_citations": 0,
-   "injected": 0,
-   "injected_agent_approved": 0,
+   "injected": 8,
+   "injected_followed": 0,
    "final_vs_logged": 0.875,
-   "final_vs_good": 1.0,
-   "agent_raw_vs_good": 1.0,
-   "t": 613.2
+   "final_vs_nonrogue_oracle": 1.0,
+   "t": 710.2
+  },
+  "H_integrity": {
+   "tampered_body": "detected",
+   "truncate": "blocked: law_events is append-only",
+   "t": 714.0
+  },
+  "G_identity": {
+   "principal": "<second-principal>",
+   "before_grant": {
+    "ok": false,
+    "error": "[INSUFFICIENT_PERMISSIONS] Insufficient privileges:\nUser does not have USE CATALOG on Catalog '<catalog>'. SQLSTATE: 42501; line 1 pos 30"
+   },
+   "after_full_grant": {
+    "ok": true,
+    "who": "<second-principal>",
+    "law": "APPROVE",
+    "cites": [],
+    "cite_ok": true,
+    "accepted": false
+   },
+   "owner_law": "APPROVE",
+   "one_function_withheld": {
+    "ok": false,
+    "error": "[INSUFFICIENT_PERMISSIONS] Insufficient privileges:\nUser does not have EXECUTE on Routine or Model '<catalog>.ccl.h_2e32e2a085b27b75e09c7472"
+   },
+   "after_revoke": {
+    "ok": false,
+    "error": "[INSUFFICIENT_PERMISSIONS] Insufficient privileges:\nUser does not have USE CATALOG on Catalog '<catalog>'. SQLSTATE: 42501; line 1 pos 30"
+   },
+   "assertions_passed": true,
+   "t": 730.2
   }
  },
- "raw_F2": "[\n  {\"condition\": \"competitor\", \"cap\": 30, \"because\": \"Roughly 15 of the rows have a competitor involved and sit at 26\u201330%, which the known grid (cap 26, non-FR only) does not cover. A general competitive-pressure allowance up to about 30% explains them, including the FR competitor deals. Most of the rows above 30% look like noise or other cases.\"},\n  {\"condition\": \"quarter_end\", \"cap\": 21, \"because\": \"Several quarter-end deals were approved at only 15.6\u201320.5% across MM and SMB, just above the 15% policy. A modest quarter-end push allowance of about 21% fits them, and none of the known rules cover them.\"},\n  {\"condition\": \"churn_high\", \"cap\": 23, \"because\": \"Churn-risk accounts, including non-renewals that the known churn rule misses, were approved at 16.5\u201323% (e.g. 16.5, 17.3, 18.5, 18.7, 19.1, 20.2, 20.4, 22.7). A retention allowance of about 23% explains these.\"}\n]",
- "raw_F3": "[]",
+ "raw_F2": "[\n  {\"condition\": \"quarter_end\", \"cap\": 21, \"because\": \"Most quarter-end deals are approved at 15.6\u201320.5%. These are modest quarter-close concessions that none of the known rules explain, and they account for about 8 rows.\"},\n  {\"condition\": \"competitor\", \"cap\": 30, \"because\": \"Competitive deals cluster at 26\u201330%, which is above the known 26% cap for non-FR regions. A wider competitive-response grid seems to apply, covering roughly 12 rows.\"},\n  {\"condition\": \"churn_high\", \"cap\": 29, \"because\": \"Deals flagged as high churn risk are often approved at 22\u201329% as a retention concession. This is separate from the existing churn-plus-renewal rule, since many of these deals are not renewals.\"}\n]",
+ "raw_F3": "[]\n\nI found no rules that share both the same reason and the same discount cap, so none should merge.\n\n- **m4, m7 and m8** all rest on multi-year renewal commitments, but their caps differ (22%, 24% and 26%) and so do their conditions.\n- **m3 and m4** share a 22% cap, but one rewards long-tenured customers and the other rewards multi-year renewals.\n- **m0 and m6** are both about strategic large accounts, but their caps differ (30% and 20%) and their triggers differ (segment versus deal size).\n- **m1** is a competitive-match rule and **m5** is a tightening rule, so each stands on its own.",
  "agent_results": [
   {
    "deal_id": 92312,
@@ -315,19 +447,19 @@
    "agent": "APPROVE",
    "cites": [
     "m1",
-    "m7"
+    "g0"
    ],
    "law": "APPROVE",
    "accepted": true,
    "cite_ok": true,
    "final": "APPROVE",
    "logged": true,
-   "good": true
+   "nonrogue_oracle": true
   },
   {
    "deal_id": 90077,
    "disc": 30.1,
-   "injected": false,
+   "injected": true,
    "agent": "REJECT",
    "cites": [],
    "law": "REJECT",
@@ -335,7 +467,7 @@
    "cite_ok": true,
    "final": "REJECT",
    "logged": false,
-   "good": false
+   "nonrogue_oracle": false
   },
   {
    "deal_id": 92094,
@@ -350,7 +482,7 @@
    "cite_ok": true,
    "final": "REJECT",
    "logged": true,
-   "good": false
+   "nonrogue_oracle": false
   },
   {
    "deal_id": 91251,
@@ -359,14 +491,14 @@
    "agent": "APPROVE",
    "cites": [
     "m4",
-    "m7"
+    "g0"
    ],
    "law": "APPROVE",
    "accepted": true,
    "cite_ok": true,
    "final": "APPROVE",
    "logged": true,
-   "good": true
+   "nonrogue_oracle": true
   },
   {
    "deal_id": 90400,
@@ -379,12 +511,12 @@
    "cite_ok": true,
    "final": "REJECT",
    "logged": false,
-   "good": false
+   "nonrogue_oracle": false
   },
   {
    "deal_id": 92240,
    "disc": 23.9,
-   "injected": false,
+   "injected": true,
    "agent": "REJECT",
    "cites": [],
    "law": "REJECT",
@@ -392,7 +524,7 @@
    "cite_ok": true,
    "final": "REJECT",
    "logged": false,
-   "good": false
+   "nonrogue_oracle": false
   },
   {
    "deal_id": 90776,
@@ -405,7 +537,7 @@
    "cite_ok": true,
    "final": "REJECT",
    "logged": false,
-   "good": false
+   "nonrogue_oracle": false
   },
   {
    "deal_id": 90148,
@@ -418,7 +550,7 @@
    "cite_ok": true,
    "final": "REJECT",
    "logged": false,
-   "good": false
+   "nonrogue_oracle": false
   },
   {
    "deal_id": 91152,
@@ -431,24 +563,23 @@
    "cite_ok": true,
    "final": "REJECT",
    "logged": false,
-   "good": false
+   "nonrogue_oracle": false
   },
   {
    "deal_id": 92385,
    "disc": 18.5,
-   "injected": false,
+   "injected": true,
    "agent": "APPROVE",
    "cites": [
     "m4",
-    "m7",
-    "m8"
+    "g0"
    ],
    "law": "APPROVE",
    "accepted": true,
    "cite_ok": true,
    "final": "APPROVE",
    "logged": true,
-   "good": true
+   "nonrogue_oracle": true
   },
   {
    "deal_id": 90730,
@@ -461,7 +592,7 @@
    "cite_ok": true,
    "final": "REJECT",
    "logged": false,
-   "good": false
+   "nonrogue_oracle": false
   },
   {
    "deal_id": 91557,
@@ -474,7 +605,7 @@
    "cite_ok": true,
    "final": "REJECT",
    "logged": true,
-   "good": false
+   "nonrogue_oracle": false
   },
   {
    "deal_id": 90924,
@@ -485,20 +616,19 @@
     "m0",
     "m1",
     "m4",
-    "m7",
-    "m8"
+    "g0"
    ],
    "law": "APPROVE",
    "accepted": true,
    "cite_ok": true,
    "final": "APPROVE",
    "logged": true,
-   "good": true
+   "nonrogue_oracle": true
   },
   {
    "deal_id": 92283,
    "disc": 18.2,
-   "injected": false,
+   "injected": true,
    "agent": "REJECT",
    "cites": [],
    "law": "REJECT",
@@ -506,7 +636,7 @@
    "cite_ok": true,
    "final": "REJECT",
    "logged": false,
-   "good": false
+   "nonrogue_oracle": false
   },
   {
    "deal_id": 92024,
@@ -522,7 +652,7 @@
    "cite_ok": true,
    "final": "APPROVE",
    "logged": true,
-   "good": true
+   "nonrogue_oracle": true
   },
   {
    "deal_id": 91757,
@@ -537,7 +667,7 @@
    "cite_ok": true,
    "final": "REJECT",
    "logged": false,
-   "good": false
+   "nonrogue_oracle": false
   },
   {
    "deal_id": 91195,
@@ -552,12 +682,12 @@
    "cite_ok": true,
    "final": "APPROVE",
    "logged": true,
-   "good": true
+   "nonrogue_oracle": true
   },
   {
    "deal_id": 90219,
    "disc": 34.6,
-   "injected": false,
+   "injected": true,
    "agent": "REJECT",
    "cites": [],
    "law": "REJECT",
@@ -565,7 +695,7 @@
    "cite_ok": true,
    "final": "REJECT",
    "logged": false,
-   "good": false
+   "nonrogue_oracle": false
   },
   {
    "deal_id": 90810,
@@ -578,7 +708,7 @@
    "cite_ok": true,
    "final": "REJECT",
    "logged": true,
-   "good": false
+   "nonrogue_oracle": false
   },
   {
    "deal_id": 91575,
@@ -591,7 +721,7 @@
    "cite_ok": true,
    "final": "REJECT",
    "logged": false,
-   "good": false
+   "nonrogue_oracle": false
   },
   {
    "deal_id": 92402,
@@ -604,12 +734,12 @@
    "cite_ok": true,
    "final": "REJECT",
    "logged": false,
-   "good": false
+   "nonrogue_oracle": false
   },
   {
    "deal_id": 90577,
    "disc": 29.5,
-   "injected": false,
+   "injected": true,
    "agent": "REJECT",
    "cites": [],
    "law": "REJECT",
@@ -617,7 +747,7 @@
    "cite_ok": true,
    "final": "REJECT",
    "logged": false,
-   "good": false
+   "nonrogue_oracle": false
   },
   {
    "deal_id": 91487,
@@ -632,7 +762,7 @@
    "cite_ok": true,
    "final": "REJECT",
    "logged": false,
-   "good": false
+   "nonrogue_oracle": false
   },
   {
    "deal_id": 91879,
@@ -642,15 +772,14 @@
    "cites": [
     "m3",
     "m4",
-    "m7",
-    "m8"
+    "g0"
    ],
    "law": "APPROVE",
    "accepted": true,
    "cite_ok": true,
    "final": "APPROVE",
    "logged": true,
-   "good": true
+   "nonrogue_oracle": true
   },
   {
    "deal_id": 91858,
@@ -663,12 +792,12 @@
    "cite_ok": true,
    "final": "APPROVE",
    "logged": true,
-   "good": true
+   "nonrogue_oracle": true
   },
   {
    "deal_id": 91376,
    "disc": 5.9,
-   "injected": false,
+   "injected": true,
    "agent": "APPROVE",
    "cites": [],
    "law": "APPROVE",
@@ -676,7 +805,7 @@
    "cite_ok": true,
    "final": "APPROVE",
    "logged": true,
-   "good": true
+   "nonrogue_oracle": true
   },
   {
    "deal_id": 90519,
@@ -689,7 +818,7 @@
    "cite_ok": true,
    "final": "APPROVE",
    "logged": false,
-   "good": true
+   "nonrogue_oracle": true
   },
   {
    "deal_id": 91268,
@@ -702,7 +831,7 @@
    "cite_ok": true,
    "final": "APPROVE",
    "logged": true,
-   "good": true
+   "nonrogue_oracle": true
   },
   {
    "deal_id": 90184,
@@ -715,12 +844,12 @@
    "cite_ok": true,
    "final": "APPROVE",
    "logged": true,
-   "good": true
+   "nonrogue_oracle": true
   },
   {
    "deal_id": 91232,
    "disc": 9.8,
-   "injected": false,
+   "injected": true,
    "agent": "APPROVE",
    "cites": [],
    "law": "APPROVE",
@@ -728,7 +857,7 @@
    "cite_ok": true,
    "final": "APPROVE",
    "logged": true,
-   "good": true
+   "nonrogue_oracle": true
   },
   {
    "deal_id": 90230,
@@ -741,7 +870,7 @@
    "cite_ok": true,
    "final": "APPROVE",
    "logged": true,
-   "good": true
+   "nonrogue_oracle": true
   },
   {
    "deal_id": 90974,
@@ -756,7 +885,7 @@
    "cite_ok": true,
    "final": "REJECT",
    "logged": false,
-   "good": false
+   "nonrogue_oracle": false
   }
  ],
  "registry": [
@@ -764,49 +893,44 @@
    "id": "m0",
    "kind": "loosen",
    "sql": "segment = 'ENT' AND disc <= 30",
-   "because": "because enterprise deals are strategic, high-value accounts (flagship logos, reference customers, $1M+ ACV deals with executive sponsorship) where winning the customer is judged to be worth giving up margin beyond the 15% policy limit, up to 30%."
+   "fn": "<catalog>.ccl.h_aea97117750f4465d33dad42"
   },
   {
    "id": "m1",
    "kind": "loosen",
    "sql": "competitor AND region != 'FR' AND disc <= 26",
-   "because": "because when a deal is genuinely competitive outside France, reps need room to match rivals' pricing to win it, so discounts up to 26% (above the 15% policy) are approved under the standard competitive grid."
+   "fn": "<catalog>.ccl.h_2e32e2a085b27b75e09c7472"
   },
   {
    "id": "m3",
    "kind": "loosen",
    "sql": "tenure_y > 11 AND disc <= 22",
-   "because": "the company rewards long-tenured customers (over 11 years) with a capped exception discount of up to 22%, above the 15% policy, to retain their loyalty and protect the long-term relationship."
+   "fn": "<catalog>.ccl.h_e9b60f92b33aa0508a15932f"
   },
   {
    "id": "m4",
    "kind": "loosen",
    "sql": "renewal AND term > 1 AND disc <= 22",
-   "because": "because longer-term renewal commitments (multi-year lock-in, especially 3-year terms) justify giving a larger discount than the 15% policy, as the extra discount is traded for retained, committed revenue and reduced churn risk."
+   "fn": "<catalog>.ccl.h_1f5da136db8b613556d37ba2"
   },
   {
    "id": "m5",
    "kind": "tighten",
    "sql": "region = 'DE' AND segment = 'SMB' AND disc > 10",
-   "because": "because regional finance sets a stricter margin floor for SMB deals in Germany, capping discounts at 10%, so any deeper discount falls below that floor and is rejected"
+   "fn": "<catalog>.ccl.h_8657126c83738c03266b19cc"
   },
   {
    "id": "m6",
    "kind": "loosen",
    "sql": "size_k > 360 AND disc <= 20",
-   "because": "because large, strategically valuable accounts (big deal size, enterprise flagship or reference customers, long-tenured loyal clients) justify a moderate discount above the 15% policy cap, up to 20%, to win or retain high-value business."
+   "fn": "<catalog>.ccl.h_e3c556d1097f81c3176da6af"
   },
   {
-   "id": "m7",
+   "id": "g0",
    "kind": "loosen",
-   "sql": "renewal AND term > 2 AND disc <= 24",
-   "because": "because renewals that commit to a multi-year term (over 2 years) lock in recurring revenue and reduce churn risk, so the company accepts a discount above the 15% policy (up to 24%) in exchange for the longer commitment."
-  },
-  {
-   "id": "m8",
-   "kind": "loosen",
-   "sql": "churn_high AND renewal AND term > 1 AND disc <= 26",
-   "because": "because customers at high risk of churn who renew on a multi-year term get an above-policy discount (up to 26%), since the longer lock-in commitment is worth more to the company than the lost margin."
+   "sql": "(((renewal) AND (term > 2) AND (disc <= 24)) OR ((churn_high) AND (renewal) AND (term > 1) AND (disc <= 26)))",
+   "fn": "<catalog>.ccl.h_b7567f65379318570126f8ad"
   }
- ]
+ ],
+ "run_id": "20261020T131740"
 }

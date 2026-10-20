@@ -1,0 +1,70 @@
+"""Generate the README evidence block from the result files (no hand-typed numbers). Writes between the CLAIMS markers."""
+import json, os
+HERE = os.path.dirname(os.path.abspath(__file__))
+V5 = json.load(open(os.path.join(HERE, "summary_v5.json")))["configs"]
+H = json.load(open(os.path.join(HERE, "real", "hmda", "results.json")))["tests"]
+D = json.load(open(os.path.join(HERE, "dbx", "run_log.json")))["stages"]
+NAMES = {"statute": "policy", "gbm_monthly": "GBM", "gbm_uplift": "GBM+renewal veto", "gbm_tlearner": "GBM+T-learner", "ccl": "CCL", "ccl_goodlaw": "CCL+outcome screen"}
+sel = lambda **k: [g for g in V5 if all((abs(g[a] - b) < 1e-9 if isinstance(b, float) else g[a] == b) for a, b in k.items())]
+rng = lambda xs, f="{:.3f}": f.format(min(xs)) if abs(max(xs) - min(xs)) < 5e-4 else f.format(min(xs)) + "-" + f.format(max(xs))
+v = lambda gs, m: [g["vs_harm_oracle"][m][0] for g in gs]
+
+E_ex = sel(world="easy", rogue_effect="exception", bad_renew=0.35); H_ex = sel(world="hard", rogue_effect="exception", bad_renew=0.35)
+E_sg = sel(world="easy", rogue_effect="segment", law_ref="scoped", bad_renew=0.35); H_sg = sel(world="hard", rogue_effect="segment", law_ref="scoped", bad_renew=0.35)
+rec_e = [g["recovered"][0] for g in sel(world="easy", bad_renew=0.35)]; rec_h = [g["recovered"][0] for g in sel(world="hard", bad_renew=0.35)]
+d_tl = lambda gs: [g["vs_harm_oracle_diff"]["gbm_tlearner"] for g in gs]
+fmt_d = lambda ds: "; ".join(sorted({f"{d[0]*100:+.2f} [{d[1]*100:+.2f}, {d[2]*100:+.2f}]" for d in ds}))
+best = []
+for name, gs in [("easy/exception", E_ex), ("hard/exception", H_ex), ("easy/segment (scoped)", E_sg), ("hard/segment (scoped)", H_sg)]:
+    m = max(NAMES, key=lambda k: max(v(gs, k)))  # exact maximum, no tolerance
+    best.append(f"{name}: {NAMES[m]}")
+lab = lambda g: f"{g['miner']}/{g['adm_months']}"
+d_lab = lambda gs: "; ".join(f"{lab(g)} {g['vs_harm_oracle_diff']['gbm_tlearner'][0]*100:+.2f} [{g['vs_harm_oracle_diff']['gbm_tlearner'][1]*100:+.2f}, {g['vs_harm_oracle_diff']['gbm_tlearner'][2]*100:+.2f}]" for g in sorted(gs, key=lab))
+harm_ccl = [g["harmful_approvals"]["ccl_goodlaw"][0] for g in H_ex]; harm_veto = [g["harmful_approvals"]["gbm_uplift"][0] for g in H_ex]
+
+sim = (f"- **Simulation** (`RESULTS_v5.md`; exploratory runs, five seeds per configuration, manifest-validated): month-36 laws achieve mean thresholded-overlap recovery of "
+       f"{rng(rec_e, '{:.1f}')}/7 planted rules in the easy world and {rng(rec_h, '{:.1f}')}/7 in the hard world; this is not exact structural recovery. The displayed outcome comparisons "
+       f"(CCL's screen, renewal veto, T-learner) share one eligibility rule (`ccl_sim.outcome_rows`). At rogue renewal 0.35 in the exception-effect world, the renewal veto scores {rng(v(E_ex, 'gbm_uplift'))} (easy) and "
+       f"{rng(v(H_ex, 'gbm_uplift'))} (hard), the T-learner {rng(v(E_ex, 'gbm_tlearner'))} and {rng(v(H_ex, 'gbm_tlearner'))}, and screened CCL {rng(v(E_ex, 'ccl_goodlaw'))} "
+       f"and {rng(v(H_ex, 'ccl_goodlaw'))}; in the hard world CCL approves harmful cases in {rng(harm_ccl, '{:.1%}')} of decisions vs {rng(harm_veto, '{:.1%}')} for the case-level veto, "
+       f"consistent with harmful cases remaining covered by overlapping rules that pass the rule-level association screen. In the segment-effect world, scoped CCL substantially "
+       f"reduces the false blocking of the global screen and the veto; scoped CCL minus T-learner, by miner/admission window: {d_lab(E_sg)} pts (easy) and {d_lab(H_sg)} pts (hard). "
+       f"Highest observed mean at rogue renewal 0.35 among the displayed variants (exact maximum; not a significance claim; near-ties are within the paired intervals in `RESULTS_v5.md`): {'; '.join(best)}. No method is best in every setting; the "
+       f"effect-size sweep in `RESULTS_v5.md` changes the ordering further. These are agreement rates with a threshold-defined synthetic oracle, not estimates of causal policy value.")
+cut = H["2023"]["learned_threshold"]["threshold"]
+dd = [H[t]["ci_ccl_selected_minus_learned_threshold"][0] * 100 for t in H]; dg = {t: H[t]["ci_ccl_selected_minus_gbm_tuned"] for t in H}
+excl = [t for t, x in dg.items() if x[1] > 0 or x[2] < 0]
+rec_hi = all(H[t]["gbm_tuned"]["deny_recall"] > H[t]["ccl_selected"]["deny_recall"] for t in H)
+real = (f"- **Real decisions** (`real/hmda/REPORT.md`, one US lender, HMDA 2018-2023, mined against a fixed 43% DTI heuristic that is not the lender's policy): "
+        f"CCL's observed accuracy is {min(dd):+.2f} to {max(dd):+.2f} percentage points relative to a learned DTI cutoff of {cut:g}%. Relative to the tuned GBM, its differences are "
+        + ", ".join(f"{dg[t][0]*100:+.2f} ({t})" for t in H) + f"; the conditional state-cluster bootstrap intervals exclude zero only in {', '.join(excl) or 'no year'}. "
+        f"These results do not establish equivalence. GBM has higher denial recall in {'all three years' if rec_hi else 'some years'}. Mined rules are predictive associations, not verified tacit policy.")
+pit = D["B_point_in_time"]["asof_minus_today_table"]; P = D["B_parity"]; F4 = D.get("F4_final", {}); G = D["G_identity"]
+ctl = [p for p in D["F2_proposals"]["proposals"] if "CONTROL" in str(p.get("because"))]
+IC = json.load(open(os.path.join(HERE, "dbx", "integrity_check.json")))
+H_ = D.get("H_integrity", {}); M3 = D.get("F3_merges", {}).get("merges", [])
+ctl_merge = next((m["verdict"] for m in M3 if str(m.get("because", "")).startswith("CONTROL") or m.get("id") == "g0"), None)
+llm_admitted = sum(p["verdict"] == "admitted" for p in D["F2_proposals"]["proposals"] if "CONTROL" not in str(p.get("because")))
+llm_merges = sum(m.get("verdict") == "admitted" for m in M3 if not str(m.get("because", "")).startswith("CONTROL") and m.get("id") != "g0")
+dbx = (f"- **Databricks build** (`dbx/REPORT.md`, one synthetic run): month-end Delta reconstruction under a delayed-edit simulator; hash-named UC functions whose stored body "
+       f"and ordered signature are checked exactly ({'tamper tests detected an added clause and swapped parameters' if H_.get('tampered_body') == 'detected' and IC.get('signature_tamper') == 'detected' else 'tamper tests incomplete'}; "
+       f"{len(IC.get('checked', []))} active functions verified, {len(IC.get('failures', []))} failures); a trusted compiler (`rulec.py`) for "
+       f"proposed conditions and caps; Lakebase branches isolating trial registry records while replay runs in DBSQL; an event log (`law_events`) whose triggers block UPDATE, "
+       f"DELETE and TRUNCATE ({'TRUNCATE verified blocked' if str(H_.get('truncate', '')).startswith('blocked') else 'TRUNCATE not verified'}; ownership/DDL lockdown not demonstrated); "
+       f"Python/SQL agreement: {P['python_vs_sql_mismatches']} decision mismatches in {P['cases']} admission cases before the LLM steps"
+       + (f" and {F4.get('python_vs_sql_mismatches')} after them, with {len(F4.get('mask_mismatches', {}))} rules whose per-case decided mask differs" if F4 else "")
+       + (f"; a control merge (exact union of two admitted rules) ended as `{ctl_merge}`" if ctl_merge else "")
+       + (f"; {llm_admitted} LLM-generated proposals and {llm_merges} LLM-proposed merges were admitted, so no LLM-authored law was activated; a deterministic control merge "
+          f"(built from mined rules) exercised the merge activation path. " if llm_admitted + llm_merges == 0 else f"; {llm_admitted} LLM-generated proposals and {llm_merges} LLM-proposed merges were admitted. ")
+       + f"The point-in-time contrast (same admission function, untouched months {D['B_point_in_time']['test_months']}) is {pit['diff']*100:+.2f} pts [{pit['ci'][0]*100:+.2f}, {pit['ci'][1]*100:+.2f}], "
+       f"a paired decision-bootstrap interval conditional on this run's laws and simulated edits. The same checker run under a second principal: "
+       f"{'all identity assertions passed' if G.get('assertions_passed') else 'identity assertions FAILED'} (denied before grant, works after grant, denied with one function withheld, "
+       f"denied after revoke); this is not end-user OBO token passthrough. "
+       + (f"A control re-proposal of a screened rule ended as `{ctl[0]['verdict']}`." if ctl else ""))
+gov = ("- **Governance advantage: untested.** CCL produces compact executable rules that support inspection, testing and controlled deployment; whether that beats an "
+       "explained black box in practice has not been measured.")
+block = "\n".join([sim, real, dbx, gov])
+R = open(os.path.join(HERE, "README.md")).read()
+a, b = R.index("<!-- CLAIMS:BEGIN -->"), R.index("<!-- CLAIMS:END -->")
+open(os.path.join(HERE, "README.md"), "w").write(R[:a] + "<!-- CLAIMS:BEGIN -->\n" + block + "\n" + R[b:])
+print(block)

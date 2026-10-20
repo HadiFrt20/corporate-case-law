@@ -109,3 +109,91 @@ Decisions are in `docs/ADR.md`. Results come from `RESULTS.md` (auto-generated).
 - **#4 proper uplift baseline:** a T-learner (exception-approved vs policy-approved renewal models, veto when tau < -0.20) did WORSE than the simple veto. Diagnosis: my simulator made the rogue approver's whole book renew badly, including in-policy deals, so the discount was not causal. Added `--rogue-effect exception` (only above-policy approvals renew badly) and a scoped bad-law reference (`--law-ref scoped`: policy approvals in the holding's own population). Result (`RESULTS_causal.md`): when the exception causes churn, CCL's filter 0.999 vs renewal veto 0.990 vs T-learner 0.980 (easy), 0.985 vs 0.974 vs 0.962 (hard); when the segment churns anyway, the scoped filter correctly stays quiet. v3's "a fair black box ties CCL" came from a correlational simulator.
 - **#2 real decisions:** one US lender (U.S. Bank, public LEI), HMDA 2018-2023, about 222K conventional purchase applications; statute = QM 43% DTI cap; yearly replay. CCL (power-aware) 0.933/0.931/0.933 vs black box 0.940/0.931/0.934 vs always-approve ~0.91. Mined tacit rule: approve up to 49% DTI unless underwritten by TOTAL; stricter rule: jumbo with LTV > 90 rejected, "because" = collateral 66-75% of denial codes; both stricter rules fail the four-fifths fairness audit, so they go to steward review. A research agent recommended COMPAS; rejected (no logged decisions against a written policy; unsupported claims). Full table: `real/hmda/REPORT.md`.
 - **#1 Board 2:** zones 9 (Databricks run), 10 (real lender), 11 (rare rules + causal check), all read from result files.
+
+## 20 Oct (afternoon): Astra review → v5 fixes (all re-run)
+- Astra (`databricks-gpt-6-astra`) reviewed the whole repo: grade D, `docs/reviews/astra_review_2026-10-20.md`. I verified its key claims before acting; the most damaging one was confirmed: the uplift baselines trained on a 24-month window in which **0** two- or three-year renewal outcomes were knowable, while CCL's screen used all history (3,200 two-year outcomes). My "same outcome information" claim was false.
+- **Simulator fixes** (`ccl_sim.py`, tests in `tests/test_v5.py`):
+  - one `outcome_rows()` used by every outcome-aware method;
+  - a harm-aware oracle that depends on the causal mechanism and effect size (`vs_good` renamed `vs_nonrogue_oracle`, kept as legacy);
+  - harmful-approval and false-rejection decomposition;
+  - canonical order-independent attribution shared with the SQL replay;
+  - shadowed incumbents block admission;
+  - final precision recomputed;
+  - scoped screen returns `pending_no_controls` instead of silently falling back;
+  - `exact` → `overlap_recovered` (any qualifying candidate);
+  - single-class tree leaves;
+  - `reset_config()` isolates dataset configuration;
+  - `step()` refactor with leakage-invariance tests (future rows and not-yet-known outcomes changed → identical law).
+- A job-script bug on my side (zsh does not word-split variables) silently produced 120 failed runs on the first launch; rerun with explicit loops. 180 runs, 5 seeds.
+- **v5 simulation result:** with equal information CCL's outcome screen does NOT beat case-level baselines. Exception-causes-harm world: veto / T-learner 0.997 vs CCL 0.996 (easy) and 0.967-0.970 (hard), because harm routed through other overlapping rules escapes a rule-level screen (1.7-1.9% harmful approvals). Segment world: the scoped screen is correct (no flag), the global screen and the veto wrongly block; the T-learner is best across both worlds. The earlier "beats uplift baselines" margin came from the information gap.
+- **HMDA fixes:**
+  - "43% DTI heuristic" naming;
+  - action-code assertion and cohort-flow table;
+  - group audit on the final system's decisions;
+  - tuned GBM (4-config grid chosen on the admission year);
+  - learned single DTI cutoff baseline;
+  - CCL variant chosen in advance by admission-year accuracy;
+  - state-clustered paired bootstrap CIs;
+  - balanced accuracy and denial recall;
+  - a no-workflow-fields run.
+
+  Result: the learned cutoff is 49 every year and CCL is within +0.01 to +0.18 pts of it; CCL minus tuned GBM is -0.69 [-0.88, -0.50] (2021), and the 2022/2023 CIs include 0; GBM detects denials better.
+- **Databricks fixes:**
+  - `dbx/rulec.py` trusted compiler (20 adversarial tests);
+  - LLM-origin rules go through compiler → moot court → outcome screen before activation (control: the re-proposed rogue rule was admitted on accuracy, then blocked as bad law);
+  - content-addressed immutable UC functions;
+  - append-only registry with data and compiler versions;
+  - one admission rule shared by both point-in-time arms, judged on untouched months 36-38;
+  - Python/SQL parity check;
+  - identity-scoped execution test with a second principal;
+  - escaped SQL literals.
+
+  Result: point-in-time +0.20 pts [+0.09, +0.33]; parity 0/5,029; strict judge 7/9; LLM returned no proposals this run (empty reply).
+- **HMDA download recipe:** `curl -sL --compressed "https://ffiec.cfpb.gov/v2/data-browser-api/view/csv?years=<YEAR>&leis=6BYL5QZYBDK8S7L73M02&actions_taken=1,3" -o real/hmda/raw/usb_<YEAR>.csv` for 2018-2023. At most 2 filters; follow redirects.
+
+## 20 Oct (evening): Astra re-review (grade D → C) → round-2 fixes
+- Re-review: `docs/reviews/astra_rereview_2026-10-20.md`. It verified the core repairs (information gap, fair point-in-time contrast, compiler) and found, among others:
+  - **my README simulation paragraph was numerically wrong**, written from memory rather than from `RESULTS_v5.md`;
+  - "append-only registry" was false (upserts and updates);
+  - compiler holes (caps, overflow, rounding, bounds);
+  - merges tolerating a 0.1-point loss;
+  - Python/SQL screen populations differing;
+  - recovery ignoring the action;
+  - the harm-threshold float boundary;
+  - an incomplete error decomposition;
+  - an identity test that never invoked the checker.
+
+  All confirmed against code and tables before fixing.
+- **Fixes:**
+  - **Simulator:** `good_law` uses `effective()` (same population as SQL), scoped controls for tree rules (`rule_population`), inclusive harm boundary, recovery requires the same action, full-precision run metrics with `code_sha`, `nonharmful_false_approvals` so the components sum to total error, "overlapping effective coverage" naming.
+  - **Compiler:** `rulec.py` moved to the root as `rulec-2`: AST shared by Python evaluation and SQL emission, exact decimals, length/token/depth/digit bounds, per-column domains, `validate_cap`.
+  - **Databricks:** `law_events` append-only enforced by a trigger plus a `law_current` view; SHA-256 function names with body verification; merges must be decision-equivalent and of one action kind, with no accuracy loss; whole-law re-screen after LLM admissions; tightening rules not outcome-screened; parity on decisions AND per-rule support, before and after the LLM steps; final-stats events; one `check()` run under the owner and a second principal, with asserted denials and grants revoked in `finally`.
+  - **HMDA:** "retrospective, admission-selected" wording; per-comparison deterministic seeds; 2,000 resamples; cluster diagnostics; group error tables; denial-reason denominators.
+  - **README evidence block** now GENERATED by `make_claims.py` from the result files.
+- **Process mistake (mine):** I edited `ccl_sim.py` while the v5.1 grid was running. I stopped the grid, cleared its runs, and relaunched after the code was final. The aggregator now fails closed on a manifest (every configuration × seed) and on a single `code_sha`.
+- New tests: a shadowing fixture that passes every other gate, recovery action, boundary, error-sum, scoped tree screen, screen population; compiler bound and cap tests.
+
+## 20 Oct (late): Astra round 3 (stays C; no number mismatches in the generated README) → round-3 fixes
+- `docs/reviews/astra_round3_2026-10-20.md`: all README numbers matched the tables. The remaining issues were guarantees stated more strongly than the code enforced. Fixes:
+  - **Function verification:** exact comparison of the stored routine body from `information_schema.routines` (was a substring test); a tamper test (`OR true` appended) must be detected.
+  - **Registry:** a TRUNCATE-blocking trigger, verified live.
+  - **Merges:** built as the exact OR of the parts' ASTs (`rulec.union`); the LLM only picks ids. A CONTROL merge of two admitted rules exercises activation of compiled law and post-merge parity.
+  - **Parity:** per-rule case-by-case masks.
+  - **Scope:** AST and literal scopes strip top-level bounds on the policy variable (ambiguous scope → no controls); scoped rules with no comparable controls are QUARANTINED, not active.
+  - **Shared helper:** CCL's screen now literally calls `outcome_rows`.
+  - **Compiler (`rulec-3`):** caps must be plain decimals with at most 2 decimals and exactly representable; a null/non-finite fact contract.
+  - **Aggregator:** rejects missing hashes and requires the run hash to equal the imported simulator's hash.
+  - **README wording:** "highest observed mean … not a significance claim", configuration-labelled paired differences, softened mechanism sentence.
+- Grid re-run on the final simulator code (manifest + hash checks); Databricks pipeline re-run.
+
+## 20 Oct (late): Astra round 4 → C+ (all README numbers re-verified)
+- `docs/reviews/astra_round4_2026-10-20.md`. Fixes:
+  - **README wording:** exact maximum for "highest observed mean" (no tolerance); shared-helper sentence restricted to the displayed comparisons; "substantially reduces" false blocking; corrected provenance (no LLM-authored law was activated; a deterministic control merge exercised the merge path; merge provenance derived from source).
+  - **Signature verification:** ordered parameter names/types and return type from `information_schema` (`LONG` is normalised to `BIGINT`); standalone `dbx/integrity_check.py`: 9/9 active functions pass and a signature-tamper copy (two BOOLEAN parameters swapped) is detected.
+  - My first integrity run reported 9/9 failures because of that type alias. The check's assertion caught it before any claim was made.
+- **Still open:**
+  - asymmetric null handling between Python and SQL (SQL three-valued logic is not mirrored);
+  - dependency hashing beyond `ccl_sim.py`;
+  - DDL ownership lockdown;
+  - grants restored by revoke only;
+  - independent evaluation.

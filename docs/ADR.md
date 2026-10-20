@@ -169,3 +169,56 @@ Background: CCL was born on 16 Oct from studying the CLM paper (arXiv 2609.04377
 ## ADR-029 · Publish a clean history
 **Decision.** The public repo is a single orphan commit (`public` branch → `main`) with workspace identifiers in env vars. The local `master` keeps the full private history.
 **Status.** Accepted.
+
+## ADR-030 · Equal outcome information for every outcome-aware method (supersedes the "same information" wording of ADR-019)
+**Decision.** `ccl_sim.outcome_rows(df, m)` (approved, decided before m, outcome known before m) is the only outcome data used by CCL's screen, the renewal veto and the T-learner.
+**Consequences.** CCL's apparent lead over uplift baselines disappears; the T-learner is the strongest method across both causal worlds.
+**Status.** Accepted.
+
+## ADR-031 · Harm-aware oracle; the outcome screen is an association screen (supersedes ADR-027's "causally correct")
+**Decision.** The scoring target approves what the firm's rules allow, except approvals that CAUSE a renewal drop >= 0.20 (`harmful_if_approved`). In the segment world, or below the effect threshold, nothing is harmful. The former `vs_good` is kept as `vs_nonrogue_oracle`. Results report harmful approvals and false rejections separately. The screen is described as an association screen; `pending_no_controls` replaces the silent global fallback.
+**Status.** Accepted.
+
+## ADR-032 · Canonical attribution, shadowing, final precision (amends ADR-006)
+**Decision.** `effective()` defines which cases each holding decides, independent of order and identical to the SQL replay; admission is blocked if an incumbent with >= 15 decided cases is pushed below 15; replay precision is recomputed for every admitted holding at the end. Recovery is reported as `overlap_recovered` (thresholded overlap, not structural equality).
+**Status.** Accepted.
+
+## ADR-033 · Trusted rule compiler; every new rule is screened (amends ADR-024)
+**Decision.** Non-mined rules (LLM proposals, merges) are parsed by `dbx/rulec.py` (allow-listed columns, operators, literal types; no functions, subqueries or comments) and re-emitted as canonical SQL, then go through the moot court AND the outcome screen before activation.
+**Status.** Accepted.
+
+## ADR-034 · Immutable law artifacts and an append-only registry (amends ADR-005, ADR-023)
+**Decision.** UC function name = hash of the rule body (`CREATE FUNCTION IF NOT EXISTS`, never replaced); the registry `law` / `law_trials` is keyed by run id, records data versions and compiler version, and is never truncated.
+**Status.** Accepted.
+
+## ADR-035 · Identity-scoped execution, not "OBO by construction" (supersedes ADR-025's wording)
+**Decision.** The checker executes under the calling identity; this is demonstrated with a second principal (denied → granted → other function denied → revoked). End-user OBO token passthrough from an app is not implemented or claimed.
+**Status.** Accepted.
+
+## ADR-036 · Real-data study discipline (amends ADR-028)
+**Decision.** Call the reference a 43% DTI heuristic; assert action codes; publish the cohort flow; compare against a learned single cutoff and a tuned GBM; pick the CCL variant in advance by admission-year accuracy; report state-clustered paired CIs, balanced accuracy and denial recall; audit the final system's decisions per group; run without workflow-sensitive fields.
+**Status.** Accepted.
+
+## ADR-037 · Everything so far is exploratory
+**Decision.** All results in this repo are exploratory. A confirmatory test needs frozen code, metrics and thresholds, and data or worlds supplied by someone else after the freeze (Astra review, section D).
+**Status.** Accepted.
+
+## ADR-038 · One rule representation for Python and SQL (rulec-2)
+**Decision.** Non-mined rules are parsed once into an AST (allow-listed columns, exact decimals, bounded size and depth, per-column domains). The same AST is evaluated in Python (`rulec.evaluate`, used by `ccl_sim.fires`) and emitted as SQL. Caps are validated by `validate_cap`. No externally reachable sentinel remains.
+**Status.** Accepted (mined rules still use the literal representation).
+
+## ADR-039 · The registry is an event log (supersedes the "append-only" claim of ADR-034)
+**Decision.** `law_events` rejects UPDATE/DELETE via a trigger; every state change is a new event; `law_current` = latest event per (run, holding). Rule function names are SHA-256 based (compiler version, signature, action, body), and an existing function's body is verified before use. DDL privileges are not locked down in this sandbox.
+**Status.** Accepted.
+
+## ADR-040 · Merge = semantics-preserving compression only
+**Decision.** A merge must replace rules of one action kind, give decisions identical to the union of its parts on all mining + admission cases, and lose no admission accuracy. Policy changes go through the normal proposal path. After any LLM-origin admission the whole law is re-screened.
+**Status.** Accepted.
+
+## ADR-041 · Claims are generated, not written
+**Decision.** The README evidence block is produced by `make_claims.py` from `summary_v5.json`, `real/hmda/results.json` and `dbx/run_log.json`. Interval wording states what each interval conditions on.
+**Status.** Accepted.
+
+## ADR-042 · Exact artifact verification, unscreenable rules are quarantined
+**Decision.** A rule function's stored body must equal the expected canonical body exactly (whitespace-normalised, case preserved). Merges are the exact AST union of their parts. Scoped rules with no comparable in-policy controls are quarantined (excluded from the screened law) rather than active-pending. CCL's screen calls the shared `outcome_rows` helper.
+**Status.** Accepted.

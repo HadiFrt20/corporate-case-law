@@ -1,20 +1,90 @@
 {
  "lender": "6BYL5QZYBDK8S7L73M02",
- "rows": {
-  "2018": 36473,
-  "2019": 38889,
-  "2020": 41185,
-  "2021": 41456,
-  "2022": 35200,
-  "2023": 28551
- },
- "approval_rate": {
-  "2018": 0.8482,
-  "2019": 0.8522,
-  "2020": 0.876,
-  "2021": 0.9101,
-  "2022": 0.906,
-  "2023": 0.9055
+ "cohort_flow": {
+  "2018": {
+   "raw": 229021,
+   "raw_approval": 0.5858,
+   "cohort": 37797,
+   "cohort_approval": 0.8475,
+   "complete": 36473,
+   "complete_approval": 0.8482,
+   "dropped_by_race": {
+    "White": 997,
+    "Race Not Available": 164,
+    "Asian": 86,
+    "Black or African American": 27
+   }
+  },
+  "2019": {
+   "raw": 232915,
+   "raw_approval": 0.6229,
+   "cohort": 40221,
+   "cohort_approval": 0.8517,
+   "complete": 38889,
+   "complete_approval": 0.8522,
+   "dropped_by_race": {
+    "White": 958,
+    "Race Not Available": 219,
+    "Asian": 88,
+    "Black or African American": 34
+   }
+  },
+  "2020": {
+   "raw": 265599,
+   "raw_approval": 0.6802,
+   "cohort": 42770,
+   "cohort_approval": 0.8704,
+   "complete": 41185,
+   "complete_approval": 0.876,
+   "dropped_by_race": {
+    "White": 1131,
+    "Race Not Available": 252,
+    "Asian": 93,
+    "Black or African American": 52
+   }
+  },
+  "2021": {
+   "raw": 263701,
+   "raw_approval": 0.7138,
+   "cohort": 43014,
+   "cohort_approval": 0.9022,
+   "complete": 41456,
+   "complete_approval": 0.9101,
+   "dropped_by_race": {
+    "White": 1124,
+    "Asian": 109,
+    "Race Not Available": 206,
+    "Black or African American": 53
+   }
+  },
+  "2022": {
+   "raw": 196993,
+   "raw_approval": 0.6079,
+   "cohort": 36298,
+   "cohort_approval": 0.9024,
+   "complete": 35200,
+   "complete_approval": 0.906,
+   "dropped_by_race": {
+    "White": 799,
+    "Asian": 109,
+    "Race Not Available": 116,
+    "Black or African American": 39
+   }
+  },
+  "2023": {
+   "raw": 130663,
+   "raw_approval": 0.552,
+   "cohort": 29316,
+   "cohort_approval": 0.9018,
+   "complete": 28551,
+   "complete_approval": 0.9055,
+   "dropped_by_race": {
+    "White": 539,
+    "Race Not Available": 115,
+    "Asian": 60,
+    "Black or African American": 31
+   }
+  }
  },
  "residual_rate": {
   "2018": 0.2203,
@@ -27,9 +97,79 @@
  "tests": {
   "2021": {
    "beam": {
-    "acc": 0.9069,
+    "acc": 0.9069133539174065,
+    "bal_acc": 0.6618334595719464,
+    "deny_precision": 0.47674418604651164,
+    "deny_recall": 0.363026562919238,
+    "admission_acc": 0.8909068835741167,
     "n_holdings": 9,
-    "cited": 0.0999,
+    "cited": 0.09986491702045543,
+    "audit": {
+     "race": {
+      "groups": {
+       "White": {
+        "n": 27138,
+        "approval": 0.9328,
+        "false_denial": 0.0387,
+        "false_approval": 0.6294
+       },
+       "Asian": {
+        "n": 6422,
+        "approval": 0.9344,
+        "false_denial": 0.0429,
+        "false_approval": 0.666
+       },
+       "Race Not Available": {
+        "n": 5804,
+        "approval": 0.9251,
+        "false_denial": 0.0402,
+        "false_approval": 0.6397
+       },
+       "Black or African American": {
+        "n": 1036,
+        "approval": 0.9093,
+        "false_denial": 0.0326,
+        "false_approval": 0.625
+       },
+       "Joint": {
+        "n": 924,
+        "approval": 0.9394,
+        "false_denial": 0.0354,
+        "false_approval": 0.6579
+       }
+      },
+      "approval_ratio": 0.968
+     },
+     "sex": {
+      "groups": {
+       "Joint": {
+        "n": 17903,
+        "approval": 0.9392,
+        "false_denial": 0.0358,
+        "false_approval": 0.6493
+       },
+       "Male": {
+        "n": 13080,
+        "approval": 0.9277,
+        "false_denial": 0.0404,
+        "false_approval": 0.6292
+       },
+       "Female": {
+        "n": 7333,
+        "approval": 0.9202,
+        "false_denial": 0.0479,
+        "false_approval": 0.6169
+       },
+       "Sex Not Available": {
+        "n": 3140,
+        "approval": 0.9303,
+        "false_denial": 0.0351,
+        "false_approval": 0.6553
+       }
+      },
+      "approval_ratio": 0.98
+     }
+    },
     "holdings": [
      {
       "id": "H0",
@@ -37,27 +177,8 @@
       "sql": "loan_k <= 335 AND ltv <= 96 AND disc <= 49  => APPROVE",
       "support": 6433,
       "replay_prec": 0.915,
-      "because": null,
-      "audit": {
-       "race": {
-        "rates": {
-         "White": 0.4524,
-         "Race Not Available": 0.3774,
-         "Asian": 0.249,
-         "Black or African American": 0.3484
-        },
-        "ratio": 0.55
-       },
-       "sex": {
-        "rates": {
-         "Joint": 0.3787,
-         "Male": 0.3953,
-         "Female": 0.4839,
-         "Sex Not Available": 0.4229
-        },
-        "ratio": 0.783
-       }
-      }
+      "replay_n": 2823,
+      "because": null
      },
      {
       "id": "H1",
@@ -65,27 +186,8 @@
       "sql": "aus = 'LP' AND income_k > 67 AND ltv <= 80 AND disc <= 49  => APPROVE",
       "support": 762,
       "replay_prec": 0.918,
-      "because": null,
-      "audit": {
-       "race": {
-        "rates": {
-         "White": 0.0224,
-         "Race Not Available": 0.0106,
-         "Asian": 0.035,
-         "Black or African American": 0.009
-        },
-        "ratio": 0.257
-       },
-       "sex": {
-        "rates": {
-         "Joint": 0.0278,
-         "Male": 0.021,
-         "Female": 0.0137,
-         "Sex Not Available": 0.0169
-        },
-        "ratio": 0.493
-       }
-      }
+      "replay_n": 147,
+      "because": null
      },
      {
       "id": "H2",
@@ -93,27 +195,8 @@
       "sql": "income_k > 128 AND ltv <= 80 AND term_m > 349 AND disc <= 44  => APPROVE",
       "support": 428,
       "replay_prec": 0.93,
-      "because": null,
-      "audit": {
-       "race": {
-        "rates": {
-         "White": 0.047,
-         "Race Not Available": 0.0434,
-         "Asian": 0.0947,
-         "Black or African American": 0.0271
-        },
-        "ratio": 0.286
-       },
-       "sex": {
-        "rates": {
-         "Joint": 0.0788,
-         "Male": 0.0415,
-         "Female": 0.0311,
-         "Sex Not Available": 0.032
-        },
-        "ratio": 0.395
-       }
-      }
+      "replay_n": 356,
+      "because": null
      },
      {
       "id": "H3",
@@ -121,55 +204,17 @@
       "sql": "aus = 'LP' AND loan_k <= 585 AND disc <= 44  => APPROVE",
       "support": 296,
       "replay_prec": 0.924,
-      "because": null,
-      "audit": {
-       "race": {
-        "rates": {
-         "White": 0.0254,
-         "Race Not Available": 0.0145,
-         "Asian": 0.013,
-         "Black or African American": 0.0317
-        },
-        "ratio": 0.41
-       },
-       "sex": {
-        "rates": {
-         "Joint": 0.0191,
-         "Male": 0.0264,
-         "Female": 0.028,
-         "Sex Not Available": 0.0113
-        },
-        "ratio": 0.404
-       }
-      }
+      "replay_n": 157,
+      "because": null
      },
      {
       "id": "H4",
       "kind": "loosen",
       "sql": "aus = 'DU' AND loan_k > 335 AND ltv > 90 AND disc <= 48  => APPROVE",
       "support": 221,
-      "replay_prec": 0.898,
-      "because": null,
-      "audit": {
-       "race": {
-        "rates": {
-         "White": 0.0431,
-         "Race Not Available": 0.0569,
-         "Asian": 0.0428,
-         "Black or African American": 0.0271
-        },
-        "ratio": 0.476
-       },
-       "sex": {
-        "rates": {
-         "Joint": 0.0434,
-         "Male": 0.0511,
-         "Female": 0.0298,
-         "Sex Not Available": 0.0639
-        },
-        "ratio": 0.466
-       }
-      }
+      "replay_prec": 0.904,
+      "replay_n": 301,
+      "because": null
      },
      {
       "id": "H5",
@@ -177,27 +222,8 @@
       "sql": "aus = 'DU' AND ltv <= 76 AND disc <= 49  => APPROVE",
       "support": 163,
       "replay_prec": 0.944,
-      "because": null,
-      "audit": {
-       "race": {
-        "rates": {
-         "White": 0.1476,
-         "Race Not Available": 0.1274,
-         "Asian": 0.1855,
-         "Black or African American": 0.0317
-        },
-        "ratio": 0.171
-       },
-       "sex": {
-        "rates": {
-         "Joint": 0.1535,
-         "Male": 0.1085,
-         "Female": 0.1839,
-         "Sex Not Available": 0.1278
-        },
-        "ratio": 0.59
-       }
-      }
+      "replay_n": 988,
+      "because": null
      },
      {
       "id": "H6",
@@ -205,27 +231,8 @@
       "sql": "loan_k > 585 AND ltv <= 64 AND score_model != '2' AND disc <= 49  => APPROVE",
       "support": 132,
       "replay_prec": 0.914,
-      "because": null,
-      "audit": {
-       "race": {
-        "rates": {
-         "White": 0.01,
-         "Race Not Available": 0.0183,
-         "Asian": 0.0182,
-         "Black or African American": 0.0
-        },
-        "ratio": 0.0
-       },
-       "sex": {
-        "rates": {
-         "Joint": 0.0127,
-         "Male": 0.0132,
-         "Female": 0.0087,
-         "Sex Not Available": 0.0113
-        },
-        "ratio": 0.659
-       }
-      }
+      "replay_n": 81,
+      "because": null
      },
      {
       "id": "H7",
@@ -233,29 +240,14 @@
       "sql": "jumbo AND ltv > 90 AND disc > 25  => REJECT",
       "support": 104,
       "replay_prec": 0.965,
+      "replay_n": 86,
       "because": {
-       "collateral": 0.663,
-       "debt-to-income": 0.145,
-       "other": 0.084
-      },
-      "audit": {
-       "race": {
-        "rates": {
-         "White": 0.0016,
-         "Race Not Available": 0.0018,
-         "Asian": 0.0026,
-         "Black or African American": 0.0025
-        },
-        "ratio": 0.615
-       },
-       "sex": {
-        "rates": {
-         "Joint": 0.0022,
-         "Male": 0.002,
-         "Female": 0.0014,
-         "Sex Not Available": 0.001
-        },
-        "ratio": 0.455
+       "n_denials": 83,
+       "n_with_reason": 83,
+       "top": {
+        "collateral": 0.663,
+        "debt-to-income": 0.145,
+        "other": 0.084
        }
       }
      },
@@ -265,62 +257,94 @@
       "sql": "income_k > 160 AND loan_k <= 445 AND loan_k > 335 AND disc <= 48  => APPROVE",
       "support": 65,
       "replay_prec": 0.934,
-      "because": null,
-      "audit": {
-       "race": {
-        "rates": {
-         "White": 0.0141,
-         "Race Not Available": 0.0106,
-         "Asian": 0.0078,
-         "Black or African American": 0.0181
-        },
-        "ratio": 0.431
-       },
-       "sex": {
-        "rates": {
-         "Joint": 0.0223,
-         "Male": 0.0073,
-         "Female": 0.0081,
-         "Sex Not Available": 0.0113
-        },
-        "ratio": 0.327
-       }
-      }
+      "replay_n": 91,
+      "because": null
      }
     ]
    },
    "beam_power": {
-    "acc": 0.9332,
+    "acc": 0.933230412967966,
+    "bal_acc": 0.6465495106626677,
+    "deny_precision": 0.8820717131474104,
+    "deny_recall": 0.2970217332975584,
+    "admission_acc": 0.9085589413621464,
     "n_holdings": 2,
-    "cited": 0.138,
+    "cited": 0.1380499807024315,
+    "audit": {
+     "race": {
+      "groups": {
+       "White": {
+        "n": 27138,
+        "approval": 0.9697,
+        "false_denial": 0.0044,
+        "false_approval": 0.6935
+       },
+       "Asian": {
+        "n": 6422,
+        "approval": 0.978,
+        "false_denial": 0.0015,
+        "false_approval": 0.736
+       },
+       "Race Not Available": {
+        "n": 5804,
+        "approval": 0.9642,
+        "false_denial": 0.0052,
+        "false_approval": 0.7127
+       },
+       "Black or African American": {
+        "n": 1036,
+        "approval": 0.9459,
+        "false_denial": 0.0012,
+        "false_approval": 0.6875
+       },
+       "Joint": {
+        "n": 924,
+        "approval": 0.9729,
+        "false_denial": 0.0035,
+        "false_approval": 0.7105
+       }
+      },
+      "approval_ratio": 0.967
+     },
+     "sex": {
+      "groups": {
+       "Joint": {
+        "n": 17903,
+        "approval": 0.9729,
+        "false_denial": 0.0047,
+        "false_approval": 0.7114
+       },
+       "Male": {
+        "n": 13080,
+        "approval": 0.9682,
+        "false_denial": 0.003,
+        "false_approval": 0.6989
+       },
+       "Female": {
+        "n": 7333,
+        "approval": 0.9671,
+        "false_denial": 0.003,
+        "false_approval": 0.6829
+       },
+       "Sex Not Available": {
+        "n": 3140,
+        "approval": 0.9643,
+        "false_denial": 0.0054,
+        "false_approval": 0.7236
+       }
+      },
+      "approval_ratio": 0.991
+     }
+    },
     "holdings": [
      {
       "id": "H0",
       "kind": "loosen",
       "sql": "aus != 'TOTAL' AND disc <= 49  => APPROVE",
       "support": 11193,
-      "replay_prec": 0.881,
-      "because": null,
-      "audit": {
-       "race": {
-        "rates": {
-         "White": 0.7907,
-         "Race Not Available": 0.7461,
-         "Asian": 0.7925,
-         "Black or African American": 0.6923
-        },
-        "ratio": 0.874
-       },
-       "sex": {
-        "rates": {
-         "Joint": 0.7856,
-         "Male": 0.7784,
-         "Female": 0.7888,
-         "Sex Not Available": 0.7444
-        },
-        "ratio": 0.944
-       }
-      }
+      "replay_prec": 0.882,
+      "replay_n": 5336,
+      "because": null
      },
      {
       "id": "H1",
@@ -328,49 +352,920 @@
       "sql": "jumbo AND ltv > 90 AND disc > 25  => REJECT",
       "support": 104,
       "replay_prec": 0.965,
+      "replay_n": 86,
       "because": {
-       "collateral": 0.663,
-       "debt-to-income": 0.145,
-       "other": 0.084
-      },
-      "audit": {
-       "race": {
-        "rates": {
-         "White": 0.0016,
-         "Race Not Available": 0.0018,
-         "Asian": 0.0026,
-         "Black or African American": 0.0025
-        },
-        "ratio": 0.615
-       },
-       "sex": {
-        "rates": {
-         "Joint": 0.0022,
-         "Male": 0.002,
-         "Female": 0.0014,
-         "Sex Not Available": 0.001
-        },
-        "ratio": 0.455
+       "n_denials": 83,
+       "n_with_reason": 83,
+       "top": {
+        "collateral": 0.663,
+        "debt-to-income": 0.145,
+        "other": 0.084
        }
       }
      }
     ]
    },
-   "statute": {
-    "acc": 0.8207
+   "ccl_selected": {
+    "acc": 0.933230412967966,
+    "bal_acc": 0.6465495106626677,
+    "deny_precision": 0.8820717131474104,
+    "deny_recall": 0.2970217332975584,
+    "admission_acc": 0.9085589413621464,
+    "n_holdings": 2,
+    "cited": 0.1380499807024315,
+    "audit": {
+     "race": {
+      "groups": {
+       "White": {
+        "n": 27138,
+        "approval": 0.9697,
+        "false_denial": 0.0044,
+        "false_approval": 0.6935
+       },
+       "Asian": {
+        "n": 6422,
+        "approval": 0.978,
+        "false_denial": 0.0015,
+        "false_approval": 0.736
+       },
+       "Race Not Available": {
+        "n": 5804,
+        "approval": 0.9642,
+        "false_denial": 0.0052,
+        "false_approval": 0.7127
+       },
+       "Black or African American": {
+        "n": 1036,
+        "approval": 0.9459,
+        "false_denial": 0.0012,
+        "false_approval": 0.6875
+       },
+       "Joint": {
+        "n": 924,
+        "approval": 0.9729,
+        "false_denial": 0.0035,
+        "false_approval": 0.7105
+       }
+      },
+      "approval_ratio": 0.967
+     },
+     "sex": {
+      "groups": {
+       "Joint": {
+        "n": 17903,
+        "approval": 0.9729,
+        "false_denial": 0.0047,
+        "false_approval": 0.7114
+       },
+       "Male": {
+        "n": 13080,
+        "approval": 0.9682,
+        "false_denial": 0.003,
+        "false_approval": 0.6989
+       },
+       "Female": {
+        "n": 7333,
+        "approval": 0.9671,
+        "false_denial": 0.003,
+        "false_approval": 0.6829
+       },
+       "Sex Not Available": {
+        "n": 3140,
+        "approval": 0.9643,
+        "false_denial": 0.0054,
+        "false_approval": 0.7236
+       }
+      },
+      "approval_ratio": 0.991
+     }
+    },
+    "holdings": [
+     {
+      "id": "H0",
+      "kind": "loosen",
+      "sql": "aus != 'TOTAL' AND disc <= 49  => APPROVE",
+      "support": 11193,
+      "replay_prec": 0.882,
+      "replay_n": 5336,
+      "because": null
+     },
+     {
+      "id": "H1",
+      "kind": "tighten",
+      "sql": "jumbo AND ltv > 90 AND disc > 25  => REJECT",
+      "support": 104,
+      "replay_prec": 0.965,
+      "replay_n": 86,
+      "because": {
+       "n_denials": 83,
+       "n_with_reason": 83,
+       "top": {
+        "collateral": 0.663,
+        "debt-to-income": 0.145,
+        "other": 0.084
+       }
+      }
+     }
+    ],
+    "variant": "beam_power"
    },
-   "gbm": {
-    "acc": 0.9401
+   "gbm_tuned": {
+    "acc": 0.9401051717483597,
+    "bal_acc": 0.6973580058818776,
+    "deny_precision": 0.8558352402745996,
+    "deny_recall": 0.4013952240407835,
+    "config": {
+     "max_depth": null,
+     "learning_rate": 0.1,
+     "max_iter": 100
+    },
+    "audit": {
+     "race": {
+      "groups": {
+       "White": {
+        "n": 27138,
+        "approval": 0.9585,
+        "false_denial": 0.0069,
+        "false_approval": 0.5894
+       },
+       "Asian": {
+        "n": 6422,
+        "approval": 0.9707,
+        "false_denial": 0.0034,
+        "false_approval": 0.664
+       },
+       "Race Not Available": {
+        "n": 5804,
+        "approval": 0.9481,
+        "false_denial": 0.0077,
+        "false_approval": 0.5857
+       },
+       "Black or African American": {
+        "n": 1036,
+        "approval": 0.916,
+        "false_denial": 0.0151,
+        "false_approval": 0.5795
+       },
+       "Joint": {
+        "n": 924,
+        "approval": 0.96,
+        "false_denial": 0.0083,
+        "false_approval": 0.6053
+       }
+      },
+      "approval_ratio": 0.944
+     },
+     "sex": {
+      "groups": {
+       "Joint": {
+        "n": 17903,
+        "approval": 0.9621,
+        "false_denial": 0.0073,
+        "false_approval": 0.6055
+       },
+       "Male": {
+        "n": 13080,
+        "approval": 0.9565,
+        "false_denial": 0.0064,
+        "false_approval": 0.6094
+       },
+       "Female": {
+        "n": 7333,
+        "approval": 0.9546,
+        "false_denial": 0.0051,
+        "false_approval": 0.571
+       },
+       "Sex Not Available": {
+        "n": 3140,
+        "approval": 0.9468,
+        "false_denial": 0.0079,
+        "false_approval": 0.5869
+       }
+      },
+      "approval_ratio": 0.984
+     }
+    }
+   },
+   "ci_ccl_selected_minus_gbm_tuned": [
+    -0.006874758780393671,
+    -0.00879283588802806,
+    -0.005066149315496993,
+    {
+     "n_states": 51,
+     "largest_state_share": 0.19533963720571207
+    }
+   ],
+   "beam_noworkflow": {
+    "acc": 0.9032950598224624,
+    "bal_acc": 0.6622636738243333,
+    "deny_precision": 0.4534346103038309,
+    "deny_recall": 0.36839280922994366,
+    "admission_acc": 0.8868034478572295,
+    "n_holdings": 7,
+    "cited": 0.09528174450019297,
+    "audit": {
+     "race": {
+      "groups": {
+       "White": {
+        "n": 27138,
+        "approval": 0.9287,
+        "false_denial": 0.0428,
+        "false_approval": 0.6242
+       },
+       "Asian": {
+        "n": 6422,
+        "approval": 0.9302,
+        "false_denial": 0.0473,
+        "false_approval": 0.664
+       },
+       "Race Not Available": {
+        "n": 5804,
+        "approval": 0.9182,
+        "false_denial": 0.0468,
+        "false_approval": 0.6302
+       },
+       "Black or African American": {
+        "n": 1036,
+        "approval": 0.9015,
+        "false_denial": 0.0407,
+        "false_approval": 0.6193
+       },
+       "Joint": {
+        "n": 924,
+        "approval": 0.9394,
+        "false_denial": 0.0354,
+        "false_approval": 0.6579
+       }
+      },
+      "approval_ratio": 0.96
+     },
+     "sex": {
+      "groups": {
+       "Joint": {
+        "n": 17903,
+        "approval": 0.9357,
+        "false_denial": 0.0392,
+        "false_approval": 0.6436
+       },
+       "Male": {
+        "n": 13080,
+        "approval": 0.9222,
+        "false_denial": 0.0458,
+        "false_approval": 0.6228
+       },
+       "Female": {
+        "n": 7333,
+        "approval": 0.915,
+        "false_denial": 0.0533,
+        "false_approval": 0.6141
+       },
+       "Sex Not Available": {
+        "n": 3140,
+        "approval": 0.9248,
+        "false_denial": 0.0405,
+        "false_approval": 0.6496
+       }
+      },
+      "approval_ratio": 0.978
+     }
+    },
+    "holdings": [
+     {
+      "id": "H0",
+      "kind": "loosen",
+      "sql": "loan_k <= 335 AND ltv <= 96 AND disc <= 49  => APPROVE",
+      "support": 6433,
+      "replay_prec": 0.915,
+      "replay_n": 2823,
+      "because": null
+     },
+     {
+      "id": "H1",
+      "kind": "loosen",
+      "sql": "income_k > 128 AND ltv <= 80 AND disc <= 44  => APPROVE",
+      "support": 611,
+      "replay_prec": 0.924,
+      "replay_n": 369,
+      "because": null
+     },
+     {
+      "id": "H2",
+      "kind": "loosen",
+      "sql": "ltv <= 95 AND ltv > 90 AND disc <= 47  => APPROVE",
+      "support": 360,
+      "replay_prec": 0.92,
+      "replay_n": 862,
+      "because": null
+     },
+     {
+      "id": "H3",
+      "kind": "loosen",
+      "sql": "NOT jumbo AND loan_k > 445 AND ltv <= 76 AND disc <= 49  => APPROVE",
+      "support": 351,
+      "replay_prec": 0.93,
+      "replay_n": 256,
+      "because": null
+     },
+     {
+      "id": "H4",
+      "kind": "loosen",
+      "sql": "income_k > 104 AND loan_k <= 445 AND ltv <= 90 AND disc <= 46  => APPROVE",
+      "support": 212,
+      "replay_prec": 0.936,
+      "replay_n": 282,
+      "because": null
+     },
+     {
+      "id": "H5",
+      "kind": "loosen",
+      "sql": "income_k > 128 AND ltv <= 64 AND term_m > 349 AND disc <= 49  => APPROVE",
+      "support": 127,
+      "replay_prec": 0.906,
+      "replay_n": 160,
+      "because": null
+     },
+     {
+      "id": "H6",
+      "kind": "tighten",
+      "sql": "jumbo AND ltv > 90 AND disc > 25  => REJECT",
+      "support": 104,
+      "replay_prec": 0.965,
+      "replay_n": 86,
+      "because": {
+       "n_denials": 83,
+       "n_with_reason": 83,
+       "top": {
+        "collateral": 0.663,
+        "debt-to-income": 0.145,
+        "other": 0.084
+       }
+      }
+     }
+    ]
+   },
+   "beam_power_noworkflow": {
+    "acc": 0.9336163643380934,
+    "bal_acc": 0.648816912939406,
+    "deny_precision": 0.8829536527886881,
+    "deny_recall": 0.3015830426616582,
+    "admission_acc": 0.9089717130023066,
+    "n_holdings": 3,
+    "cited": 0.13860478579698957,
+    "audit": {
+     "race": {
+      "groups": {
+       "White": {
+        "n": 27138,
+        "approval": 0.9694,
+        "false_denial": 0.0044,
+        "false_approval": 0.6892
+       },
+       "Asian": {
+        "n": 6422,
+        "approval": 0.9779,
+        "false_denial": 0.0014,
+        "false_approval": 0.732
+       },
+       "Race Not Available": {
+        "n": 5804,
+        "approval": 0.9633,
+        "false_denial": 0.0056,
+        "false_approval": 0.7079
+       },
+       "Black or African American": {
+        "n": 1036,
+        "approval": 0.945,
+        "false_denial": 0.0012,
+        "false_approval": 0.6818
+       },
+       "Joint": {
+        "n": 924,
+        "approval": 0.9719,
+        "false_denial": 0.0035,
+        "false_approval": 0.6974
+       }
+      },
+      "approval_ratio": 0.966
+     },
+     "sex": {
+      "groups": {
+       "Joint": {
+        "n": 17903,
+        "approval": 0.9723,
+        "false_denial": 0.0047,
+        "false_approval": 0.7043
+       },
+       "Male": {
+        "n": 13080,
+        "approval": 0.9679,
+        "false_denial": 0.003,
+        "false_approval": 0.6949
+       },
+       "Female": {
+        "n": 7333,
+        "approval": 0.9671,
+        "false_denial": 0.0032,
+        "false_approval": 0.6844
+       },
+       "Sex Not Available": {
+        "n": 3140,
+        "approval": 0.9631,
+        "false_denial": 0.0057,
+        "false_approval": 0.7151
+       }
+      },
+      "approval_ratio": 0.991
+     }
+    },
+    "holdings": [
+     {
+      "id": "H0",
+      "kind": "loosen",
+      "sql": "term_m <= 360 AND disc <= 49  => APPROVE",
+      "support": 11214,
+      "replay_prec": 0.882,
+      "replay_n": 5340,
+      "because": null
+     },
+     {
+      "id": "H1",
+      "kind": "tighten",
+      "sql": "jumbo AND ltv > 90 AND disc > 25  => REJECT",
+      "support": 104,
+      "replay_prec": 0.965,
+      "replay_n": 86,
+      "because": {
+       "n_denials": 83,
+       "n_with_reason": 83,
+       "top": {
+        "collateral": 0.663,
+        "debt-to-income": 0.145,
+        "other": 0.084
+       }
+      }
+     },
+     {
+      "id": "H2",
+      "kind": "tighten",
+      "sql": "income_k > 208 AND ltv > 95 AND disc > 15  => REJECT",
+      "support": 48,
+      "replay_prec": 0.917,
+      "replay_n": 60,
+      "because": {
+       "n_denials": 55,
+       "n_with_reason": 55,
+       "top": {
+        "collateral": 0.745,
+        "other": 0.127,
+        "debt-to-income": 0.055
+       }
+      }
+     }
+    ]
+   },
+   "ccl_selected_noworkflow": {
+    "acc": 0.9336163643380934,
+    "bal_acc": 0.648816912939406,
+    "deny_precision": 0.8829536527886881,
+    "deny_recall": 0.3015830426616582,
+    "admission_acc": 0.9089717130023066,
+    "n_holdings": 3,
+    "cited": 0.13860478579698957,
+    "audit": {
+     "race": {
+      "groups": {
+       "White": {
+        "n": 27138,
+        "approval": 0.9694,
+        "false_denial": 0.0044,
+        "false_approval": 0.6892
+       },
+       "Asian": {
+        "n": 6422,
+        "approval": 0.9779,
+        "false_denial": 0.0014,
+        "false_approval": 0.732
+       },
+       "Race Not Available": {
+        "n": 5804,
+        "approval": 0.9633,
+        "false_denial": 0.0056,
+        "false_approval": 0.7079
+       },
+       "Black or African American": {
+        "n": 1036,
+        "approval": 0.945,
+        "false_denial": 0.0012,
+        "false_approval": 0.6818
+       },
+       "Joint": {
+        "n": 924,
+        "approval": 0.9719,
+        "false_denial": 0.0035,
+        "false_approval": 0.6974
+       }
+      },
+      "approval_ratio": 0.966
+     },
+     "sex": {
+      "groups": {
+       "Joint": {
+        "n": 17903,
+        "approval": 0.9723,
+        "false_denial": 0.0047,
+        "false_approval": 0.7043
+       },
+       "Male": {
+        "n": 13080,
+        "approval": 0.9679,
+        "false_denial": 0.003,
+        "false_approval": 0.6949
+       },
+       "Female": {
+        "n": 7333,
+        "approval": 0.9671,
+        "false_denial": 0.0032,
+        "false_approval": 0.6844
+       },
+       "Sex Not Available": {
+        "n": 3140,
+        "approval": 0.9631,
+        "false_denial": 0.0057,
+        "false_approval": 0.7151
+       }
+      },
+      "approval_ratio": 0.991
+     }
+    },
+    "holdings": [
+     {
+      "id": "H0",
+      "kind": "loosen",
+      "sql": "term_m <= 360 AND disc <= 49  => APPROVE",
+      "support": 11214,
+      "replay_prec": 0.882,
+      "replay_n": 5340,
+      "because": null
+     },
+     {
+      "id": "H1",
+      "kind": "tighten",
+      "sql": "jumbo AND ltv > 90 AND disc > 25  => REJECT",
+      "support": 104,
+      "replay_prec": 0.965,
+      "replay_n": 86,
+      "because": {
+       "n_denials": 83,
+       "n_with_reason": 83,
+       "top": {
+        "collateral": 0.663,
+        "debt-to-income": 0.145,
+        "other": 0.084
+       }
+      }
+     },
+     {
+      "id": "H2",
+      "kind": "tighten",
+      "sql": "income_k > 208 AND ltv > 95 AND disc > 15  => REJECT",
+      "support": 48,
+      "replay_prec": 0.917,
+      "replay_n": 60,
+      "because": {
+       "n_denials": 55,
+       "n_with_reason": 55,
+       "top": {
+        "collateral": 0.745,
+        "other": 0.127,
+        "debt-to-income": 0.055
+       }
+      }
+     }
+    ],
+    "variant": "beam_power_noworkflow"
+   },
+   "gbm_tuned_noworkflow": {
+    "acc": 0.9376447317637978,
+    "bal_acc": 0.6845204040567707,
+    "deny_precision": 0.8439759036144578,
+    "deny_recall": 0.3759055540649316,
+    "config": {
+     "max_depth": null,
+     "learning_rate": 0.05,
+     "max_iter": 300
+    },
+    "audit": {
+     "race": {
+      "groups": {
+       "White": {
+        "n": 27138,
+        "approval": 0.9611,
+        "false_denial": 0.007,
+        "false_approval": 0.6212
+       },
+       "Asian": {
+        "n": 6422,
+        "approval": 0.9715,
+        "false_denial": 0.0034,
+        "false_approval": 0.674
+       },
+       "Race Not Available": {
+        "n": 5804,
+        "approval": 0.9492,
+        "false_denial": 0.0085,
+        "false_approval": 0.6016
+       },
+       "Black or African American": {
+        "n": 1036,
+        "approval": 0.9199,
+        "false_denial": 0.0151,
+        "false_approval": 0.6023
+       },
+       "Joint": {
+        "n": 924,
+        "approval": 0.9589,
+        "false_denial": 0.0094,
+        "false_approval": 0.6053
+       }
+      },
+      "approval_ratio": 0.947
+     },
+     "sex": {
+      "groups": {
+       "Joint": {
+        "n": 17903,
+        "approval": 0.9641,
+        "false_denial": 0.0072,
+        "false_approval": 0.6302
+       },
+       "Male": {
+        "n": 13080,
+        "approval": 0.9595,
+        "false_denial": 0.006,
+        "false_approval": 0.6363
+       },
+       "Female": {
+        "n": 7333,
+        "approval": 0.9551,
+        "false_denial": 0.0069,
+        "false_approval": 0.594
+       },
+       "Sex Not Available": {
+        "n": 3140,
+        "approval": 0.9494,
+        "false_denial": 0.0086,
+        "false_approval": 0.6154
+       }
+      },
+      "approval_ratio": 0.985
+     }
+    }
+   },
+   "ci_ccl_selected_minus_gbm_tuned_noworkflow": [
+    -0.004028367425704361,
+    -0.005665267467808981,
+    -0.00201494006922582,
+    {
+     "n_states": 51,
+     "largest_state_share": 0.19533963720571207
+    }
+   ],
+   "learned_threshold": {
+    "acc": 0.931445387881127,
+    "bal_acc": 0.6360174362255818,
+    "deny_precision": 0.8778821520068317,
+    "deny_recall": 0.275825060370271,
+    "threshold": 49.0,
+    "audit": {
+     "race": {
+      "groups": {
+       "White": {
+        "n": 27138,
+        "approval": 0.9717,
+        "false_denial": 0.0042,
+        "false_approval": 0.7154
+       },
+       "Asian": {
+        "n": 6422,
+        "approval": 0.9799,
+        "false_denial": 0.0014,
+        "false_approval": 0.758
+       },
+       "Race Not Available": {
+        "n": 5804,
+        "approval": 0.9661,
+        "false_denial": 0.0052,
+        "false_approval": 0.7302
+       },
+       "Black or African American": {
+        "n": 1036,
+        "approval": 0.9479,
+        "false_denial": 0.0,
+        "false_approval": 0.6932
+       },
+       "Joint": {
+        "n": 924,
+        "approval": 0.9784,
+        "false_denial": 0.0035,
+        "false_approval": 0.7763
+       }
+      },
+      "approval_ratio": 0.967
+     },
+     "sex": {
+      "groups": {
+       "Joint": {
+        "n": 17903,
+        "approval": 0.975,
+        "false_denial": 0.0046,
+        "false_approval": 0.7382
+       },
+       "Male": {
+        "n": 13080,
+        "approval": 0.9702,
+        "false_denial": 0.0028,
+        "false_approval": 0.7171
+       },
+       "Female": {
+        "n": 7333,
+        "approval": 0.9688,
+        "false_denial": 0.0029,
+        "false_approval": 0.6987
+       },
+       "Sex Not Available": {
+        "n": 3140,
+        "approval": 0.9666,
+        "false_denial": 0.0054,
+        "false_approval": 0.7436
+       }
+      },
+      "approval_ratio": 0.991
+     }
+    }
+   },
+   "heuristic_43": {
+    "acc": 0.8207255885758394,
+    "bal_acc": 0.6391469808947678,
+    "deny_precision": 0.22833260008798945,
+    "deny_recall": 0.41776227528843574,
+    "audit": {
+     "race": {
+      "groups": {
+       "White": {
+        "n": 27138,
+        "approval": 0.8306,
+        "false_denial": 0.1449,
+        "false_approval": 0.5696
+       },
+       "Asian": {
+        "n": 6422,
+        "approval": 0.8543,
+        "false_denial": 0.1268,
+        "false_approval": 0.63
+       },
+       "Race Not Available": {
+        "n": 5804,
+        "approval": 0.8384,
+        "false_denial": 0.1314,
+        "false_approval": 0.5905
+       },
+       "Black or African American": {
+        "n": 1036,
+        "approval": 0.7992,
+        "false_denial": 0.1512,
+        "false_approval": 0.5568
+       },
+       "Joint": {
+        "n": 924,
+        "approval": 0.8723,
+        "false_denial": 0.1061,
+        "false_approval": 0.6316
+       }
+      },
+      "approval_ratio": 0.916
+     },
+     "sex": {
+      "groups": {
+       "Joint": {
+        "n": 17903,
+        "approval": 0.8591,
+        "false_denial": 0.1192,
+        "false_approval": 0.6062
+       },
+       "Male": {
+        "n": 13080,
+        "approval": 0.8317,
+        "false_denial": 0.1405,
+        "false_approval": 0.5713
+       },
+       "Female": {
+        "n": 7333,
+        "approval": 0.7824,
+        "false_denial": 0.1924,
+        "false_approval": 0.5423
+       },
+       "Sex Not Available": {
+        "n": 3140,
+        "approval": 0.8414,
+        "false_denial": 0.1287,
+        "false_approval": 0.604
+       }
+      },
+      "approval_ratio": 0.911
+     }
+    }
    },
    "always_approve": {
-    "acc": 0.9101
-   }
+    "acc": 0.9100974527209572,
+    "bal_acc": 0.5,
+    "deny_precision": NaN,
+    "deny_recall": 0.0
+   },
+   "ci_ccl_selected_minus_learned_threshold": [
+    0.0017850250868390583,
+    0.0007919360379690599,
+    0.0025991619961645883,
+    {
+     "n_states": 51,
+     "largest_state_share": 0.19533963720571207
+    }
+   ]
   },
   "2022": {
    "beam": {
-    "acc": 0.9216,
+    "acc": 0.9215909090909091,
+    "bal_acc": 0.6789716509333474,
+    "deny_precision": 0.6395526182003051,
+    "deny_recall": 0.3801752795406467,
+    "admission_acc": 0.9278270937861829,
     "n_holdings": 5,
-    "cited": 0.1536,
+    "cited": 0.15357954545454544,
+    "audit": {
+     "race": {
+      "groups": {
+       "White": {
+        "n": 22990,
+        "approval": 0.9477,
+        "false_denial": 0.0203,
+        "false_approval": 0.6144
+       },
+       "Asian": {
+        "n": 5309,
+        "approval": 0.9395,
+        "false_denial": 0.031,
+        "false_approval": 0.6385
+       },
+       "Race Not Available": {
+        "n": 4948,
+        "approval": 0.9349,
+        "false_denial": 0.0266,
+        "false_approval": 0.6293
+       },
+       "Black or African American": {
+        "n": 1038,
+        "approval": 0.9229,
+        "false_denial": 0.0082,
+        "false_approval": 0.6117
+       },
+       "Joint": {
+        "n": 794,
+        "approval": 0.9597,
+        "false_denial": 0.0136,
+        "false_approval": 0.6333
+       }
+      },
+      "approval_ratio": 0.962
+     },
+     "sex": {
+      "groups": {
+       "Joint": {
+        "n": 15824,
+        "approval": 0.947,
+        "false_denial": 0.0243,
+        "false_approval": 0.5948
+       },
+       "Male": {
+        "n": 10928,
+        "approval": 0.9413,
+        "false_denial": 0.0204,
+        "false_approval": 0.6398
+       },
+       "Female": {
+        "n": 6471,
+        "approval": 0.9471,
+        "false_denial": 0.017,
+        "false_approval": 0.6301
+       },
+       "Sex Not Available": {
+        "n": 1977,
+        "approval": 0.9267,
+        "false_denial": 0.0321,
+        "false_approval": 0.613
+       }
+      },
+      "approval_ratio": 0.978
+     }
+    },
     "holdings": [
      {
       "id": "H0",
@@ -378,27 +1273,8 @@
       "sql": "NOT jumbo AND aus != 'none' AND disc <= 49  => APPROVE",
       "support": 9424,
       "replay_prec": 0.932,
-      "because": null,
-      "audit": {
-       "race": {
-        "rates": {
-         "White": 0.7011,
-         "Asian": 0.5897,
-         "Race Not Available": 0.6535,
-         "Black or African American": 0.7163
-        },
-        "ratio": 0.823
-       },
-       "sex": {
-        "rates": {
-         "Joint": 0.635,
-         "Male": 0.658,
-         "Female": 0.7801,
-         "Sex Not Available": 0.6566
-        },
-        "ratio": 0.814
-       }
-      }
+      "replay_n": 4623,
+      "because": null
      },
      {
       "id": "H1",
@@ -406,27 +1282,8 @@
       "sql": "loan_k > 635 AND ltv <= 80 AND disc <= 44  => APPROVE",
       "support": 463,
       "replay_prec": 0.945,
-      "because": null,
-      "audit": {
-       "race": {
-        "rates": {
-         "White": 0.047,
-         "Asian": 0.1389,
-         "Race Not Available": 0.0416,
-         "Black or African American": 0.0048
-        },
-        "ratio": 0.035
-       },
-       "sex": {
-        "rates": {
-         "Joint": 0.0721,
-         "Male": 0.0677,
-         "Female": 0.0301,
-         "Sex Not Available": 0.0402
-        },
-        "ratio": 0.417
-       }
-      }
+      "replay_n": 399,
+      "because": null
      },
      {
       "id": "H2",
@@ -434,29 +1291,14 @@
       "sql": "jumbo AND ltv > 90 AND disc > 25  => REJECT",
       "support": 124,
       "replay_prec": 0.958,
+      "replay_n": 95,
       "because": {
-       "collateral": 0.714,
-       "debt-to-income": 0.176,
-       "credit history": 0.055
-      },
-      "audit": {
-       "race": {
-        "rates": {
-         "White": 0.002,
-         "Asian": 0.002,
-         "Race Not Available": 0.0006,
-         "Black or African American": 0.0024
-        },
-        "ratio": 0.25
-       },
-       "sex": {
-        "rates": {
-         "Joint": 0.002,
-         "Male": 0.0019,
-         "Female": 0.0017,
-         "Sex Not Available": 0.0008
-        },
-        "ratio": 0.4
+       "n_denials": 91,
+       "n_with_reason": 91,
+       "top": {
+        "collateral": 0.714,
+        "debt-to-income": 0.176,
+        "credit history": 0.055
        }
       }
      },
@@ -466,27 +1308,8 @@
       "sql": "loan_k > 375 AND ltv <= 65 AND score_model = '3' AND disc <= 49  => APPROVE",
       "support": 80,
       "replay_prec": 0.918,
-      "because": null,
-      "audit": {
-       "race": {
-        "rates": {
-         "White": 0.0159,
-         "Asian": 0.0331,
-         "Race Not Available": 0.0128,
-         "Black or African American": 0.0
-        },
-        "ratio": 0.0
-       },
-       "sex": {
-        "rates": {
-         "Joint": 0.0218,
-         "Male": 0.0195,
-         "Female": 0.01,
-         "Sex Not Available": 0.0161
-        },
-        "ratio": 0.459
-       }
-      }
+      "replay_n": 122,
+      "because": null
      },
      {
       "id": "H5",
@@ -494,62 +1317,94 @@
       "sql": "loan_k > 375 AND ltv <= 76 AND score_model = '1' AND disc <= 45  => APPROVE",
       "support": 60,
       "replay_prec": 0.923,
-      "because": null,
-      "audit": {
-       "race": {
-        "rates": {
-         "White": 0.0196,
-         "Asian": 0.0374,
-         "Race Not Available": 0.0107,
-         "Black or African American": 0.0096
-        },
-        "ratio": 0.257
-       },
-       "sex": {
-        "rates": {
-         "Joint": 0.025,
-         "Male": 0.0241,
-         "Female": 0.0144,
-         "Sex Not Available": 0.006
-        },
-        "ratio": 0.24
-       }
-      }
+      "replay_n": 142,
+      "because": null
      }
     ]
    },
    "beam_power": {
-    "acc": 0.9308,
+    "acc": 0.9307670454545455,
+    "bal_acc": 0.6565445721216512,
+    "deny_precision": 0.8521809369951535,
+    "deny_recall": 0.31882744031429433,
+    "admission_acc": 0.9351601698186028,
     "n_holdings": 3,
-    "cited": 0.1747,
+    "cited": 0.17474431818181818,
+    "audit": {
+     "race": {
+      "groups": {
+       "White": {
+        "n": 22990,
+        "approval": 0.9659,
+        "false_denial": 0.0062,
+        "false_approval": 0.6749
+       },
+       "Asian": {
+        "n": 5309,
+        "approval": 0.9727,
+        "false_denial": 0.0029,
+        "false_approval": 0.723
+       },
+       "Race Not Available": {
+        "n": 4948,
+        "approval": 0.957,
+        "false_denial": 0.0082,
+        "false_approval": 0.6799
+       },
+       "Black or African American": {
+        "n": 1038,
+        "approval": 0.9374,
+        "false_denial": 0.0012,
+        "false_approval": 0.6596
+       },
+       "Joint": {
+        "n": 794,
+        "approval": 0.9748,
+        "false_denial": 0.0027,
+        "false_approval": 0.7
+       }
+      },
+      "approval_ratio": 0.962
+     },
+     "sex": {
+      "groups": {
+       "Joint": {
+        "n": 15824,
+        "approval": 0.9697,
+        "false_denial": 0.0061,
+        "false_approval": 0.6728
+       },
+       "Male": {
+        "n": 10928,
+        "approval": 0.9625,
+        "false_denial": 0.0047,
+        "false_approval": 0.7041
+       },
+       "Female": {
+        "n": 6471,
+        "approval": 0.9614,
+        "false_denial": 0.0048,
+        "false_approval": 0.6621
+       },
+       "Sex Not Available": {
+        "n": 1977,
+        "approval": 0.9499,
+        "false_denial": 0.0114,
+        "false_approval": 0.6565
+       }
+      },
+      "approval_ratio": 0.98
+     }
+    },
     "holdings": [
      {
       "id": "H0",
       "kind": "loosen",
       "sql": "aus != 'TOTAL' AND disc <= 49  => APPROVE",
       "support": 11241,
-      "replay_prec": 0.907,
-      "because": null,
-      "audit": {
-       "race": {
-        "rates": {
-         "White": 0.8329,
-         "Asian": 0.8611,
-         "Race Not Available": 0.7889,
-         "Black or African American": 0.7404
-        },
-        "ratio": 0.86
-       },
-       "sex": {
-        "rates": {
-         "Joint": 0.8228,
-         "Male": 0.822,
-         "Female": 0.8559,
-         "Sex Not Available": 0.7892
-        },
-        "ratio": 0.922
-       }
-      }
+      "replay_prec": 0.912,
+      "replay_n": 5608,
+      "because": null
      },
      {
       "id": "H1",
@@ -557,29 +1412,14 @@
       "sql": "jumbo AND ltv > 90 AND disc > 15  => REJECT",
       "support": 184,
       "replay_prec": 0.963,
+      "replay_n": 109,
       "because": {
-       "collateral": 0.752,
-       "debt-to-income": 0.152,
-       "credit history": 0.048
-      },
-      "audit": {
-       "race": {
-        "rates": {
-         "White": 0.0022,
-         "Asian": 0.0026,
-         "Race Not Available": 0.0014,
-         "Black or African American": 0.0024
-        },
-        "ratio": 0.538
-       },
-       "sex": {
-        "rates": {
-         "Joint": 0.0025,
-         "Male": 0.0022,
-         "Female": 0.0019,
-         "Sex Not Available": 0.0015
-        },
-        "ratio": 0.6
+       "n_denials": 105,
+       "n_with_reason": 105,
+       "top": {
+        "collateral": 0.752,
+        "debt-to-income": 0.152,
+        "credit history": 0.048
        }
       }
      },
@@ -589,49 +1429,867 @@
       "sql": "score_model = '8' AND disc > 15  => REJECT",
       "support": 59,
       "replay_prec": 0.952,
+      "replay_n": 146,
       "because": {
-       "credit history": 0.36,
-       "debt-to-income": 0.266,
-       "other": 0.209
-      },
-      "audit": {
-       "race": {
-        "rates": {
-         "White": 0.002,
-         "Asian": 0.0002,
-         "Race Not Available": 0.0027,
-         "Black or African American": 0.0012
-        },
-        "ratio": 0.074
-       },
-       "sex": {
-        "rates": {
-         "Joint": 0.0012,
-         "Male": 0.0017,
-         "Female": 0.0028,
-         "Sex Not Available": 0.0026
-        },
-        "ratio": 0.429
+       "n_denials": 139,
+       "n_with_reason": 139,
+       "top": {
+        "credit history": 0.36,
+        "debt-to-income": 0.266,
+        "other": 0.209
        }
       }
      }
     ]
    },
-   "statute": {
-    "acc": 0.7923
+   "ccl_selected": {
+    "acc": 0.9307670454545455,
+    "bal_acc": 0.6565445721216512,
+    "deny_precision": 0.8521809369951535,
+    "deny_recall": 0.31882744031429433,
+    "admission_acc": 0.9351601698186028,
+    "n_holdings": 3,
+    "cited": 0.17474431818181818,
+    "audit": {
+     "race": {
+      "groups": {
+       "White": {
+        "n": 22990,
+        "approval": 0.9659,
+        "false_denial": 0.0062,
+        "false_approval": 0.6749
+       },
+       "Asian": {
+        "n": 5309,
+        "approval": 0.9727,
+        "false_denial": 0.0029,
+        "false_approval": 0.723
+       },
+       "Race Not Available": {
+        "n": 4948,
+        "approval": 0.957,
+        "false_denial": 0.0082,
+        "false_approval": 0.6799
+       },
+       "Black or African American": {
+        "n": 1038,
+        "approval": 0.9374,
+        "false_denial": 0.0012,
+        "false_approval": 0.6596
+       },
+       "Joint": {
+        "n": 794,
+        "approval": 0.9748,
+        "false_denial": 0.0027,
+        "false_approval": 0.7
+       }
+      },
+      "approval_ratio": 0.962
+     },
+     "sex": {
+      "groups": {
+       "Joint": {
+        "n": 15824,
+        "approval": 0.9697,
+        "false_denial": 0.0061,
+        "false_approval": 0.6728
+       },
+       "Male": {
+        "n": 10928,
+        "approval": 0.9625,
+        "false_denial": 0.0047,
+        "false_approval": 0.7041
+       },
+       "Female": {
+        "n": 6471,
+        "approval": 0.9614,
+        "false_denial": 0.0048,
+        "false_approval": 0.6621
+       },
+       "Sex Not Available": {
+        "n": 1977,
+        "approval": 0.9499,
+        "false_denial": 0.0114,
+        "false_approval": 0.6565
+       }
+      },
+      "approval_ratio": 0.98
+     }
+    },
+    "holdings": [
+     {
+      "id": "H0",
+      "kind": "loosen",
+      "sql": "aus != 'TOTAL' AND disc <= 49  => APPROVE",
+      "support": 11241,
+      "replay_prec": 0.912,
+      "replay_n": 5608,
+      "because": null
+     },
+     {
+      "id": "H1",
+      "kind": "tighten",
+      "sql": "jumbo AND ltv > 90 AND disc > 15  => REJECT",
+      "support": 184,
+      "replay_prec": 0.963,
+      "replay_n": 109,
+      "because": {
+       "n_denials": 105,
+       "n_with_reason": 105,
+       "top": {
+        "collateral": 0.752,
+        "debt-to-income": 0.152,
+        "credit history": 0.048
+       }
+      }
+     },
+     {
+      "id": "H2",
+      "kind": "tighten",
+      "sql": "score_model = '8' AND disc > 15  => REJECT",
+      "support": 59,
+      "replay_prec": 0.952,
+      "replay_n": 146,
+      "because": {
+       "n_denials": 139,
+       "n_with_reason": 139,
+       "top": {
+        "credit history": 0.36,
+        "debt-to-income": 0.266,
+        "other": 0.209
+       }
+      }
+     }
+    ],
+    "variant": "beam_power"
    },
-   "gbm": {
-    "acc": 0.9311
+   "gbm_tuned": {
+    "acc": 0.9311931818181818,
+    "bal_acc": 0.6798019383018723,
+    "deny_precision": 0.7837492002559181,
+    "deny_recall": 0.3702024780900574,
+    "config": {
+     "max_depth": null,
+     "learning_rate": 0.05,
+     "max_iter": 300
+    },
+    "audit": {
+     "race": {
+      "groups": {
+       "White": {
+        "n": 22990,
+        "approval": 0.9575,
+        "false_denial": 0.0105,
+        "false_approval": 0.6243
+       },
+       "Asian": {
+        "n": 5309,
+        "approval": 0.9644,
+        "false_denial": 0.007,
+        "false_approval": 0.6723
+       },
+       "Race Not Available": {
+        "n": 4948,
+        "approval": 0.9475,
+        "false_denial": 0.0134,
+        "false_approval": 0.6365
+       },
+       "Black or African American": {
+        "n": 1038,
+        "approval": 0.9114,
+        "false_denial": 0.0165,
+        "false_approval": 0.5851
+       },
+       "Joint": {
+        "n": 794,
+        "approval": 0.961,
+        "false_denial": 0.0109,
+        "false_approval": 0.6167
+       }
+      },
+      "approval_ratio": 0.945
+     },
+     "sex": {
+      "groups": {
+       "Joint": {
+        "n": 15824,
+        "approval": 0.9612,
+        "false_denial": 0.0107,
+        "false_approval": 0.6158
+       },
+       "Male": {
+        "n": 10928,
+        "approval": 0.952,
+        "false_denial": 0.01,
+        "false_approval": 0.652
+       },
+       "Female": {
+        "n": 6471,
+        "approval": 0.9516,
+        "false_denial": 0.0107,
+        "false_approval": 0.618
+       },
+       "Sex Not Available": {
+        "n": 1977,
+        "approval": 0.9439,
+        "false_denial": 0.0132,
+        "false_approval": 0.6174
+       }
+      },
+      "approval_ratio": 0.982
+     }
+    }
+   },
+   "ci_ccl_selected_minus_gbm_tuned": [
+    -0.0004261363636363636,
+    -0.0021238292207663915,
+    0.0015174532499114821,
+    {
+     "n_states": 51,
+     "largest_state_share": 0.19170454545454546
+    }
+   ],
+   "beam_noworkflow": {
+    "acc": 0.91625,
+    "bal_acc": 0.676294960170456,
+    "deny_precision": 0.5836035201482168,
+    "deny_recall": 0.38077969174977333,
+    "admission_acc": 0.9231956773446546,
+    "n_holdings": 3,
+    "cited": 0.148125,
+    "audit": {
+     "race": {
+      "groups": {
+       "White": {
+        "n": 22990,
+        "approval": 0.9423,
+        "false_denial": 0.0264,
+        "false_approval": 0.6169
+       },
+       "Asian": {
+        "n": 5309,
+        "approval": 0.9392,
+        "false_denial": 0.0325,
+        "false_approval": 0.649
+       },
+       "Race Not Available": {
+        "n": 4948,
+        "approval": 0.9285,
+        "false_denial": 0.0325,
+        "false_approval": 0.6184
+       },
+       "Black or African American": {
+        "n": 1038,
+        "approval": 0.8979,
+        "false_denial": 0.0341,
+        "false_approval": 0.5904
+       },
+       "Joint": {
+        "n": 794,
+        "approval": 0.9559,
+        "false_denial": 0.0163,
+        "false_approval": 0.6167
+       }
+      },
+      "approval_ratio": 0.939
+     },
+     "sex": {
+      "groups": {
+       "Joint": {
+        "n": 15824,
+        "approval": 0.9455,
+        "false_denial": 0.0267,
+        "false_approval": 0.604
+       },
+       "Male": {
+        "n": 10928,
+        "approval": 0.9351,
+        "false_denial": 0.028,
+        "false_approval": 0.6447
+       },
+       "Female": {
+        "n": 6471,
+        "approval": 0.9332,
+        "false_denial": 0.0294,
+        "false_approval": 0.6027
+       },
+       "Sex Not Available": {
+        "n": 1977,
+        "approval": 0.9211,
+        "false_denial": 0.0378,
+        "false_approval": 0.6087
+       }
+      },
+      "approval_ratio": 0.974
+     }
+    },
+    "holdings": [
+     {
+      "id": "H0",
+      "kind": "loosen",
+      "sql": "NOT jumbo AND ltv <= 95 AND disc <= 49  => APPROVE",
+      "support": 9225,
+      "replay_prec": 0.937,
+      "replay_n": 4445,
+      "because": null
+     },
+     {
+      "id": "H1",
+      "kind": "loosen",
+      "sql": "ltv <= 80 AND ltv > 65 AND disc <= 44  => APPROVE",
+      "support": 470,
+      "replay_prec": 0.95,
+      "replay_n": 713,
+      "because": null
+     },
+     {
+      "id": "H2",
+      "kind": "tighten",
+      "sql": "jumbo AND ltv > 90 AND disc > 25  => REJECT",
+      "support": 124,
+      "replay_prec": 0.958,
+      "replay_n": 95,
+      "because": {
+       "n_denials": 91,
+       "n_with_reason": 91,
+       "top": {
+        "collateral": 0.714,
+        "debt-to-income": 0.176,
+        "credit history": 0.055
+       }
+      }
+     }
+    ]
+   },
+   "beam_power_noworkflow": {
+    "acc": 0.9306818181818182,
+    "bal_acc": 0.6560912629648062,
+    "deny_precision": 0.8518218623481781,
+    "deny_recall": 0.3179208220006044,
+    "admission_acc": 0.9335439984561945,
+    "n_holdings": 2,
+    "cited": 0.17482954545454546,
+    "audit": {
+     "race": {
+      "groups": {
+       "White": {
+        "n": 22990,
+        "approval": 0.966,
+        "false_denial": 0.0062,
+        "false_approval": 0.6764
+       },
+       "Asian": {
+        "n": 5309,
+        "approval": 0.9727,
+        "false_denial": 0.0029,
+        "false_approval": 0.723
+       },
+       "Race Not Available": {
+        "n": 4948,
+        "approval": 0.957,
+        "false_denial": 0.0082,
+        "false_approval": 0.6799
+       },
+       "Black or African American": {
+        "n": 1038,
+        "approval": 0.9374,
+        "false_denial": 0.0012,
+        "false_approval": 0.6596
+       },
+       "Joint": {
+        "n": 794,
+        "approval": 0.9748,
+        "false_denial": 0.0027,
+        "false_approval": 0.7
+       }
+      },
+      "approval_ratio": 0.962
+     },
+     "sex": {
+      "groups": {
+       "Joint": {
+        "n": 15824,
+        "approval": 0.9697,
+        "false_denial": 0.0061,
+        "false_approval": 0.6728
+       },
+       "Male": {
+        "n": 10928,
+        "approval": 0.9627,
+        "false_denial": 0.0047,
+        "false_approval": 0.7057
+       },
+       "Female": {
+        "n": 6471,
+        "approval": 0.9615,
+        "false_denial": 0.0048,
+        "false_approval": 0.6636
+       },
+       "Sex Not Available": {
+        "n": 1977,
+        "approval": 0.9499,
+        "false_denial": 0.0114,
+        "false_approval": 0.6565
+       }
+      },
+      "approval_ratio": 0.98
+     }
+    },
+    "holdings": [
+     {
+      "id": "H0",
+      "kind": "loosen",
+      "sql": "term_m <= 360 AND disc <= 49  => APPROVE",
+      "support": 11269,
+      "replay_prec": 0.909,
+      "replay_n": 5631,
+      "because": null
+     },
+     {
+      "id": "H1",
+      "kind": "tighten",
+      "sql": "jumbo AND ltv > 90 AND disc > 15  => REJECT",
+      "support": 184,
+      "replay_prec": 0.963,
+      "replay_n": 109,
+      "because": {
+       "n_denials": 105,
+       "n_with_reason": 105,
+       "top": {
+        "collateral": 0.752,
+        "debt-to-income": 0.152,
+        "credit history": 0.048
+       }
+      }
+     }
+    ]
+   },
+   "ccl_selected_noworkflow": {
+    "acc": 0.9306818181818182,
+    "bal_acc": 0.6560912629648062,
+    "deny_precision": 0.8518218623481781,
+    "deny_recall": 0.3179208220006044,
+    "admission_acc": 0.9335439984561945,
+    "n_holdings": 2,
+    "cited": 0.17482954545454546,
+    "audit": {
+     "race": {
+      "groups": {
+       "White": {
+        "n": 22990,
+        "approval": 0.966,
+        "false_denial": 0.0062,
+        "false_approval": 0.6764
+       },
+       "Asian": {
+        "n": 5309,
+        "approval": 0.9727,
+        "false_denial": 0.0029,
+        "false_approval": 0.723
+       },
+       "Race Not Available": {
+        "n": 4948,
+        "approval": 0.957,
+        "false_denial": 0.0082,
+        "false_approval": 0.6799
+       },
+       "Black or African American": {
+        "n": 1038,
+        "approval": 0.9374,
+        "false_denial": 0.0012,
+        "false_approval": 0.6596
+       },
+       "Joint": {
+        "n": 794,
+        "approval": 0.9748,
+        "false_denial": 0.0027,
+        "false_approval": 0.7
+       }
+      },
+      "approval_ratio": 0.962
+     },
+     "sex": {
+      "groups": {
+       "Joint": {
+        "n": 15824,
+        "approval": 0.9697,
+        "false_denial": 0.0061,
+        "false_approval": 0.6728
+       },
+       "Male": {
+        "n": 10928,
+        "approval": 0.9627,
+        "false_denial": 0.0047,
+        "false_approval": 0.7057
+       },
+       "Female": {
+        "n": 6471,
+        "approval": 0.9615,
+        "false_denial": 0.0048,
+        "false_approval": 0.6636
+       },
+       "Sex Not Available": {
+        "n": 1977,
+        "approval": 0.9499,
+        "false_denial": 0.0114,
+        "false_approval": 0.6565
+       }
+      },
+      "approval_ratio": 0.98
+     }
+    },
+    "holdings": [
+     {
+      "id": "H0",
+      "kind": "loosen",
+      "sql": "term_m <= 360 AND disc <= 49  => APPROVE",
+      "support": 11269,
+      "replay_prec": 0.909,
+      "replay_n": 5631,
+      "because": null
+     },
+     {
+      "id": "H1",
+      "kind": "tighten",
+      "sql": "jumbo AND ltv > 90 AND disc > 15  => REJECT",
+      "support": 184,
+      "replay_prec": 0.963,
+      "replay_n": 109,
+      "because": {
+       "n_denials": 105,
+       "n_with_reason": 105,
+       "top": {
+        "collateral": 0.752,
+        "debt-to-income": 0.152,
+        "credit history": 0.048
+       }
+      }
+     }
+    ],
+    "variant": "beam_power_noworkflow"
+   },
+   "gbm_tuned_noworkflow": {
+    "acc": 0.9308238636363636,
+    "bal_acc": 0.6725560373612827,
+    "deny_precision": 0.796875,
+    "deny_recall": 0.35448776065276516,
+    "config": {
+     "max_depth": 6,
+     "learning_rate": 0.05,
+     "max_iter": 300
+    },
+    "audit": {
+     "race": {
+      "groups": {
+       "White": {
+        "n": 22990,
+        "approval": 0.9601,
+        "false_denial": 0.0099,
+        "false_approval": 0.6476
+       },
+       "Asian": {
+        "n": 5309,
+        "approval": 0.9657,
+        "false_denial": 0.0054,
+        "false_approval": 0.6702
+       },
+       "Race Not Available": {
+        "n": 4948,
+        "approval": 0.9509,
+        "false_denial": 0.0109,
+        "false_approval": 0.6474
+       },
+       "Black or African American": {
+        "n": 1038,
+        "approval": 0.9123,
+        "false_denial": 0.0165,
+        "false_approval": 0.5904
+       },
+       "Joint": {
+        "n": 794,
+        "approval": 0.966,
+        "false_denial": 0.0041,
+        "false_approval": 0.6
+       }
+      },
+      "approval_ratio": 0.944
+     },
+     "sex": {
+      "groups": {
+       "Joint": {
+        "n": 15824,
+        "approval": 0.9639,
+        "false_denial": 0.0092,
+        "false_approval": 0.6334
+       },
+       "Male": {
+        "n": 10928,
+        "approval": 0.9553,
+        "false_denial": 0.0081,
+        "false_approval": 0.6667
+       },
+       "Female": {
+        "n": 6471,
+        "approval": 0.9533,
+        "false_denial": 0.0107,
+        "false_approval": 0.6347
+       },
+       "Sex Not Available": {
+        "n": 1977,
+        "approval": 0.9444,
+        "false_denial": 0.0137,
+        "false_approval": 0.6261
+       }
+      },
+      "approval_ratio": 0.98
+     }
+    }
+   },
+   "ci_ccl_selected_minus_gbm_tuned_noworkflow": [
+    -0.00014204545454545454,
+    -0.0016966420439226127,
+    0.0017366124617633383,
+    {
+     "n_states": 51,
+     "largest_state_share": 0.19170454545454546
+    }
+   ],
+   "learned_threshold": {
+    "acc": 0.9301136363636363,
+    "bal_acc": 0.6518503800897282,
+    "deny_precision": 0.8546365914786967,
+    "deny_recall": 0.30915684496826834,
+    "threshold": 49.0,
+    "audit": {
+     "race": {
+      "groups": {
+       "White": {
+        "n": 22990,
+        "approval": 0.967,
+        "false_denial": 0.0059,
+        "false_approval": 0.6849
+       },
+       "Asian": {
+        "n": 5309,
+        "approval": 0.9736,
+        "false_denial": 0.0029,
+        "false_approval": 0.7336
+       },
+       "Race Not Available": {
+        "n": 4948,
+        "approval": 0.9586,
+        "false_denial": 0.0077,
+        "false_approval": 0.6908
+       },
+       "Black or African American": {
+        "n": 1038,
+        "approval": 0.9374,
+        "false_denial": 0.0012,
+        "false_approval": 0.6596
+       },
+       "Joint": {
+        "n": 794,
+        "approval": 0.9761,
+        "false_denial": 0.0027,
+        "false_approval": 0.7167
+       }
+      },
+      "approval_ratio": 0.96
+     },
+     "sex": {
+      "groups": {
+       "Joint": {
+        "n": 15824,
+        "approval": 0.971,
+        "false_denial": 0.0057,
+        "false_approval": 0.6854
+       },
+       "Male": {
+        "n": 10928,
+        "approval": 0.9638,
+        "false_denial": 0.0044,
+        "false_approval": 0.713
+       },
+       "Female": {
+        "n": 6471,
+        "approval": 0.962,
+        "false_denial": 0.0046,
+        "false_approval": 0.6667
+       },
+       "Sex Not Available": {
+        "n": 1977,
+        "approval": 0.9514,
+        "false_denial": 0.0114,
+        "false_approval": 0.6696
+       }
+      },
+      "approval_ratio": 0.98
+     }
+    }
+   },
+   "heuristic_43": {
+    "acc": 0.7923011363636364,
+    "bal_acc": 0.6616536661942487,
+    "deny_precision": 0.22648988518316018,
+    "deny_recall": 0.5007555152614083,
+    "audit": {
+     "race": {
+      "groups": {
+       "White": {
+        "n": 22990,
+        "approval": 0.7926,
+        "false_denial": 0.1787,
+        "false_approval": 0.4938
+       },
+       "Asian": {
+        "n": 5309,
+        "approval": 0.7971,
+        "false_denial": 0.1793,
+        "false_approval": 0.556
+       },
+       "Race Not Available": {
+        "n": 4948,
+        "approval": 0.793,
+        "false_denial": 0.1695,
+        "false_approval": 0.4955
+       },
+       "Black or African American": {
+        "n": 1038,
+        "approval": 0.7274,
+        "false_denial": 0.2094,
+        "false_approval": 0.4415
+       },
+       "Joint": {
+        "n": 794,
+        "approval": 0.83,
+        "false_denial": 0.1403,
+        "false_approval": 0.4667
+       }
+      },
+      "approval_ratio": 0.876
+     },
+     "sex": {
+      "groups": {
+       "Joint": {
+        "n": 15824,
+        "approval": 0.8141,
+        "false_denial": 0.1603,
+        "false_approval": 0.5
+       },
+       "Male": {
+        "n": 10928,
+        "approval": 0.7924,
+        "false_denial": 0.1743,
+        "false_approval": 0.5293
+       },
+       "Female": {
+        "n": 6471,
+        "approval": 0.7398,
+        "false_denial": 0.2276,
+        "false_approval": 0.4505
+       },
+       "Sex Not Available": {
+        "n": 1977,
+        "approval": 0.7865,
+        "false_denial": 0.1723,
+        "false_approval": 0.4739
+       }
+      },
+      "approval_ratio": 0.909
+     }
+    }
    },
    "always_approve": {
-    "acc": 0.906
-   }
+    "acc": 0.9059943181818182,
+    "bal_acc": 0.5,
+    "deny_precision": NaN,
+    "deny_recall": 0.0
+   },
+   "ci_ccl_selected_minus_learned_threshold": [
+    0.0006534090909090909,
+    0.0002876737787352537,
+    0.0009701208558968253,
+    {
+     "n_states": 51,
+     "largest_state_share": 0.19170454545454546
+    }
+   ]
   },
   "2023": {
    "beam": {
-    "acc": 0.9226,
+    "acc": 0.9226296802213583,
+    "bal_acc": 0.6806991712794757,
+    "deny_precision": 0.6556543837357052,
+    "deny_recall": 0.3823638384586884,
+    "admission_acc": 0.9251704545454545,
     "n_holdings": 1,
-    "cited": 0.2171,
+    "cited": 0.2170852159293895,
+    "audit": {
+     "race": {
+      "groups": {
+       "White": {
+        "n": 17619,
+        "approval": 0.9435,
+        "false_denial": 0.0229,
+        "false_approval": 0.605
+       },
+       "Race Not Available": {
+        "n": 5097,
+        "approval": 0.9435,
+        "false_denial": 0.0214,
+        "false_approval": 0.6565
+       },
+       "Asian": {
+        "n": 4331,
+        "approval": 0.9584,
+        "false_denial": 0.0068,
+        "false_approval": 0.5831
+       },
+       "Black or African American": {
+        "n": 775,
+        "approval": 0.9032,
+        "false_denial": 0.0561,
+        "false_approval": 0.6724
+       },
+       "Joint": {
+        "n": 625,
+        "approval": 0.9632,
+        "false_denial": 0.014,
+        "false_approval": 0.7115
+       }
+      },
+      "approval_ratio": 0.938
+     },
+     "sex": {
+      "groups": {
+       "Joint": {
+        "n": 13000,
+        "approval": 0.9575,
+        "false_denial": 0.0135,
+        "false_approval": 0.599
+       },
+       "Male": {
+        "n": 8436,
+        "approval": 0.9379,
+        "false_denial": 0.0258,
+        "false_approval": 0.644
+       },
+       "Female": {
+        "n": 5140,
+        "approval": 0.9251,
+        "false_denial": 0.0324,
+        "false_approval": 0.5864
+       },
+       "Sex Not Available": {
+        "n": 1975,
+        "approval": 0.9428,
+        "false_denial": 0.0212,
+        "false_approval": 0.6681
+       }
+      },
+      "approval_ratio": 0.966
+     }
+    },
     "holdings": [
      {
       "id": "H0",
@@ -639,34 +2297,85 @@
       "sql": "ltv <= 95 AND disc <= 49  => APPROVE",
       "support": 10370,
       "replay_prec": 0.901,
-      "because": null,
-      "audit": {
-       "race": {
-        "rates": {
-         "White": 0.8008,
-         "Asian": 0.8533,
-         "Race Not Available": 0.7637,
-         "Black or African American": 0.6714
-        },
-        "ratio": 0.787
-       },
-       "sex": {
-        "rates": {
-         "Joint": 0.8276,
-         "Male": 0.7801,
-         "Female": 0.7844,
-         "Sex Not Available": 0.7346
-        },
-        "ratio": 0.888
-       }
-      }
+      "replay_n": 5835,
+      "because": null
      }
     ]
    },
    "beam_power": {
-    "acc": 0.9333,
+    "acc": 0.9333123183075899,
+    "bal_acc": 0.6781365749585364,
+    "deny_precision": 0.8406169665809768,
+    "deny_recall": 0.3634679510929974,
+    "admission_acc": 0.9301988636363636,
     "n_holdings": 1,
-    "cited": 0.2313,
+    "cited": 0.2313404083920003,
+    "audit": {
+     "race": {
+      "groups": {
+       "White": {
+        "n": 17619,
+        "approval": 0.9594,
+        "false_denial": 0.0076,
+        "false_approval": 0.6264
+       },
+       "Race Not Available": {
+        "n": 5097,
+        "approval": 0.9549,
+        "false_denial": 0.0099,
+        "false_approval": 0.6673
+       },
+       "Asian": {
+        "n": 4331,
+        "approval": 0.9624,
+        "false_denial": 0.0035,
+        "false_approval": 0.594
+       },
+       "Black or African American": {
+        "n": 775,
+        "approval": 0.9561,
+        "false_denial": 0.003,
+        "false_approval": 0.7241
+       },
+       "Joint": {
+        "n": 625,
+        "approval": 0.9728,
+        "false_denial": 0.0052,
+        "false_approval": 0.7308
+       }
+      },
+      "approval_ratio": 0.982
+     },
+     "sex": {
+      "groups": {
+       "Joint": {
+        "n": 13000,
+        "approval": 0.9647,
+        "false_denial": 0.0068,
+        "false_approval": 0.6113
+       },
+       "Male": {
+        "n": 8436,
+        "approval": 0.9561,
+        "false_denial": 0.0084,
+        "false_approval": 0.6688
+       },
+       "Female": {
+        "n": 5140,
+        "approval": 0.9525,
+        "false_denial": 0.0048,
+        "false_approval": 0.6126
+       },
+       "Sex Not Available": {
+        "n": 1975,
+        "approval": 0.9524,
+        "false_denial": 0.0109,
+        "false_approval": 0.6725
+       }
+      },
+      "approval_ratio": 0.987
+     }
+    },
     "holdings": [
      {
       "id": "H0",
@@ -674,39 +2383,689 @@
       "sql": "aus != 'TOTAL' AND disc <= 49  => APPROVE",
       "support": 10935,
       "replay_prec": 0.897,
-      "because": null,
-      "audit": {
-       "race": {
-        "rates": {
-         "White": 0.8404,
-         "Asian": 0.87,
-         "Race Not Available": 0.7998,
-         "Black or African American": 0.7703
-        },
-        "ratio": 0.885
-       },
-       "sex": {
-        "rates": {
-         "Joint": 0.8439,
-         "Male": 0.8246,
-         "Female": 0.8533,
-         "Sex Not Available": 0.7725
-        },
-        "ratio": 0.905
-       }
-      }
+      "replay_n": 6116,
+      "because": null
      }
     ]
    },
-   "statute": {
-    "acc": 0.7383
+   "ccl_selected": {
+    "acc": 0.9333123183075899,
+    "bal_acc": 0.6781365749585364,
+    "deny_precision": 0.8406169665809768,
+    "deny_recall": 0.3634679510929974,
+    "admission_acc": 0.9301988636363636,
+    "n_holdings": 1,
+    "cited": 0.2313404083920003,
+    "audit": {
+     "race": {
+      "groups": {
+       "White": {
+        "n": 17619,
+        "approval": 0.9594,
+        "false_denial": 0.0076,
+        "false_approval": 0.6264
+       },
+       "Race Not Available": {
+        "n": 5097,
+        "approval": 0.9549,
+        "false_denial": 0.0099,
+        "false_approval": 0.6673
+       },
+       "Asian": {
+        "n": 4331,
+        "approval": 0.9624,
+        "false_denial": 0.0035,
+        "false_approval": 0.594
+       },
+       "Black or African American": {
+        "n": 775,
+        "approval": 0.9561,
+        "false_denial": 0.003,
+        "false_approval": 0.7241
+       },
+       "Joint": {
+        "n": 625,
+        "approval": 0.9728,
+        "false_denial": 0.0052,
+        "false_approval": 0.7308
+       }
+      },
+      "approval_ratio": 0.982
+     },
+     "sex": {
+      "groups": {
+       "Joint": {
+        "n": 13000,
+        "approval": 0.9647,
+        "false_denial": 0.0068,
+        "false_approval": 0.6113
+       },
+       "Male": {
+        "n": 8436,
+        "approval": 0.9561,
+        "false_denial": 0.0084,
+        "false_approval": 0.6688
+       },
+       "Female": {
+        "n": 5140,
+        "approval": 0.9525,
+        "false_denial": 0.0048,
+        "false_approval": 0.6126
+       },
+       "Sex Not Available": {
+        "n": 1975,
+        "approval": 0.9524,
+        "false_denial": 0.0109,
+        "false_approval": 0.6725
+       }
+      },
+      "approval_ratio": 0.987
+     }
+    },
+    "holdings": [
+     {
+      "id": "H0",
+      "kind": "loosen",
+      "sql": "aus != 'TOTAL' AND disc <= 49  => APPROVE",
+      "support": 10935,
+      "replay_prec": 0.897,
+      "replay_n": 6116,
+      "because": null
+     }
+    ],
+    "variant": "beam_power"
    },
-   "gbm": {
-    "acc": 0.9344
+   "gbm_tuned": {
+    "acc": 0.9343630695947602,
+    "bal_acc": 0.7087470419729556,
+    "deny_precision": 0.7751834556370913,
+    "deny_recall": 0.4305298258614302,
+    "config": {
+     "max_depth": null,
+     "learning_rate": 0.1,
+     "max_iter": 100
+    },
+    "audit": {
+     "race": {
+      "groups": {
+       "White": {
+        "n": 17619,
+        "approval": 0.9485,
+        "false_denial": 0.0127,
+        "false_approval": 0.5572
+       },
+       "Race Not Available": {
+        "n": 5097,
+        "approval": 0.9419,
+        "false_denial": 0.0176,
+        "false_approval": 0.6115
+       },
+       "Asian": {
+        "n": 4331,
+        "approval": 0.9554,
+        "false_denial": 0.0071,
+        "false_approval": 0.5504
+       },
+       "Black or African American": {
+        "n": 775,
+        "approval": 0.9148,
+        "false_denial": 0.0273,
+        "false_approval": 0.5862
+       },
+       "Joint": {
+        "n": 625,
+        "approval": 0.9648,
+        "false_denial": 0.0087,
+        "false_approval": 0.6731
+       }
+      },
+      "approval_ratio": 0.948
+     },
+     "sex": {
+      "groups": {
+       "Joint": {
+        "n": 13000,
+        "approval": 0.9555,
+        "false_denial": 0.0118,
+        "false_approval": 0.5495
+       },
+       "Male": {
+        "n": 8436,
+        "approval": 0.9416,
+        "false_denial": 0.0141,
+        "false_approval": 0.5825
+       },
+       "Female": {
+        "n": 5140,
+        "approval": 0.9389,
+        "false_denial": 0.0127,
+        "false_approval": 0.5532
+       },
+       "Sex Not Available": {
+        "n": 1975,
+        "approval": 0.9428,
+        "false_denial": 0.0178,
+        "false_approval": 0.6419
+       }
+      },
+      "approval_ratio": 0.983
+     }
+    }
+   },
+   "ci_ccl_selected_minus_gbm_tuned": [
+    -0.0010507512871703267,
+    -0.0033023583843851192,
+    0.0012126254437892488,
+    {
+     "n_states": 51,
+     "largest_state_share": 0.23964134356064587
+    }
+   ],
+   "beam_noworkflow": {
+    "acc": 0.9226296802213583,
+    "bal_acc": 0.6806991712794757,
+    "deny_precision": 0.6556543837357052,
+    "deny_recall": 0.3823638384586884,
+    "admission_acc": 0.9251704545454545,
+    "n_holdings": 1,
+    "cited": 0.2170852159293895,
+    "audit": {
+     "race": {
+      "groups": {
+       "White": {
+        "n": 17619,
+        "approval": 0.9435,
+        "false_denial": 0.0229,
+        "false_approval": 0.605
+       },
+       "Race Not Available": {
+        "n": 5097,
+        "approval": 0.9435,
+        "false_denial": 0.0214,
+        "false_approval": 0.6565
+       },
+       "Asian": {
+        "n": 4331,
+        "approval": 0.9584,
+        "false_denial": 0.0068,
+        "false_approval": 0.5831
+       },
+       "Black or African American": {
+        "n": 775,
+        "approval": 0.9032,
+        "false_denial": 0.0561,
+        "false_approval": 0.6724
+       },
+       "Joint": {
+        "n": 625,
+        "approval": 0.9632,
+        "false_denial": 0.014,
+        "false_approval": 0.7115
+       }
+      },
+      "approval_ratio": 0.938
+     },
+     "sex": {
+      "groups": {
+       "Joint": {
+        "n": 13000,
+        "approval": 0.9575,
+        "false_denial": 0.0135,
+        "false_approval": 0.599
+       },
+       "Male": {
+        "n": 8436,
+        "approval": 0.9379,
+        "false_denial": 0.0258,
+        "false_approval": 0.644
+       },
+       "Female": {
+        "n": 5140,
+        "approval": 0.9251,
+        "false_denial": 0.0324,
+        "false_approval": 0.5864
+       },
+       "Sex Not Available": {
+        "n": 1975,
+        "approval": 0.9428,
+        "false_denial": 0.0212,
+        "false_approval": 0.6681
+       }
+      },
+      "approval_ratio": 0.966
+     }
+    },
+    "holdings": [
+     {
+      "id": "H0",
+      "kind": "loosen",
+      "sql": "ltv <= 95 AND disc <= 49  => APPROVE",
+      "support": 10398,
+      "replay_prec": 0.901,
+      "replay_n": 5835,
+      "because": null
+     }
+    ]
+   },
+   "beam_power_noworkflow": {
+    "acc": 0.9331371930930615,
+    "bal_acc": 0.6775421318386756,
+    "deny_precision": 0.8387650085763293,
+    "deny_recall": 0.3623564283067803,
+    "admission_acc": 0.9301136363636363,
+    "n_holdings": 1,
+    "cited": 0.23137543343490596,
+    "audit": {
+     "race": {
+      "groups": {
+       "White": {
+        "n": 17619,
+        "approval": 0.9594,
+        "false_denial": 0.0077,
+        "false_approval": 0.6283
+       },
+       "Race Not Available": {
+        "n": 5097,
+        "approval": 0.9549,
+        "false_denial": 0.0099,
+        "false_approval": 0.6673
+       },
+       "Asian": {
+        "n": 4331,
+        "approval": 0.9624,
+        "false_denial": 0.0035,
+        "false_approval": 0.594
+       },
+       "Black or African American": {
+        "n": 775,
+        "approval": 0.9561,
+        "false_denial": 0.003,
+        "false_approval": 0.7241
+       },
+       "Joint": {
+        "n": 625,
+        "approval": 0.9728,
+        "false_denial": 0.0052,
+        "false_approval": 0.7308
+       }
+      },
+      "approval_ratio": 0.982
+     },
+     "sex": {
+      "groups": {
+       "Joint": {
+        "n": 13000,
+        "approval": 0.9647,
+        "false_denial": 0.0068,
+        "false_approval": 0.6113
+       },
+       "Male": {
+        "n": 8436,
+        "approval": 0.956,
+        "false_denial": 0.0087,
+        "false_approval": 0.6699
+       },
+       "Female": {
+        "n": 5140,
+        "approval": 0.9529,
+        "false_denial": 0.0048,
+        "false_approval": 0.6161
+       },
+       "Sex Not Available": {
+        "n": 1975,
+        "approval": 0.9524,
+        "false_denial": 0.0109,
+        "false_approval": 0.6725
+       }
+      },
+      "approval_ratio": 0.987
+     }
+    },
+    "holdings": [
+     {
+      "id": "H0",
+      "kind": "loosen",
+      "sql": "term_m <= 360 AND disc <= 49  => APPROVE",
+      "support": 10973,
+      "replay_prec": 0.896,
+      "replay_n": 6119,
+      "because": null
+     }
+    ]
+   },
+   "ccl_selected_noworkflow": {
+    "acc": 0.9331371930930615,
+    "bal_acc": 0.6775421318386756,
+    "deny_precision": 0.8387650085763293,
+    "deny_recall": 0.3623564283067803,
+    "admission_acc": 0.9301136363636363,
+    "n_holdings": 1,
+    "cited": 0.23137543343490596,
+    "audit": {
+     "race": {
+      "groups": {
+       "White": {
+        "n": 17619,
+        "approval": 0.9594,
+        "false_denial": 0.0077,
+        "false_approval": 0.6283
+       },
+       "Race Not Available": {
+        "n": 5097,
+        "approval": 0.9549,
+        "false_denial": 0.0099,
+        "false_approval": 0.6673
+       },
+       "Asian": {
+        "n": 4331,
+        "approval": 0.9624,
+        "false_denial": 0.0035,
+        "false_approval": 0.594
+       },
+       "Black or African American": {
+        "n": 775,
+        "approval": 0.9561,
+        "false_denial": 0.003,
+        "false_approval": 0.7241
+       },
+       "Joint": {
+        "n": 625,
+        "approval": 0.9728,
+        "false_denial": 0.0052,
+        "false_approval": 0.7308
+       }
+      },
+      "approval_ratio": 0.982
+     },
+     "sex": {
+      "groups": {
+       "Joint": {
+        "n": 13000,
+        "approval": 0.9647,
+        "false_denial": 0.0068,
+        "false_approval": 0.6113
+       },
+       "Male": {
+        "n": 8436,
+        "approval": 0.956,
+        "false_denial": 0.0087,
+        "false_approval": 0.6699
+       },
+       "Female": {
+        "n": 5140,
+        "approval": 0.9529,
+        "false_denial": 0.0048,
+        "false_approval": 0.6161
+       },
+       "Sex Not Available": {
+        "n": 1975,
+        "approval": 0.9524,
+        "false_denial": 0.0109,
+        "false_approval": 0.6725
+       }
+      },
+      "approval_ratio": 0.987
+     }
+    },
+    "holdings": [
+     {
+      "id": "H0",
+      "kind": "loosen",
+      "sql": "term_m <= 360 AND disc <= 49  => APPROVE",
+      "support": 10973,
+      "replay_prec": 0.896,
+      "replay_n": 6119,
+      "because": null
+     }
+    ],
+    "variant": "beam_power_noworkflow"
+   },
+   "gbm_tuned_noworkflow": {
+    "acc": 0.932541767363665,
+    "bal_acc": 0.6954637599372195,
+    "deny_precision": 0.7754811119030649,
+    "deny_recall": 0.4031122638014079,
+    "config": {
+     "max_depth": null,
+     "learning_rate": 0.05,
+     "max_iter": 300
+    },
+    "audit": {
+     "race": {
+      "groups": {
+       "White": {
+        "n": 17619,
+        "approval": 0.9521,
+        "false_denial": 0.0117,
+        "false_approval": 0.5874
+       },
+       "Race Not Available": {
+        "n": 5097,
+        "approval": 0.9457,
+        "false_denial": 0.0161,
+        "false_approval": 0.6331
+       },
+       "Asian": {
+        "n": 4331,
+        "approval": 0.9566,
+        "false_denial": 0.0071,
+        "false_approval": 0.564
+       },
+       "Black or African American": {
+        "n": 775,
+        "approval": 0.9239,
+        "false_denial": 0.0273,
+        "false_approval": 0.6466
+       },
+       "Joint": {
+        "n": 625,
+        "approval": 0.9648,
+        "false_denial": 0.0087,
+        "false_approval": 0.6731
+       }
+      },
+      "approval_ratio": 0.958
+     },
+     "sex": {
+      "groups": {
+       "Joint": {
+        "n": 13000,
+        "approval": 0.9572,
+        "false_denial": 0.012,
+        "false_approval": 0.5753
+       },
+       "Male": {
+        "n": 8436,
+        "approval": 0.9467,
+        "false_denial": 0.0125,
+        "false_approval": 0.616
+       },
+       "Female": {
+        "n": 5140,
+        "approval": 0.944,
+        "false_denial": 0.0105,
+        "false_approval": 0.5812
+       },
+       "Sex Not Available": {
+        "n": 1975,
+        "approval": 0.9448,
+        "false_denial": 0.0166,
+        "false_approval": 0.6507
+       }
+      },
+      "approval_ratio": 0.986
+     }
+    }
+   },
+   "ci_ccl_selected_minus_gbm_tuned_noworkflow": [
+    0.0005954257293965185,
+    -0.0013261811491730535,
+    0.002753490524993203,
+    {
+     "n_states": 51,
+     "largest_state_share": 0.23964134356064587
+    }
+   ],
+   "learned_threshold": {
+    "acc": 0.9332072431788729,
+    "bal_acc": 0.6775808135654279,
+    "deny_precision": 0.8402061855670103,
+    "deny_recall": 0.3623564283067803,
+    "threshold": 49.0,
+    "audit": {
+     "race": {
+      "groups": {
+       "White": {
+        "n": 17619,
+        "approval": 0.9595,
+        "false_denial": 0.0076,
+        "false_approval": 0.6283
+       },
+       "Race Not Available": {
+        "n": 5097,
+        "approval": 0.9549,
+        "false_denial": 0.0099,
+        "false_approval": 0.6673
+       },
+       "Asian": {
+        "n": 4331,
+        "approval": 0.9624,
+        "false_denial": 0.0035,
+        "false_approval": 0.594
+       },
+       "Black or African American": {
+        "n": 775,
+        "approval": 0.9561,
+        "false_denial": 0.003,
+        "false_approval": 0.7241
+       },
+       "Joint": {
+        "n": 625,
+        "approval": 0.9728,
+        "false_denial": 0.0052,
+        "false_approval": 0.7308
+       }
+      },
+      "approval_ratio": 0.982
+     },
+     "sex": {
+      "groups": {
+       "Joint": {
+        "n": 13000,
+        "approval": 0.9647,
+        "false_denial": 0.0068,
+        "false_approval": 0.6113
+       },
+       "Male": {
+        "n": 8436,
+        "approval": 0.9563,
+        "false_denial": 0.0084,
+        "false_approval": 0.6699
+       },
+       "Female": {
+        "n": 5140,
+        "approval": 0.9529,
+        "false_denial": 0.0048,
+        "false_approval": 0.6161
+       },
+       "Sex Not Available": {
+        "n": 1975,
+        "approval": 0.9524,
+        "false_denial": 0.0109,
+        "false_approval": 0.6725
+       }
+      },
+      "approval_ratio": 0.987
+     }
+    }
+   },
+   "heuristic_43": {
+    "acc": 0.738327904451683,
+    "bal_acc": 0.6565748014591224,
+    "deny_precision": 0.1930005146680391,
+    "deny_recall": 0.5557613931085588,
+    "audit": {
+     "race": {
+      "groups": {
+       "White": {
+        "n": 17619,
+        "approval": 0.7299,
+        "false_denial": 0.2413,
+        "false_approval": 0.4396
+       },
+       "Race Not Available": {
+        "n": 5097,
+        "approval": 0.73,
+        "false_denial": 0.237,
+        "false_approval": 0.4604
+       },
+       "Asian": {
+        "n": 4331,
+        "approval": 0.7172,
+        "false_denial": 0.253,
+        "false_approval": 0.3951
+       },
+       "Black or African American": {
+        "n": 775,
+        "approval": 0.6852,
+        "false_denial": 0.2807,
+        "false_approval": 0.4914
+       },
+       "Joint": {
+        "n": 625,
+        "approval": 0.784,
+        "false_denial": 0.2007,
+        "false_approval": 0.6154
+       }
+      },
+      "approval_ratio": 0.874
+     },
+     "sex": {
+      "groups": {
+       "Joint": {
+        "n": 13000,
+        "approval": 0.7575,
+        "false_denial": 0.2168,
+        "false_approval": 0.4392
+       },
+       "Male": {
+        "n": 8436,
+        "approval": 0.7157,
+        "false_denial": 0.2528,
+        "false_approval": 0.4606
+       },
+       "Female": {
+        "n": 5140,
+        "approval": 0.6654,
+        "false_denial": 0.3022,
+        "false_approval": 0.4066
+       },
+       "Sex Not Available": {
+        "n": 1975,
+        "approval": 0.7458,
+        "false_denial": 0.2211,
+        "false_approval": 0.4934
+       }
+      },
+      "approval_ratio": 0.878
+     }
+    }
    },
    "always_approve": {
-    "acc": 0.9055
-   }
+    "acc": 0.9054674091975763,
+    "bal_acc": 0.5,
+    "deny_precision": NaN,
+    "deny_recall": 0.0
+   },
+   "ci_ccl_selected_minus_learned_threshold": [
+    0.00010507512871703268,
+    0.0,
+    0.000261442217112439,
+    {
+     "n_states": 51,
+     "largest_state_share": 0.23964134356064587
+    }
+   ]
   }
  }
 }

@@ -1,3 +1,5 @@
+> **SUPERSEDED by `RESULTS_v5.md`.** Kept for the record. Produced before the v5 fixes (equal outcome information for baselines, harm-aware oracle, canonical attribution, shadowing check); numbers and wording here (e.g. "vs_good", "exact", causal language) should not be quoted.
+
 # Causal check: is the bad-law filter measuring the EXCEPTION's effect or the segment's? (auto-generated)
 
 rogue effect: `segment` = the rogue approver's whole book renews badly (v1-v4); `exception` = only above-policy approvals renew badly (the discount causes churn).
