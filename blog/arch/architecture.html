@@ -1,0 +1,70 @@
+<!doctype html>
+<html><head><meta charset="utf-8">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=DM+Mono:wght@500&display=swap" rel="stylesheet">
+<style>
+  :root { --lava:#FF3621; --slate:#1B3139; --oat:#F9F7F4; --line:#C9D1D4; --grey:#5A6F77; --green:#00A972; }
+  * { box-sizing:border-box; margin:0; }
+  body { width:1580px; height:960px; background:var(--oat); font-family:"DM Sans",Arial,sans-serif; color:var(--slate); position:relative; }
+  h1 { position:absolute; left:50px; top:34px; font-size:34px; font-weight:700; }
+  .sub { position:absolute; left:50px; top:84px; font-size:18px; color:var(--grey); }
+  .band { position:absolute; left:50px; font-size:15px; font-weight:700; letter-spacing:.14em; color:var(--lava); }
+  .card { position:absolute; background:#fff; border:2px solid var(--slate); border-radius:12px; padding:16px 18px; }
+  .n { display:inline-flex; width:28px; height:28px; border-radius:50%; background:var(--lava); color:#fff; font-weight:700; font-size:15px; align-items:center; justify-content:center; margin-right:8px; vertical-align:middle; }
+  .t { font-size:20px; font-weight:700; vertical-align:middle; }
+  .chip { display:block; margin:10px 0 8px; font-family:"DM Mono",monospace; font-size:13.5px; color:var(--lava); }
+  .d { font-size:15px; line-height:1.4; color:var(--grey); }
+  .law { position:absolute; left:470px; top:400px; width:640px; height:126px; background:var(--slate); color:#fff; border-radius:14px; padding:18px 26px; }
+  .law .t { font-size:22px; } .law .d { color:#D5DEE1; margin-top:8px; }
+  .law .chip { color:#FF8A78; }
+  .foot { position:absolute; left:50px; top:880px; width:1480px; font-size:14.5px; color:var(--grey); line-height:1.5; border-top:1.5px solid var(--line); padding-top:12px; }
+  .lbl { position:absolute; font-size:14px; font-weight:500; color:var(--slate); background:var(--oat); padding:0 6px; }
+  .rej { color:var(--lava); font-weight:500; }
+  .ok { color:var(--green); font-weight:700; }
+  svg { position:absolute; left:0; top:0; }
+</style></head><body>
+<h1>Corporate Case Law on Databricks: the build that ran</h1>
+<div class="sub">A rule earns its way into the law (top), then an agent can decide only through that law (bottom). Every box below ran end to end.</div>
+
+<div class="band" style="top:140px">ADMIT A RULE</div>
+<div class="card" style="left:50px;top:170px;width:262px;height:190px"><span class="n">1</span><span class="t">Decision history</span>
+  <span class="chip">Delta tables · Unity Catalog</span><div class="d">120K decisions, one commit per month. Each month is read <b>as of that month</b>: 11.6% of facts were edited later.</div></div>
+<div class="card" style="left:354px;top:170px;width:262px;height:190px"><span class="n">2</span><span class="t">Mine + compile</span>
+  <span class="chip">Python miner · rulec.py</span><div class="d">Mines where decisions disagree with policy. LLM-proposed rules must pass the trusted compiler.</div></div>
+<div class="card" style="left:658px;top:170px;width:262px;height:190px"><span class="n">3</span><span class="t">Moot court</span>
+  <span class="chip">Lakebase branch · SQL warehouse</span><div class="d">One branch per trial (ready in 5&nbsp;s). Replay must gain accuracy and break no rule. <span class="rej">3 LLM-proposed rules rejected.</span></div></div>
+<div class="card" style="left:962px;top:170px;width:262px;height:190px"><span class="n">4</span><span class="t">Outcome screen</span>
+  <span class="chip">SQL warehouse · Delta outcomes</span><div class="d">Uses only outcomes known at the time. <span class="rej">The rogue approver's rule is flagged as bad law, even when re-proposed.</span></div></div>
+<div class="card" style="left:1266px;top:170px;width:264px;height:190px"><span class="n">5</span><span class="t">Activate</span>
+  <span class="chip">CREATE FUNCTION · law_events</span><div class="d">The rule becomes a SQL function named by its SHA-256 hash. The event is appended to the log.</div></div>
+
+<div class="law"><span class="t">THE LAW</span>
+  <span class="chip">UC functions h_&lt;sha256&gt;  +  Lakebase law_events</span>
+  <div class="d">9 active rules, verified exactly (tamper tests detected). Python and SQL agree on all 5,029 replay cases. The log is append-only: UPDATE, DELETE, TRUNCATE blocked.</div></div>
+
+<div class="band" style="top:580px">USE THE LAW</div>
+<div class="card" style="left:50px;top:610px;width:262px;height:170px"><span class="n">6</span><span class="t">New case</span>
+  <span class="chip">deal + free-text note</span><div class="d">32 new deals; 8 notes carried a prompt-injection attempt.</div></div>
+<div class="card" style="left:430px;top:610px;width:330px;height:170px"><span class="n">7</span><span class="t">Clerk agent</span>
+  <span class="chip">Foundation Model API · Claude Sonnet 5.5</span><div class="d">Decides only by citing rules. <span class="ok">32/32 followed the law; 0 of 8 injections followed.</span></div></div>
+<div class="card" style="left:820px;top:610px;width:330px;height:170px"><span class="n">8</span><span class="t">Checker</span>
+  <span class="chip">re-runs the cited UC functions</span><div class="d">Reproduces each decision from the law: <span class="ok">0 overrides needed.</span> Same result under a second principal.</div></div>
+<div class="card" style="left:1266px;top:610px;width:264px;height:170px;border-color:var(--green)"><span class="t">Decision</span>
+  <span class="chip" style="color:var(--green)">with citations</span><div class="d">Ships only when the checker reproduces it from the law.</div></div>
+
+<svg width="1580" height="960"><defs><marker id="a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto"><path d="M0,0L10,5L0,10z" fill="#1B3139"/></marker>
+<marker id="r" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto"><path d="M0,0L10,5L0,10z" fill="#FF3621"/></marker></defs>
+<g stroke="#1B3139" stroke-width="2.5" fill="none" marker-end="url(#a)">
+  <path d="M314,265 H350"/><path d="M618,265 H654"/><path d="M922,265 H958"/><path d="M1226,265 H1262"/>
+  <path d="M1398,362 V463 H1114"/>
+  <path d="M640,528 V606"/><path d="M940,528 V606"/>
+  <path d="M314,695 H426"/><path d="M762,695 H816"/><path d="M1152,695 H1262"/>
+</g>
+</svg>
+<div class="lbl" style="left:1150px;top:452px">admit</div>
+<div class="lbl" style="left:556px;top:552px">cites rules</div>
+<div class="lbl" style="left:952px;top:552px">re-executes them</div>
+<div class="lbl" style="left:1164px;top:664px">agrees</div>
+
+<div class="foot">Ran in a personal Databricks sandbox, run 20261020T131740: one synthetic firm, one seed, one decision month. It shows the mechanics work, not that CCL is better.
+Orchestrated by <b>ccl_on_dbx.py</b> through the Databricks SDK; code at github.com/HadiFrt20/corporate-case-law (dbx/). Not built: an App front end, end-user OBO token passthrough, DDL ownership lockdown.</div>
+</body></html>

@@ -494,10 +494,10 @@ Every one of them is in the work log. The fix that mattered most was structural:
 
 What would change my mind toward "CCL is better", not just "CCL is different": an independent world where the harm is causal and the screen beats a case-level uplift model, or a governance study where reviewers catch more critical defects with CCL rules at no loss of accuracy.
 
-That was the last zone. Here is board 2 whole:
+That was the last zone of the board. To close, here is the system itself without the whiteboard: only the components that actually ran, and what each one measured.
 
-![Board 2, complete](img/b2_recap.png)
-*Figure 26. Board 2 complete: Corporate Case Law on one canvas, zones 1 to 11. The closing line: "CLM writes the firm's knowledge down. CCL digs it out of what the firm already decided, and makes every rule prove itself before an agent may use it."*
+![CCL on Databricks: the architecture that ran](img/b2_architecture.png)
+*Figure 26. The architecture that ran end to end. Top: a rule is mined from point-in-time Delta history, compiled, tried on its own Lakebase branch, screened against outcomes known at the time, then activated as a hash-named Unity Catalog function with an append-only log entry. Bottom: the clerk agent can only decide by citing those functions, and the checker re-executes them before a decision ships. One synthetic run; the App front end, end-user OBO passthrough and DDL lockdown were not built.*
 
 ---
 
