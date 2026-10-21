@@ -148,13 +148,11 @@ The tacit rule is the residual of the written policy. You do not have to intervi
 
 I borrowed the vocabulary of common law because it fits:
 
-| Common law | CCL |
-|---|---|
-| statute | the written policy |
-| precedent | a logged decision, with the facts as they stood that day |
-| holding | a mined rule: WHEN conditions THEN max discount = X |
-| appeal | a human override at the approval gate |
-| dead letter | a holding whose precision decays over time |
+- **Statute:** the written policy.
+- **Precedent:** a logged decision, with the facts as they stood that day.
+- **Holding:** a mined rule: WHEN conditions THEN max discount = X.
+- **Appeal:** a human override at the approval gate.
+- **Dead letter:** a holding whose precision decays over time.
 
 ### Is this new?
 
@@ -171,15 +169,13 @@ What looked unclaimed, as far as a search and a prior-art agent could find, is t
 
 Here is the evidence at the level a busy reader needs. Every row is unpacked in sections 4 to 8.
 
-| Claim | Status | Best evidence |
-|---|---|---|
-| Tacit rules can be mined from the residual | **Holds** (synthetic and real) | 7/7 planted rules (easy), 6.8 to 7/7 (hard); real lender: "approve to 49% DTI unless TOTAL" |
-| Point-in-time facts matter | **Holds, small** | 11.6% of facts edited after decisions; today's table misses a real rule; +0.20 pts [+0.09, +0.33] on untouched months |
-| Replay keeps bad rules out | **Holds** | 3 of 3 plausible LLM rules rejected (precision 0.66 to 0.77) |
-| The outcome screen blocks harmful rules | **Holds for the rule itself** | the rogue approver's rule is flagged; re-proposed, it passes replay and is still blocked |
-| CCL beats a black box on accuracy | **Does not hold** | hard world: CCL 0.969 vs renewal veto 0.997 (CCL minus veto: -2.81 [-3.07, -2.55] pts) |
-| CCL beats a black box on real decisions | **Does not hold** | 2021: -0.69 [-0.88, -0.51] pts vs tuned GBM; 2022 and 2023 tied |
-| Readable rules are easier to govern | **Untested** | no user study |
+- **Tacit rules can be mined from the residual.** Holds (synthetic and real): 7/7 planted rules (easy), 6.8 to 7/7 (hard); real lender: "approve to 49% DTI unless TOTAL".
+- **Point-in-time facts matter.** Holds, small: 11.6% of facts edited after decisions; today's table misses a real rule; +0.20 pts [+0.09, +0.33] on untouched months.
+- **Replay keeps bad rules out.** Holds: 3 of 3 plausible LLM rules rejected (precision 0.66 to 0.77).
+- **The outcome screen blocks harmful rules.** Holds for the rule itself: the rogue approver's rule is flagged; re-proposed, it passes replay and is still blocked.
+- **CCL beats a black box on accuracy.** Does not hold: hard world: CCL 0.969 vs renewal veto 0.997 (CCL minus veto: -2.81 [-3.07, -2.55] pts).
+- **CCL beats a black box on real decisions.** Does not hold: 2021: -0.69 [-0.88, -0.51] pts vs tuned GBM; 2022 and 2023 tied.
+- **Readable rules are easier to govern.** Untested: no user study.
 
 The single most important finding is the one that hurt: **a rule-level screen leaks harm.** In the hard world, CCL still approves harmful cases in 1.8% of decisions, against 0.0% for a case-level veto. The harmful cases are covered by *other* rules that are individually fine. Screening rules one at a time cannot see that.
 
@@ -250,15 +246,13 @@ I could not evaluate this on real data first, because on real data nobody knows 
 
 **The easy world** plants rules with exactly the shape the miner searches for (a few conditions and a cap):
 
-| Rule | Shape |
-|---|---|
-| R1 | renewal + 3-year term + quarter end ≤ 25% (retired at month 40) |
-| R2 | enterprise vs competitor ≤ 30% |
-| R3 | Germany SMB: reject above 10% (stricter than policy) |
-| R4 | churn-risk renewal ≤ 22% |
-| R5 | deal > 500k ≤ 20% |
-| R6 | UK vs competitor ≤ 28% (from month 24) |
-| R7 | US mid-market rogue approver ≤ 35% (bad outcomes) |
+- **R1:** renewal + 3-year term + quarter end ≤ 25% (retired at month 40)
+- **R2:** enterprise vs competitor ≤ 30%
+- **R3:** Germany SMB: reject above 10% (stricter than policy)
+- **R4:** churn-risk renewal ≤ 22%
+- **R5:** deal > 500k ≤ 20%
+- **R6:** UK vs competitor ≤ 28% (from month 24)
+- **R7:** US mid-market rogue approver ≤ 35% (bad outcomes)
 
 **The hard world** plants rules designed to defeat that shape: an OR rule (enterprise OR deal over 1M ≤ 30%), a cap that scales with contract term, an odd threshold (deals over 340k), a field the original miner never looked at (customer tenure ≥ 11 years), and a negation (competitor deals outside France).
 
@@ -291,26 +285,22 @@ Agreement with the logged decisions rewards copying the rogue approver. So the m
 
 **Hard world, when the exception itself causes churn** (5 seeds, 95% intervals):
 
-| Method | Agreement with harm-aware oracle |
-|---|---|
-| written policy | 0.766 |
-| GBM | 0.938 |
-| GBM + renewal veto | **0.997** |
-| GBM + T-learner | **0.997** |
-| CCL | 0.928 |
-| CCL + outcome screen | 0.969 |
+- written policy: 0.766
+- GBM: 0.938
+- GBM + renewal veto: **0.997**
+- GBM + T-learner: **0.997**
+- CCL: 0.928
+- CCL + outcome screen: 0.969
 
 CCL with its screen minus the renewal veto is **-2.81 points [-3.07, -2.55]**. The decomposition explains why: CCL still approves harmful cases in 1.8% of decisions; the veto approves 0.0%.
 
 **Hard world, when the segment churns anyway:**
 
-| Method | Agreement |
-|---|---|
-| written policy | 0.706 |
-| GBM | **0.998** |
-| GBM + renewal veto | 0.938 |
-| GBM + T-learner | 0.995 |
-| CCL (scoped screen) | 0.987 |
+- written policy: 0.706
+- GBM: **0.998**
+- GBM + renewal veto: 0.938
+- GBM + T-learner: 0.995
+- CCL (scoped screen): 0.987
 
 Here the renewal veto wrongly blocks deals whose churn has nothing to do with the discount. CCL's scoped screen (compare a rule's exceptions with policy approvals in the *same* population) correctly stays quiet. But the plain black box still wins, because the hard world's rules are messier than any short rule list.
 
@@ -351,21 +341,17 @@ Yearly replay: mine on years t-3 to t-2, admit on t-1, test on t.
 
 ### 6.2 What CCL found
 
-| Kind | Holding | Recorded "because" |
-|---|---|---|
-| loosen | `aus != 'TOTAL' AND dti <= 49 => APPROVE` | approvals carry no reason code |
-| tighten | `jumbo AND ltv > 90 AND dti > 15 => REJECT` | collateral 75%, debt-to-income 15% (105 denials) |
-| tighten | `score_model = '8' AND dti > 15 => REJECT` | credit history 36%, debt-to-income 27% (139 denials) |
+- **Loosen:** `aus != 'TOTAL' AND dti <= 49 => APPROVE`. Recorded reason: approvals carry no reason code.
+- **Tighten:** `jumbo AND ltv > 90 AND dti > 15 => REJECT`. Recorded reason: collateral 75%, debt-to-income 15% (105 denials).
+- **Tighten:** `score_model = '8' AND dti > 15 => REJECT`. Recorded reason: credit history 36%, debt-to-income 27% (139 denials).
 
 The first rule is the interesting one. The lender's effective cutoff is 49% DTI, not 43%, except for loans underwritten through TOTAL (the FHA scorecard). That matches how agency underwriting works in practice, and CCL found it from decisions alone. The jumbo rule comes with its own reason: the lender's recorded denial code is "collateral" three times out of four.
 
 ### 6.3 How good is it, honestly
 
-| Test year | 43% heuristic | Always approve | Learned single DTI cutoff | CCL | Tuned GBM |
-|---|---|---|---|---|---|
-| 2021 | 0.821 | 0.910 | 0.931 | 0.933 | 0.940 |
-| 2022 | 0.792 | 0.906 | 0.930 | 0.931 | 0.931 |
-| 2023 | 0.738 | 0.905 | 0.933 | 0.933 | 0.934 |
+- **2021:** 43% heuristic 0.821 · always approve 0.910 · learned DTI cutoff 0.931 · CCL 0.933 · tuned GBM 0.940
+- **2022:** 43% heuristic 0.792 · always approve 0.906 · learned DTI cutoff 0.930 · CCL 0.931 · tuned GBM 0.931
+- **2023:** 43% heuristic 0.738 · always approve 0.905 · learned DTI cutoff 0.933 · CCL 0.933 · tuned GBM 0.934
 
 Three things to read from this:
 
@@ -447,12 +433,10 @@ The same checker ran under a second identity, a workspace service principal: den
 
 I asked a second model, GPT-6 Astra on the same Databricks workspace, to review the entire repo aggressively but constructively, then to re-review each fixed version and check every claimed fix against the code.
 
-| Round | Grade | What it caught (selection) |
-|---|---|---|
-| 1 | **D** | the outcome-information gap (0 two- and three-year outcomes for the baselines); "causally correct" for an association screen; a target that marks the rogue rule wrong even in the null world; LLM rules bypassing the outcome screen; raw LLM text interpolated into SQL; "OBO by construction" overstated; the HMDA cap is not the lender's policy |
-| 2 | **C** | my README ranking was numerically wrong, written from memory; "append-only" registry that was in fact upserted; compiler holes in caps, overflow and rounding; merges tolerating a 0.1-point loss; Python and SQL screens using different populations |
-| 3 | **C** | **no number mismatches anywhere in the generated README**; function verification was a substring test; merges proven only on observed rows; caps that could cross a boundary through float rounding |
-| 4 | **C+** | signature not verified; four phrases still stronger than the code |
+- **Round 1, grade D:** the outcome-information gap (0 two- and three-year outcomes for the baselines); "causally correct" for an association screen; a target that marks the rogue rule wrong even in the null world; LLM rules bypassing the outcome screen; raw LLM text interpolated into SQL; "OBO by construction" overstated; the HMDA cap is not the lender's policy
+- **Round 2, grade C:** my README ranking was numerically wrong, written from memory; "append-only" registry that was in fact upserted; compiler holes in caps, overflow and rounding; merges tolerating a 0.1-point loss; Python and SQL screens using different populations
+- **Round 3, grade C:** **no number mismatches anywhere in the generated README**; function verification was a substring test; merges proven only on observed rows; caps that could cross a boundary through float rounding
+- **Round 4, grade C+:** signature not verified; four phrases still stronger than the code
 
 My own mistakes, in order:
 
