@@ -79,3 +79,16 @@ re-scored on dev v2.1. The stress panel has now been looked at and is no longer 
 the fresh panel is.
 Mistakes: a zsh loop did not word-split its parameter pairs (all four sensitivity runs invalid; rows removed, rerun
 with explicit splitting); a safety hook mistook a Python one-liner for kubectl again (read the file instead).
+
+## 2026-10-22 · locked method ar-locked-1 (exp 19): monitor and FRESH run 1
+
+- Monitor: -0.032 [95% CI -0.169, +0.106], non-inferior at -0.25 (worst easy/segment/202 -0.412), harm caught 100%.
+- **Fresh run 1** (draw k = 16737199, 12 configs, 4 generated worlds x 2 effects + 4 with random near-threshold harm;
+  run once, output kept verbatim in ): **-0.419 [-0.901, +0.063], NOT non-inferior**.
+  Harm caught 97%, harmful approvals 0.10%, but false rejections 0.71% on average (up to 1.44%) with overrules firing
+  in segment worlds that contain no causal harm (up to 2.2 per month). One near-threshold world won big (+1.53, where
+  the black boxes over-block), one missed harm (81.9% caught).
+- Reading: the clean test does not support "CCL ties or beats the black box". The over-blocking is consistent with
+  Astra round 1, point 5.1 (refinements by one literal miss confounders defined by two literals jointly, e.g. a rogue
+  approver = segment x region). Next: two-literal refinements (proposed by the review BEFORE this run), judged on dev,
+  then a NEW fresh draw; every fresh run is logged here so the adaptivity stays visible.
