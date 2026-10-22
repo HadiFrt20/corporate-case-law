@@ -198,6 +198,7 @@ def main():
     ap.add_argument("--manifest", default=None, help="confirm panel: committed pre-registration manifest (AR-013)")
     ap.add_argument("--dump", default=None, help="write per-config raw results as JSON (detector panel)")
     ap.add_argument("--method", default=None, help="path to a method file (tests); default autoresearch/method.py"); a = ap.parse_args()
+    if a.method: a.method = os.path.abspath(a.method)   # the runner starts in a temp dir (bug found on the first detector run)
     if a.panel == "confirm":
         man = json.load(open(a.manifest)); mp = os.path.join(ROOT, man["method"])
         sha = hashlib.sha256(open(mp, "rb").read()).hexdigest()
