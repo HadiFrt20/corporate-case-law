@@ -138,3 +138,10 @@ with explicit splitting); a safety hook mistook a Python one-liner for kubectl a
 
 - `candidates/m_bonf.py`: dev +0.360 (all positive), detector +0.073, overrule false rejections outside the confounded
   worlds 566 -> 0, harm caught unchanged (83.5%). Manifest `confirm_2.json` committed before the run.
+
+## 2026-10-22 · CONFIRMATORY TEST 2: FAIL; line stopped (AR-018)
+
+- confirm_2 (m_bonf): per-world gap -0.374 [-0.591, -0.157], 21 of 24 negative, FAIL.
+- Descriptive diagnosis: mining recall on generated rule shapes (about -0.3 pts even where no overrule fires) plus missed
+  near-threshold harm; overrule false alarms were not the main driver.
+- Decision AR-018: stop; publish everything including both failures; open hypotheses listed for a future line.

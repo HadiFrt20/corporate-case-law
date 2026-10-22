@@ -93,5 +93,5 @@ where the law loses (harmful approvals = leaked harm; false rejections = over-bl
 
 ## Current state (2026-10-22)
 
-The loop is PAUSED by AR-013: two fresh draws failed non-inferiority. Do not optimize further and do not draw another
-fresh panel until the human has frozen the detector falsification experiment and the confirmatory manifest.
+The line is STOPPED by AR-018: two pre-registered confirmatory tests failed (CIs entirely below zero). A new line
+needs a new pre-registration (open hypotheses in AR-018).

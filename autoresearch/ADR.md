@@ -297,3 +297,36 @@ inference, margin -0.25, PASS iff the lower bound exceeds the margin, one run, r
 both results are reported together, and a pass would be read with that multiplicity in mind (two looks).
 
 **Status.** Accepted (frozen).
+
+### AR-017 result: confirmatory test 2 FAILED (2026-10-22)
+
+Draw k = 894053617, 24 new worlds, output verbatim in `autoresearch/CONFIRM_2.txt`. **Per-world gap -0.374 pts [95% CI
+-0.591, -0.157]; 21 of 24 worlds negative; FAIL.** False rejections fell (0.49% to 0.34%) but harm caught fell too
+(91.0% to 87.8%); the gap did not move.
+
+**Diagnosis (from the two confirm outputs, descriptive only).** Segment worlds in which no overrule ever fired still
+lose 0.31 pts (confirm 2) and 0.46 pts (confirm 1) with 0.29% to 0.50% false rejections: the MINER misses legitimate
+generated exceptions (generated size thresholds such as 420k, 650k, 900k fall between the decile + round-number grid;
+the GBM baselines learn exact cut points). Exception worlds where the overrule did not fire lose about 0.9 to 1.0 pts:
+missed harm near the threshold. Overrule false alarms were real (AR-014) but are not the main cause of the deficit.
+
+## AR-018 · Stop this research line; what can be claimed (2026-10-22)
+
+**Decision.** Two pre-registered confirmatory tests failed with intervals entirely below zero. The line stops here;
+no third confirmatory test of a tweaked method in this session (that would be optional stopping across looks).
+
+**What the evidence supports.**
+- On planted-rule synthetic worlds, the best CCL found by the loop is worse than the best of five fixed case-level
+  baselines (selected retrospectively) by about 0.37 points of agreement (95% CIs [-0.60, -0.14] and [-0.59, -0.16]).
+- Overruling precedents are what make CCL catch causal harm at all (detector: 0% caught without them, 100% at drops of
+  0.25 to 0.30), and search adjustment removes their false alarms except under unobserved confounding, which fools every
+  outcome-aware method tested.
+- The loop itself (frozen harness, isolated method, plain-data laws, adversarial tests, pre-registration, manifests,
+  every failure kept) is the durable contribution.
+
+**Not supported.** Non-inferiority, causal harm detection, transfer to real firms.
+
+**Open hypotheses for a future line (each would need its own pre-registered test):** finer numeric threshold grids for
+mining recall; overrule power near the threshold (sequential evidence across months instead of a single-month test).
+
+**Status.** Accepted.
