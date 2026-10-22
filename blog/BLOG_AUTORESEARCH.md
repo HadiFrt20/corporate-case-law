@@ -1,27 +1,27 @@
-# I let an AI run my research loop. It failed four times, then passed once. Here is everything.
+# I let an AI run my research loop. Here is where it took my research.
 
-*Part 2 of Corporate Case Law. The method, the code, every number and every failure: github.com/HadiFrt20/corporate-case-law*
+*Part 2 of Corporate Case Law. The method, the code and every number: github.com/HadiFrt20/corporate-case-law*
 
 ---
 
 ## The answer first
 
-In part 1, Corporate Case Law (CCL) lost. Once every method saw the same outcome data, a well-informed black box beat my readable rules by about 3 points in the hardest test.
+**Where the research stood.** In part 1, Corporate Case Law (CCL) mined a company's unwritten rules from its own decisions, admitted each rule only if replaying past decisions proved it right, and screened rules against outcomes. It worked as a mechanism and lost as a method: once every method saw the same outcome data, a well-informed black box beat my readable rules by about 3 points in the hardest test, because harm leaked through overlapping rules.
 
-So I tried something I had not done before: I handed the research itself to an AI agent, inside the structure of Andrej Karpathy's **autoresearch** repo. The agent edits one file, a frozen harness scores it, the agent keeps the change if the score improves and throws it away if not, and repeats.
-
-I want to be precise about who did what, because that is the point of this post:
+**What I did next.** Instead of iterating by hand, I handed the research itself to an AI agent, inside the structure of Andrej Karpathy's **autoresearch** repo: the agent edits one file, a frozen harness scores it, the change is kept if the score improves and thrown away if not, and the loop repeats. I want to be precise about who did what:
 
 - **An AI coding agent (Claude Code) wrote all the code and ran about 40 experiments.** I did not write the method by hand.
 - **A second model (GPT-6 Astra, served on Databricks) reviewed the whole project four times**, aggressively, with file and line references. Its grades: C+, B-, B+, B+.
 - **I set the goal, the rules and the direction**, in a handful of sentences, and I read every review.
 
-Here is where it landed:
+**Where the loop took the research:**
 
-1. **The loop moved CCL from clearly losing to matching black boxes, on synthetic worlds.** On 24 freshly generated worlds that nobody had seen, about 6 readable rules came within the pre-registered margin of the best of five fixed black-box models: +0.030 points, 95% interval [-0.116, +0.175].
-2. **It got there by failing first.** Four clean tests failed before one passed. Every failure is in the repo.
-3. **The most valuable thing the loop produced was not a better method. It was a better way of testing**: a frozen harness the agent cannot touch, a rule that the agent may only decide on one panel, pre-registered tests with hashes, and a rule for when to stop.
-4. **The result is narrow.** Same family of simulated worlds, untuned baselines, parity not superiority, and no real firm yet.
+1. **It found the idea part 1 was missing: overruling precedents.** A rule mined from outcomes that rejects exceptions in a population whose above-policy deals renew much worse than its own in-policy deals. It is what lets readable rules catch harm at all: 0% of strong harm caught without it, 100% with it.
+2. **It overturned two of CCL's founding assumptions.** Replaying past decisions before admitting a mined rule (the "moot court") cost accuracy, and the rule-level outcome screen was the wrong tool. Both were removed.
+3. **It fixed the rule miner**: thresholds stated exactly instead of on a coarse grid, and a scoring rule that prefers precise rules to broad ones.
+4. **The result: on 24 freshly generated worlds nobody had seen, about 6 readable rules matched the best of five fixed black-box models** within the pre-registered margin: +0.030 points, 95% interval [-0.116, +0.175]. Part 1 ended about 3 points behind.
+5. **It also changed how the research is tested**: a harness the agent cannot touch, a single panel it may decide on, pre-registered tests with hashes, and a written rule for when to stop. Getting there took failed tests along the way, and every one of them is in the repo.
+6. **The limits are real.** Same family of simulated worlds, untuned baselines, parity not superiority, and no real firm yet.
 
 Each figure below is one zone of a single hand-drawn whiteboard (board 3). The full board comes at the end.
 
