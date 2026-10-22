@@ -37,7 +37,7 @@ def overrules(view):
             p = (ren[a].sum() + ren[b].sum()) / (na + nb); z = lift / np.sqrt(max(p * (1 - p) * (1 / na + 1 / nb), 1e-9))
             if z <= OVR_Z and (best is None or z < best[0]): best = (z, ls, P)
         if best is None: break
-        out.append({"kind": "tighten", "lits": list(best[1]), "cap": C.STATUTE_CAP, "support": int((best[2] & ~st).sum()), "outcome": "overrule"})
+        out.append({"id": f"O{len(out)}", "kind": "tighten", "lits": list(best[1]), "cap": C.STATUTE_CAP, "support": int((best[2] & ~st).sum()), "outcome": "overrule"})
         taken |= best[2]
     return out
 
