@@ -1,4 +1,6 @@
-"""The CCL method under research. THIS is the only file the autoresearch loop edits.
+"""CANDIDATE m_bonf (AR-016): m_twolit with a Bonferroni-adjusted overrule cutoff.
+
+The CCL method under research. THIS is the only file the autoresearch loop edits.
 
 build_law(view, X, m) receives the past as the firm knew it at decision month m (rows with month < m, deal fields,
 approved, statute, outcome_known_month, renewed only where knowable before m: column outcome_known) and returns the
@@ -7,10 +9,8 @@ process (harness v2, AR-009); the harness validates the law and decides with its
 
 Current method (AR-005, AR-006, AR-008, AR-010):
   - beam-search mining on the last 12 months (no moot court for mined rules)
-  - overruling precedents: a stricter-law holding for a population whose above-policy approvals renew at least 0.20
-    worse than its own in-policy approvals (z <= -3 against zero), UNLESS some one- or two-literal refinement shows
-    significant evidence that its drop is below 0.20; refinements with too few outcomes are skipped (they do not
-    object). An observational association screen, not causal identification (AR-011, AR-012, Astra round 2).
+  - overruling precedents: a stricter-law holding for a population whose above-policy approvals renew clearly worse
+    than its own in-policy approvals, in every one-literal refinement of it
   - a loosening precedent is struck only when an overrule's literals are a subset of its own (logical implication:
     it can never decide differently on any case)
 """
@@ -92,6 +92,8 @@ def overrules(view, lits):
     masks = {l: C.literal(l, view) for l in lits}
     pops = [((l,), masks[l]) for l in lits] + [((a, b), masks[a] & masks[b]) for a, b in combinations(lits, 2)]
     refine = dict(masks, **pair_refinements(view, lits))
+    from scipy.stats import norm
+    z_cut = min(OVR_Z, float(norm.ppf(0.05 / max(len(pops), 1))))   # AR-016: Bonferroni over every population tested this month
     out, taken = [], np.zeros(len(view), bool)
     for _ in range(OVR_MAX):
         best = None
@@ -102,7 +104,7 @@ def overrules(view, lits):
             lift = ren[a].mean() - ren[b].mean()
             if lift > -C.HARM_DROP: continue
             p = (ren[a].sum() + ren[b].sum()) / (na + nb); z = lift / np.sqrt(max(p * (1 - p) * (1 / na + 1 / nb), 1e-9))
-            if z <= OVR_Z and (best is None or z < best[0]) and homogeneous(ls, P, refine, known, ren, st, taken): best = (z, ls, P)
+            if z <= z_cut and (best is None or z < best[0]) and homogeneous(ls, P, refine, known, ren, st, taken): best = (z, ls, P)
         if best is None: break
         out.append({"kind": "tighten", "lits": list(best[1]), "cap": C.STATUTE_CAP})
         taken |= best[2]

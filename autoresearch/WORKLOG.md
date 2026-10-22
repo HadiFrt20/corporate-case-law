@@ -154,3 +154,10 @@ with explicit splitting); a safety hook mistook a Python one-liner for kubectl a
 - Before publishing, the commits of this line were re-authored with the GitHub noreply address (they had been made with
   a personal address). This rewrites commit hashes; every hash cited in ADR.md, WORKLOG.md and RUN_oct22.md was remapped
   to its rewritten counterpart in the same order (`HASHMAP_publish.txt` lists old -> new).
+
+## 2026-10-22 · Line 2 opened (AR-020 stopping policy, AR-021 pre-registration, harness v4)
+
+- Harness v4: 16 generated-world configs added to dev (32 total), robust timeout (test with a partial line), no caching
+  from invalid runs, manifests pin simulator and compiler, confirm CI labelling. 35 harness tests pass.
+- Mistakes: the dev-panel insertion first failed to parse twice (a trailing comma before the appended list made Python
+  read it as a dict key).

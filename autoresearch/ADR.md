@@ -357,3 +357,39 @@ commits since the autoresearch baseline (last change `eeedfa7`, 2026-10-20; `COD
 baseline cache file names). The registered result is the `confirm_world_gap` line, not the `score_pts` line.
 
 **Status.** Accepted.
+
+## AR-020 · When the loop stops (2026-10-22)
+
+**Context.** karpathy/autoresearch never stops on its own: it loops until a human interrupts. For a claim-making
+research loop that is optional stopping: keep tweaking and re-testing until something passes.
+
+**Decision.** Three levels of stopping.
+- **Inner loop (experiments on dev):** stops after at most 12 experiments in a line, or after 4 consecutive discards
+  (a plateau), or when the human interrupts. The kept method is then locked.
+- **Line:** a line ends with exactly ONE pre-registered confirmatory test of the locked method on worlds drawn at run time,
+  reported whatever it shows. No second confirmatory test inside a line.
+- **Research:** a new line is allowed only if it targets a cause diagnosed in the previous line's records, starts with a
+  new pre-registration, and uses fresh confirmatory worlds. Every line's result, pass or fail, stays in the README.
+
+**Status.** Accepted.
+
+## AR-021 · Line 2 pre-registration: mining recall (2026-10-22, committed BEFORE any line-2 result)
+
+**Diagnosis carried over (AR-017, hypothesis).** In both confirmatory tests, segment worlds with no overrule still lost
+0.3 to 0.5 pts: the miner misses legitimate exceptions in generated worlds. Line 1's dev panel contained no generated
+worlds, so it never measured this.
+
+**Harness v4 (human-owned, before running).** Dev panel = the 16 v2.1 configs + 16 generated-world configs (gen:700001 to
+700008, exception with harm drawn per world, and segment); partial-line-safe timeout; baselines never cached from
+invalid runs; manifests pin simulator and compiler hashes; the confirm summary labels the configuration-level CI as
+not the registered analysis.
+
+**Starting point.** `method.py` = `candidates/m_bonf.py` (line 1's final candidate), re-baselined on dev v4.
+
+**Inner-loop budget.** At most 12 experiments or 4 consecutive discards. Keep / discard on dev v4 only.
+
+**Confirmatory test (one).** Same protocol as AR-015 / AR-017 (24 new worlds, per-world t-interval, margin -0.25, PASS iff
+the lower bound exceeds -0.25), with simulator and compiler hashes pinned. Line 2 is its own family: alpha 0.05 for this
+single test; line 1's two failed tests are reported alongside, not pooled.
+
+**Status.** Accepted (frozen).

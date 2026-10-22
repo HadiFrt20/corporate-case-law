@@ -12,7 +12,7 @@ Trust boundary (AR-009, after Astra review round 1):
   - decisions are made HERE with this process's own ccl_sim.apply on decision-time columns only (DEC_COLS).
   - baselines are computed HERE, in processes that never import the method, and cached by harness/world/simulator hash.
 
-Metric (dev panel: 16 configs since v2.1, AR-012): score_pts = mean over the panel of (CCL agreement - best baseline agreement) * 100, with a 95% t-interval over
+Metric (dev panel: 32 configs since v4, AR-021; 16 in v2.1): score_pts = mean over the panel of (CCL agreement - best baseline agreement) * 100, with a 95% t-interval over
 configurations (configurations share seeds across worlds, so the interval is optimistic). Baselines: GBM, GBM +
 renewal veto, GBM + T-learner, a 15-leaf decision tree (a compact rule model), and that tree + the renewal veto,
 selected RETROSPECTIVELY per configuration (the best of five fixed baselines, not the best possible black box).
@@ -44,9 +44,15 @@ LIT_RES = [re.compile(r"^(segment|region) (=|!=) '([A-Z]{2,3})'$"), re.compile(r
            re.compile(r"^(term|size_k|tenure_y) (>|<=|>=) (\d{1,5}(\.\d{1,2})?)$")]
 CAP_RANGE = {"loosen": (15.0, 60.0), "tighten": (0.0, 15.0)}
 P = lambda **k: dict(dict(bad_renew=0.35, stress=None), **k)
+def _gen_dev(i, e):
+    br = round(float(np.random.default_rng(700001 + i).uniform(0.35, 0.75)), 2) if e == "exception" else 0.35
+    return P(world=f"gen:{700001 + i}", effect=e, seed=7001 + i, bad_renew=br)
+
+
 PANELS = {
     "dev": [P(world=w, effect=e, seed=s) for w in ("easy", "hard") for e in ("exception", "segment") for s in (7, 11, 23)]
-           + [P(world="hard", effect="exception", seed=s, bad_renew=b) for b in (0.60, 0.70) for s in (31, 47)],   # v2.1: harm near the threshold (AR-012)
+           + [P(world="hard", effect="exception", seed=s, bad_renew=b) for b in (0.60, 0.70) for s in (31, 47)]   # v2.1: harm near the threshold (AR-012)
+           + [_gen_dev(i, e) for i in range(8) for e in ("exception", "segment")],   # v4: generated worlds, the confirm distribution's family (AR-021)
     "monitor": [P(world=w, effect=e, seed=s) for w in ("easy", "hard", "alt") for e in ("exception", "segment") for s in (101, 202)],
     "stress": [P(world="hard", effect="segment", seed=s, stress="confounded") for s in (7, 11)]
               + [P(world="hard", effect="exception", seed=s, bad_renew=b) for b in (0.70, 0.60) for s in (7, 11)],
@@ -104,6 +110,18 @@ def baselines(df, X, m):
             "tree15": tb, "tree15_veto": tb & ~veto}
 
 
+def read_line(proc, timeout):
+    """one protocol line within `timeout` seconds overall, or None (a partial line without newline times out too)"""
+    fd, buf, end = proc.stdout.fileno(), b"", time.time() + timeout
+    while b"\n" not in buf:
+        left = end - time.time()
+        if left <= 0 or not select.select([fd], [], [], left)[0]: return None
+        chunk = os.read(fd, 65536)
+        if not chunk: return buf.decode() if buf else ""
+        buf += chunk
+    return buf.split(b"\n", 1)[0].decode() + "\n"
+
+
 def eval_config(cfg, need_base, method_path=None):
     t_start = time.time()
     df, X = WD.firm(cfg)
@@ -111,16 +129,15 @@ def eval_config(cfg, need_base, method_path=None):
     env = {"PATH": os.environ.get("PATH", ""), "OMP_NUM_THREADS": "1", "HOME": os.environ.get("HOME", "")}
     if method_path: env["AR_METHOD"] = method_path
     with tempfile.TemporaryDirectory() as tmp:
-        proc = subprocess.Popen([sys.executable, "-I", os.path.join(HERE, "runner.py")], cwd=tmp, env=env, text=True,
+        proc = subprocess.Popen([sys.executable, "-I", os.path.join(HERE, "runner.py")], cwd=tmp, env=env,   # binary pipes: read_line
                                 stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.DEVNULL)
         try:
             for m in range(C.TEST_START, C.MONTHS):
                 p = os.path.join(tmp, f"view_{m}.pkl")
                 with open(p, "wb") as f: pickle.dump(view_of(df, m), f)
-                proc.stdin.write(json.dumps({"path": p, "m": m}) + "\n"); proc.stdin.flush()
-                ready, _, _ = select.select([proc.stdout], [], [], MONTH_TIMEOUT_S)
-                if not ready: res["violation"] = f"month {m}: method timeout after {MONTH_TIMEOUT_S}s"; break
-                line = proc.stdout.readline(); os.remove(p)
+                proc.stdin.write((json.dumps({"path": p, "m": m}) + "\n").encode()); proc.stdin.flush()
+                line = read_line(proc, MONTH_TIMEOUT_S); os.remove(p)
+                if line is None: res["violation"] = f"month {m}: method timeout after {MONTH_TIMEOUT_S}s"; break
                 rep = json.loads(line) if line else {"error": "runner died"}
                 if "error" in rep: res["violation"] = f"month {m}: method error {rep['error']}"; break
                 law, err = validate(rep["law"])
@@ -158,10 +175,11 @@ def summarize(out, cache, panel):
                          catch=(sum(r["blocked_harm"]) / hc * 100) if hc else None, false_rej=float(np.average(r["false_rej"], weights=w)) * 100,
                          rules=float(np.mean(r["rules"])), lits=float(np.mean(r["lits"])), ovr=float(np.mean(r["overrules"]))))
     g = np.array([x["gap"] for x in rows]); n = len(g)
-    half = 0 if n < 2 else {2: 12.71, 3: 4.30, 4: 3.18, 5: 2.78, 6: 2.57, 8: 2.36, 12: 2.20, 16: 2.13}.get(n, 2.0) * g.std(ddof=1) / math.sqrt(n)
+    half = 0 if n < 2 else __import__('scipy.stats', fromlist=['t']).t.ppf(0.975, n - 1) * g.std(ddof=1) / math.sqrt(n)
     catches = [x["catch"] for x in rows if x["catch"] is not None]
     print("---")
-    print(f"score_pts:        {g.mean():+.3f}  [95% CI {g.mean() - half:+.3f}, {g.mean() + half:+.3f}]")
+    note = "  (config-level, NOT the registered analysis: see confirm_world_gap)" if panel == "confirm" else ""
+    print(f"score_pts:        {g.mean():+.3f}  [95% CI {g.mean() - half:+.3f}, {g.mean() + half:+.3f}]{note}")
     print(f"worst_gap_pts:    {g.min():+.3f}  ({rows[int(g.argmin())]['cfg']['world']}/{rows[int(g.argmin())]['cfg']['effect']}/{rows[int(g.argmin())]['cfg']['seed']})")
     if panel in ("monitor", "fresh"): print(f"non_inferior:     {'yes' if g.mean() - half > NI_MARGIN else 'no'} (lower CI vs margin {NI_MARGIN})")
     print(f"harmful_appr_pct: {np.mean([x['harmful'] for x in rows]):.3f}")
@@ -204,6 +222,9 @@ def main():
         sha = hashlib.sha256(open(mp, "rb").read()).hexdigest()
         if sha != man["method_sha256"]: print("status: manifest method hash mismatch"); return
         if HARNESS_SHA != man["harness_sha"]: print("status: manifest harness hash mismatch"); return
+        if "simulator_sha" in man and C.CODE_SHA != man["simulator_sha"]: print("status: manifest simulator hash mismatch"); return
+        if "rulec_sha256" in man and hashlib.sha256(open(os.path.join(ROOT, "rulec.py"), "rb").read()).hexdigest() != man["rulec_sha256"]:
+            print("status: manifest compiler hash mismatch"); return
         k = secrets.randbits(30); rr = np.random.default_rng(k); a.method = mp
         panel = []
         for i in range(man["n_worlds"]):
@@ -226,7 +247,8 @@ def main():
         out = [f.result() for f in futs]
     viol = [r["violation"] for r in out if r["violation"]]
     for r in out:
-        if r["base"]: cache[json.dumps(r["cfg"], sort_keys=True)] = {k: float(np.average(v, weights=r["n"])) for k, v in r["base"].items()}
+        if r["base"] and not r["violation"] and len(r["n"]) == C.MONTHS - C.TEST_START:
+            cache[json.dumps(r["cfg"], sort_keys=True)] = {k: float(np.average(v, weights=r["n"])) for k, v in r["base"].items()}
     if a.panel not in ("fresh", "confirm"): json.dump(cache, open(cache_p, "w"))
     if a.dump: json.dump([dict(r, base_cached=cache.get(json.dumps(r["cfg"], sort_keys=True))) for r in out], open(a.dump, "w"))
     if viol: print("---\nstatus:           invalid\nviolation:       ", viol[0], "\nscore_pts:        nan"); return

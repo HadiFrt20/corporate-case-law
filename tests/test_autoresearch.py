@@ -166,3 +166,15 @@ def test_main_resolves_a_relative_method_path(tmp_path, monkeypatch):
     assert r["violation"] is None
     src = open(os.path.join(ROOT, "autoresearch", "harness.py")).read()
     assert "a.method = os.path.abspath(a.method)" in src
+
+
+def test_partial_line_without_newline_times_out(tmp_path, monkeypatch):
+    """round 3: select() then readline() could block forever on a partial line; read_line has one deadline"""
+    monkeypatch.setattr(H, "MONTH_TIMEOUT_S", 3)
+    r = run_method(tmp_path, "import os, time\ndef build_law(view, X, m):\n    os.write(1, b'{\"law\": [')\n    time.sleep(60)\n    return []\n")
+    assert r["violation"] and "timeout" in r["violation"]
+
+
+def test_dev_panel_contains_generated_worlds():
+    gens = [c for c in H.PANELS["dev"] if c["world"].startswith("gen:")]
+    assert len(gens) == 16 and len(H.PANELS["dev"]) == 32

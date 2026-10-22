@@ -93,5 +93,5 @@ where the law loses (harmful approvals = leaked harm; false rejections = over-bl
 
 ## Current state (2026-10-22)
 
-The line is STOPPED by AR-018: two pre-registered confirmatory tests failed (CIs entirely below zero). A new line
-needs a new pre-registration (open hypotheses in AR-018).
+Line 1 STOPPED (AR-018: two confirmatory tests failed). Line 2 (AR-021: mining recall) is OPEN under the stopping
+policy AR-020: at most 12 experiments or 4 consecutive discards, then lock and run ONE confirmatory test.
