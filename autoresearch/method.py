@@ -19,7 +19,7 @@ import numpy as np
 import ccl_sim as C
 
 MIN_SUPPORT, BEAM, MAX_RULES = 30, 60, 15
-OVR_MIN_KNOWN, OVR_Z, OVR_MAX = 40, -3.0, 3
+OVR_MIN_KNOWN, OVR_Z, OVR_MAX, THR_Z = 40, -3.0, 3, -1.0
 
 
 def literals(d):
@@ -128,7 +128,9 @@ def overrules(view, lits):
             lift = ren[a].mean() - ren[b].mean()
             if lift > -C.HARM_DROP: continue
             p = (ren[a].sum() + ren[b].sum()) / (na + nb); z = lift / np.sqrt(max(p * (1 - p) * (1 / na + 1 / nb), 1e-9))
-            if z <= z_cut and (best is None or z < best[0]) and homogeneous(ls, P, refine, known, ren, st, taken): best = (z, ls, P)
+            pa_, pb_ = ren[a].mean(), ren[b].mean(); se_ = np.sqrt(max(pa_ * (1 - pa_) / na + pb_ * (1 - pb_) / nb, 1e-9))
+            beyond = (lift + C.HARM_DROP) / se_ <= THR_Z      # line 2 exp 7: some evidence the drop EXCEEDS the threshold, not just zero
+            if z <= z_cut and beyond and (best is None or z < best[0]) and homogeneous(ls, P, refine, known, ren, st, taken): best = (z, ls, P)
         if best is None: break
         out.append({"kind": "tighten", "lits": list(best[1]), "cap": C.STATUTE_CAP})
         taken |= best[2]
