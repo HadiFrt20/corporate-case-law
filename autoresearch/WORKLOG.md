@@ -133,3 +133,8 @@ with explicit splitting); a safety hook mistook a Python one-liner for kubectl a
 - `python3 autoresearch/harness.py --panel confirm --manifest autoresearch/manifests/confirm_1.json`, run once.
 - Per-world gap **-0.373 [-0.603, -0.142]**, 22 of 24 worlds negative, **FAIL**; harm caught 91.0%, false rejections 0.49%.
 - Recorded in AR-015. No change to the method or harness between the manifest commit (6efd56f) and the run.
+
+## 2026-10-22 · AR-016 Bonferroni overrules; AR-017 confirm_2 manifest
+
+- `candidates/m_bonf.py`: dev +0.360 (all positive), detector +0.073, overrule false rejections outside the confounded
+  worlds 566 -> 0, harm caught unchanged (83.5%). Manifest `confirm_2.json` committed before the run.

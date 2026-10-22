@@ -273,3 +273,27 @@ Harm caught 91.0%, false rejections 0.49%. Consistent with AR-014: overrules on 
 
 **Consequence.** The claim "CCL ties or beats case-level models" is refuted for this simulator family. What survives:
 compact, auditable laws that catch most causal harm, at a measured accuracy cost.
+
+## AR-016 · Search-adjusted overrules (Bonferroni) (2026-10-22)
+
+**Context.** AR-014 located the false overrules on thin numeric tails: a multiple-testing failure. Confirmatory test 1
+failed (AR-015).
+
+**Decision.** Candidate `candidates/m_bonf.py` = `m_twolit` with the overrule cutoff `z <= min(-3, Phi^-1(0.05 / n))`, n =
+populations tested that month (about z <= -4.4). Nothing else changed.
+
+**Evidence (dev and the now-diagnostic detector panel).** Dev +0.360 [+0.054, +0.667], every dev config positive
+(worst +0.020), false rejections 0.052% (was 0.094%). Detector +0.073 (was -0.020); overrule-caused false rejections
+outside the confounded worlds 566 -> 0; the 1,505 left are all in the unobserved-confounding worlds; harm caught
+83.5% (was 83.6%).
+
+**Status.** Accepted as the candidate for confirmatory test 2.
+
+## AR-017 · Confirmatory test 2, pre-registered (2026-10-22, committed BEFORE the run)
+
+Manifest `autoresearch/manifests/confirm_2.json`: same protocol as AR-015 (24 new worlds drawn at run time, per-world
+inference, margin -0.25, PASS iff the lower bound exceeds the margin, one run, reported whatever it shows), method
+`candidates/m_bonf.py` with its hash pinned. This is the second confirmatory test of the line: whatever it shows,
+both results are reported together, and a pass would be read with that multiplicity in mind (two looks).
+
+**Status.** Accepted (frozen).

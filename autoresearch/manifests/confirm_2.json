@@ -1,0 +1,25 @@
+{
+ "id": "confirm_2",
+ "date": "2026-10-22",
+ "adr": "AR-017",
+ "method": "autoresearch/candidates/m_bonf.py",
+ "method_sha256": "74caf64d21bea5d7af7a28d2784bc2d831baa11fcead939364ba054ad57b27f9",
+ "selected_by": "AR-016: the only candidate; Bonferroni-adjusted overrules, chosen to fix the AR-014 multiple-testing failure (dev +0.360, detector +0.073; overrule false rejections outside confounded worlds 566 -> 0). This is the SECOND confirmatory test of this research line; confirm_1 failed and stays in the record.",
+ "harness_sha": "b0d75d3bfde0",
+ "n_worlds": 24,
+ "per_world_configs": [
+  "exception (harm size drawn per world)",
+  "segment (no causal harm)"
+ ],
+ "harm_bad_renew_range": [
+  0.35,
+  0.75
+ ],
+ "world_and_seed_draw": "secrets.randbits(30) at run time; recorded in the output",
+ "primary_metric": "per-world gap = mean over its two configs of (CCL agreement - best of five fixed baselines, retrospective), points",
+ "inference": "two-sided 95% t-interval over the 24 independent worlds",
+ "margin_pts": -0.25,
+ "margin_justification": "0.25 points = 1 decision in 400. Against best-baseline error rates of about 0.1% to 0.3% this allows CCL up to roughly two to three times the errors of the best black box; it is a lenient margin, stated as such. A pass therefore means 'not much worse than the best of five fixed models on these synthetic worlds', nothing stronger.",
+ "success_rule": "PASS iff the lower 95% bound of the per-world gap exceeds -0.25",
+ "reporting": "the result is reported whatever it shows; no method or harness change between this manifest's commit and the run; one run only"
+}
