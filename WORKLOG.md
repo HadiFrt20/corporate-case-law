@@ -197,3 +197,12 @@ Decisions are in `docs/ADR.md`. Results come from `RESULTS.md` (auto-generated).
   - DDL ownership lockdown;
   - grants restored by revoke only;
   - independent evaluation.
+
+
+## 2026-10-22 · autoresearch (karpathy/autoresearch adapted)
+
+- Built a frozen harness, an editable `method.py`, `program.md`; about 20 s per experiment on 14 cores (12 configs in parallel, baselines cached).
+- Baseline reproduced v5.1: dev -1.141 pts, holdout -0.836; hard/exception -3.1 with 1.7% harmful approvals.
+- 13 experiments, 8 kept. Overruling precedents: the naive version over-blocked through Simpson confounding (-4.4); requiring the contrast in every refinement fixed it (-0.655, harm 0%). Then integer thresholds (-0.411), admission window 4 (-0.182), min_support 40 and 30, beam width 60, dropping the outcome screen, striking overruled precedents.
+- Final: dev +0.110 (first time CCL beats the best case-level black box on the panel average), holdout -0.071, harmful approvals 0% everywhere; the never-seen alt world goes from -0.6 to -0.1 and the overrule finds that world's different rogue approver on its own.
+- Discarded: beam_power, 4-literal rules, admission 6, 18-month window. Mistakes: the first overrule run crashed (missing holding id); a safety hook flagged a combined grep-and-commit command, so edits and commits now run as separate steps.

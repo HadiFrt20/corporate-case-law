@@ -222,3 +222,14 @@ Background: CCL was born on 16 Oct from studying the CLM paper (arXiv 2609.04377
 ## ADR-042 · Exact artifact verification, unscreenable rules are quarantined
 **Decision.** A rule function's stored body must equal the expected canonical body exactly (whitespace-normalised, case preserved). Merges are the exact AST union of their parts. Scoped rules with no comparable in-policy controls are quarantined (excluded from the screened law) rather than active-pending. CCL's screen calls the shared `outcome_rows` helper.
 **Status.** Accepted.
+
+
+## ADR-043 · Autoresearch loop; overruling precedents replace the rule-level outcome screen
+
+**Context.** With equal outcome information, v5.1 CCL lost to case-level black boxes (hard world, exception effect: -2.8 to -3.2 pts), because harm leaked through overlapping rules that a rule-level screen cannot see.
+
+**Decision.** Adopt karpathy/autoresearch's structure: a frozen harness (`autoresearch/harness.py`: hides ground truth, applies the law with the frozen rule engine, form gates of at most 15 rules with at most 4 conditions, scores against the harm-aware oracle), one editable file (`autoresearch/method.py`), one metric (CCL minus the best case-level baseline over 12 dev configs), keep or discard per experiment, and a holdout (unseen seeds plus an unseen world) checked only at checkpoints. The kept method adds **overruling precedents**: a stricter-law holding for a population whose above-policy approvals renew at least 0.20 worse than its own in-policy approvals, in every refinement of the population (no Simpson effect); precedents fully inside an overrule are struck. The rule-level outcome screen is removed.
+
+**Consequences.** Dev score -1.141 to +0.110; holdout -0.836 to -0.071; harmful approvals 0% in every dev and holdout config (from up to 1.9%). Rules 6.7 to 8.4 on average. Caveats: synthetic worlds only; 13 experiments chosen by one agent with dev error analysis; the refinement contrast is a rule-form T-learner, not causal identification; dev overstates holdout by about 0.18 pts. See `autoresearch/RUN_oct22.md`.
+
+**Status.** Accepted (exploratory).
