@@ -9,7 +9,7 @@ the rogue effect or the seed.
 
 v5.1 CCL (beam miner on m-12..m-3, moot court on m-2..m-1, scoped outcome screen)
 + overruling precedents: a population whose above-policy approvals renew clearly worse than its own
-  in-policy approvals gets a stricter-law holding (REJECT above policy).
+  in-policy approvals, in every refinement of it (no Simpson effect), gets a stricter-law holding.
 """
 from itertools import combinations
 import numpy as np
@@ -17,6 +17,16 @@ import ccl_sim as C
 
 MINER, ADM, LAW_REF = "beam", 2, "scoped"
 OVR_MIN_KNOWN, OVR_Z, OVR_MAX = 40, -3.0, 3
+
+
+def homogeneous(ls, P, masks, known, ren, st, taken, min_n=20):
+    """compare like with like: the contrast must survive every refinement of the population (no Simpson effect)"""
+    for q, Q in masks.items():
+        if q in ls: continue
+        for side in (P & Q, P & ~Q):
+            a = known & side & ~st & ~taken; b = known & side & st
+            if a.sum() >= min_n and b.sum() >= min_n and ren[a].mean() - ren[b].mean() > -C.HARM_DROP / 2: return False
+    return True
 
 
 def overrules(view):
@@ -35,7 +45,7 @@ def overrules(view):
             pa, pb = ren[a].mean(), ren[b].mean(); lift = pa - pb
             if lift > -C.HARM_DROP: continue
             p = (ren[a].sum() + ren[b].sum()) / (na + nb); z = lift / np.sqrt(max(p * (1 - p) * (1 / na + 1 / nb), 1e-9))
-            if z <= OVR_Z and (best is None or z < best[0]): best = (z, ls, P)
+            if z <= OVR_Z and (best is None or z < best[0]) and homogeneous(ls, P, masks, known, ren, st, taken): best = (z, ls, P)
         if best is None: break
         out.append({"id": f"O{len(out)}", "kind": "tighten", "lits": list(best[1]), "cap": C.STATUTE_CAP, "support": int((best[2] & ~st).sum()), "outcome": "overrule"})
         taken |= best[2]
