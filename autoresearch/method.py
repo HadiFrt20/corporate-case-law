@@ -60,12 +60,20 @@ def mine_beam(d, lits, min_support=60, min_prec=.9, max_rules=14, max_lits=3, be
     return out
 
 
+def pair_refinements(view, lits):
+    """conjunctions of two categorical / boolean literals (no negations, no thresholds): joint confounders such as a
+    segment x region book are invisible to one-literal refinements (Astra round 1, point 5.1)"""
+    base = [l for l in lits if (" = '" in l) or l in ("renewal", "quarter_end", "competitor", "churn_high")]
+    m = {l: C.literal(l, view) for l in base}
+    return {f"{a} AND {b}": m[a] & m[b] for a, b in combinations(base, 2) if a.split(" = ")[0] != b.split(" = ")[0]}
+
+
 def homogeneous(ls, P, masks, known, ren, st, taken, min_n=20, z_fail=2.0):
     """compare like with like: reject the population if some one-literal refinement shows SIGNIFICANT evidence that its
     drop is smaller than the harm threshold (a statistical test, so sampling noise in small cells does not veto a real
     effect, and a heterogeneous population is still caught; AR-012)"""
     for q, Q in masks.items():
-        if q in ls: continue
+        if q in ls or any(part in ls for part in q.split(" AND ")): continue
         for side in (P & Q, P & ~Q):
             a = known & side & ~st & ~taken; b = known & side & st & ~taken
             na, nb = a.sum(), b.sum()
@@ -81,6 +89,7 @@ def overrules(view, lits):
     known, ren, st = view.outcome_known.values, view.renewed.values, view.statute.values
     masks = {l: C.literal(l, view) for l in lits}
     pops = [((l,), masks[l]) for l in lits] + [((a, b), masks[a] & masks[b]) for a, b in combinations(lits, 2)]
+    refine = dict(masks, **pair_refinements(view, lits))
     out, taken = [], np.zeros(len(view), bool)
     for _ in range(OVR_MAX):
         best = None
@@ -91,7 +100,7 @@ def overrules(view, lits):
             lift = ren[a].mean() - ren[b].mean()
             if lift > -C.HARM_DROP: continue
             p = (ren[a].sum() + ren[b].sum()) / (na + nb); z = lift / np.sqrt(max(p * (1 - p) * (1 / na + 1 / nb), 1e-9))
-            if z <= OVR_Z and (best is None or z < best[0]) and homogeneous(ls, P, masks, known, ren, st, taken): best = (z, ls, P)
+            if z <= OVR_Z and (best is None or z < best[0]) and homogeneous(ls, P, refine, known, ren, st, taken): best = (z, ls, P)
         if best is None: break
         out.append({"kind": "tighten", "lits": list(best[1]), "cap": C.STATUTE_CAP})
         taken |= best[2]
