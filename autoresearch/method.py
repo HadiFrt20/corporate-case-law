@@ -15,7 +15,7 @@ from itertools import combinations
 import numpy as np
 import ccl_sim as C
 
-MINER, ADM, LAW_REF = "beam", 2, "scoped"
+MINER, ADM, LAW_REF = "beam", 4, "scoped"
 _decile_literals = C.generic_literals
 
 
