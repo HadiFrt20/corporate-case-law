@@ -43,7 +43,8 @@ LIT_RES = [re.compile(r"^(segment|region) (=|!=) '([A-Z]{2,3})'$"), re.compile(r
 CAP_RANGE = {"loosen": (15.0, 60.0), "tighten": (0.0, 15.0)}
 P = lambda **k: dict(dict(bad_renew=0.35, stress=None), **k)
 PANELS = {
-    "dev": [P(world=w, effect=e, seed=s) for w in ("easy", "hard") for e in ("exception", "segment") for s in (7, 11, 23)],
+    "dev": [P(world=w, effect=e, seed=s) for w in ("easy", "hard") for e in ("exception", "segment") for s in (7, 11, 23)]
+           + [P(world="hard", effect="exception", seed=s, bad_renew=b) for b in (0.60, 0.70) for s in (31, 47)],   # v2.1: harm near the threshold (AR-012)
     "monitor": [P(world=w, effect=e, seed=s) for w in ("easy", "hard", "alt") for e in ("exception", "segment") for s in (101, 202)],
     "stress": [P(world="hard", effect="segment", seed=s, stress="confounded") for s in (7, 11)]
               + [P(world="hard", effect="exception", seed=s, bad_renew=b) for b in (0.70, 0.60) for s in (7, 11)],
@@ -140,7 +141,7 @@ def summarize(out, cache, panel):
                          catch=(sum(r["blocked_harm"]) / hc * 100) if hc else None, false_rej=float(np.average(r["false_rej"], weights=w)) * 100,
                          rules=float(np.mean(r["rules"])), lits=float(np.mean(r["lits"])), ovr=float(np.mean(r["overrules"]))))
     g = np.array([x["gap"] for x in rows]); n = len(g)
-    half = 0 if n < 2 else {2: 12.71, 3: 4.30, 4: 3.18, 5: 2.78, 6: 2.57, 8: 2.36, 12: 2.20}.get(n, 2.0) * g.std(ddof=1) / math.sqrt(n)
+    half = 0 if n < 2 else {2: 12.71, 3: 4.30, 4: 3.18, 5: 2.78, 6: 2.57, 8: 2.36, 12: 2.20, 16: 2.13}.get(n, 2.0) * g.std(ddof=1) / math.sqrt(n)
     catches = [x["catch"] for x in rows if x["catch"] is not None]
     print("---")
     print(f"score_pts:        {g.mean():+.3f}  [95% CI {g.mean() - half:+.3f}, {g.mean() + half:+.3f}]")
@@ -163,6 +164,8 @@ def main():
     if a.panel == "fresh":
         k = secrets.randbits(30)    # drawn now: nobody, including the agent, has seen these worlds or seeds
         panel = [P(world=f"gen:{k + i}", effect=e, seed=k % 100000 + 1000 + i) for i in range(4) for e in ("exception", "segment")]
+        rr = np.random.default_rng(k)   # v2.1: plus harm of random size around the threshold (drop 0.10 to 0.30)
+        panel += [P(world=f"gen:{k + 4 + i}", effect="exception", seed=k % 100000 + 2000 + i, bad_renew=round(float(rr.uniform(0.55, 0.75)), 2)) for i in range(4)]
         print(f"fresh draw: k={k}")
     else: panel = PANELS[a.panel]
     cache_p = os.path.join(HERE, f"baselines_{a.panel}_{HARNESS_SHA}_{C.CODE_SHA}.json")

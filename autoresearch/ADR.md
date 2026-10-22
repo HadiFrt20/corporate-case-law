@@ -167,3 +167,24 @@ CCL is fooled (false rejections 2.4% to 2.6%, -2.2 to -2.4 pts vs plain GBM), bu
 it cannot detect confounding by unobserved customer quality. Do not claim causal harm detection.
 
 **Status.** Accepted.
+
+## AR-012 · A Goodhart caught at the checkpoint; statistical refinement test; dev panel v2.1 (2026-10-22)
+
+**Context.** Experiment 16 required every one-literal refinement to show the full 0.20 drop. It improved dev (+0.181 to
++0.184) because every harmful dev world had a 0.50 drop. The stress checkpoint then showed it catching 38% of harmful
+cases at a 0.25 drop (one config 0%, 6% harmful approvals). The metric rewarded a check that destroys sensitivity
+near the threshold.
+
+**Decision.** (1) Replace the point-estimate check with a statistical one: reject a population only if some refinement
+shows significant evidence (z > 2) that its drop is smaller than the threshold. Justification is a priori (power in
+small cells), not the stress number. (2) Fix the dev panel, a human-owned harness change: add hard-world exception
+configs with renewal 0.60 and 0.70 (drops 0.25 and 0.15) on new seeds 31 and 47 (16 dev configs). (3) Widen the
+unrun fresh panel with four generated worlds whose harm size is drawn at run time (drops 0.10 to 0.30). (4) Re-score
+both candidates on dev v2.1: exp 16 +0.193 (worst -1.276, 93.8% caught), exp 19 +0.306 (worst -0.196, 100% caught).
+Keep exp 19.
+
+**Consequences.** Dev v2.1 scores are not comparable with v1/v2 rows. The stress panel has been looked at; its
+near-threshold configs now duplicate dev in kind (on other seeds) and only its confounded configs remain informative
+as a check. The fresh panel is the clean test.
+
+**Status.** Accepted.

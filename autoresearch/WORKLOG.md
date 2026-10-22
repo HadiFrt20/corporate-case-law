@@ -57,3 +57,25 @@ injects; see AR-008.
 - Mistakes: harness v2 first run crashed (decision columns included `tenure_y` in the easy world); the first leak probe
   crashed on objects whose `columns` attribute is not iterable; added a positive control so the probe's silence means
   something. A safety hook mistook a Python one-liner for a kubectl command; read the cache file directly instead.
+
+## 2026-10-22 · experiments 15 to 19 on harness v2, and the dev panel fix (v2.1)
+
+| # | commit | hypothesis | dev score | rules | decision |
+|---|---|---|---|---|---|
+| 15 | d0f0baa | overrule discovery on older outcomes, confirmation on newer (multiple-testing guard) | +0.129 | 8.81 | discard: half the data per stage, small refinements skipped, more false overrules (easy/segment s7 -0.56) |
+| 16 | 08c36ca | refinements must show the full 0.20 drop, not half | +0.184 | 8.75 | keep: small gain, worst case +0.097, fewer overrules |
+| 17 | 08c36ca | sensitivity: min_support 25/35, beam 40/80 | +0.180 to +0.184 | 8.72 to 8.75 | flat neighbourhood: not knife-edge |
+| 18 | 08c36ca | ablations: minus overrules / minus integer thresholds / minus refinement check / plus moot court | -2.787 / -0.043 / -3.755 / +0.113 | | overruling with the refinement check is the core of the gain |
+| ckpt | 08c36ca | monitor + stress after exp 16 | monitor +0.081 | | STRESS: harm just above threshold caught 38% (was 96%): exp 16 is a Goodhart, see AR-012 |
+| 19 | 5ce0e00 | statistical refinement test: reject a population only on significant evidence a refinement's drop is below 0.20 | +0.121 (dev v2) / +0.306 (dev v2.1) | 9.34 | keep: on the corrected dev panel it beats exp 16 (+0.193, 93.8% caught) |
+
+What happened at the checkpoint: experiment 16 (refinements must show the full 0.20 drop) was kept on dev (+0.184), then
+the stress panel showed it catching only 38% of harmful cases when the true drop is 0.25 (was 96%). Dev had only 0.50
+drops, so the stricter point estimate cost nothing there and vetoed real effects near the threshold through sampling
+noise. Fix for a reason stated in advance (power), not because of the stress number: a statistical refinement test
+(experiment 19). The dev panel itself was defective (no near-threshold harm), so harness v2.1 adds 4 near-threshold
+configs on new seeds (31, 47) and widens the still-unrun fresh panel with harms of random size; both candidates were
+re-scored on dev v2.1. The stress panel has now been looked at and is no longer a clean test of threshold sensitivity;
+the fresh panel is.
+Mistakes: a zsh loop did not word-split its parameter pairs (all four sensitivity runs invalid; rows removed, rerun
+with explicit splitting); a safety hook mistook a Python one-liner for kubectl again (read the file instead).
