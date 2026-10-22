@@ -66,7 +66,7 @@ def homogeneous(ls, P, masks, known, ren, st, taken, min_n=20):
         if q in ls: continue
         for side in (P & Q, P & ~Q):
             a = known & side & ~st & ~taken; b = known & side & st & ~taken
-            if a.sum() >= min_n and b.sum() >= min_n and ren[a].mean() - ren[b].mean() > -C.HARM_DROP / 2: return False
+            if a.sum() >= min_n and b.sum() >= min_n and ren[a].mean() - ren[b].mean() > -C.HARM_DROP: return False
     return True
 
 
