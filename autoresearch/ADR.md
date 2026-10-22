@@ -262,3 +262,14 @@ over worlds; margin -0.25 pts with its (lenient) justification; PASS iff the low
 reported whatever it shows.
 
 **Status.** Accepted (frozen).
+
+### AR-015 result: confirmatory test 1 FAILED (2026-10-22)
+
+Draw k = 1068663073, 24 independent generated worlds, 48 configs, output verbatim in `autoresearch/CONFIRM_1.txt`.
+**Per-world gap -0.373 pts [95% CI -0.603, -0.142]; 22 of 24 worlds negative; FAIL** (lower bound below -0.25). The whole
+interval is below zero: on these synthetic worlds, the locked CCL is measurably worse than the best of five fixed
+baselines (selected retrospectively per configuration), by about 0.37 points (about 1 extra error in 270 decisions).
+Harm caught 91.0%, false rejections 0.49%. Consistent with AR-014: overrules on thin numeric tails over-block.
+
+**Consequence.** The claim "CCL ties or beats case-level models" is refuted for this simulator family. What survives:
+compact, auditable laws that catch most causal harm, at a measured accuracy cost.

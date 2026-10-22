@@ -127,3 +127,9 @@ with explicit splitting); a safety hook mistook a Python one-liner for kubectl a
 - Selection by the pre-registered rule: `m_twolit.py`. Manifest `confirm_1.json` (AR-015) committed before the run.
 - Not done on purpose: no method change in response to the H2 failure before the confirmatory run (that is the next
   iteration: search-adjusted overrules, AR-016 to come).
+
+## 2026-10-22 · CONFIRMATORY TEST 1: FAIL
+
+- `python3 autoresearch/harness.py --panel confirm --manifest autoresearch/manifests/confirm_1.json`, run once.
+- Per-world gap **-0.373 [-0.603, -0.142]**, 22 of 24 worlds negative, **FAIL**; harm caught 91.0%, false rejections 0.49%.
+- Recorded in AR-015. No change to the method or harness between the manifest commit (6efd56f) and the run.
