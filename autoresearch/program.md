@@ -93,5 +93,5 @@ where the law loses (harmful approvals = leaked harm; false rejections = over-bl
 
 ## Current state (2026-10-22)
 
-Line 1 STOPPED (AR-018: two confirmatory tests failed). Line 2 (AR-021: mining recall) is OPEN under the stopping
-policy AR-020: at most 12 experiments or 4 consecutive discards, then lock and run ONE confirmatory test.
+Line 1 STOPPED (AR-018: two confirmatory tests failed). Line 2 (AR-021) CLOSED: its single confirmatory test PASSED
+(AR-022). A new line needs a newly diagnosed cause and its own pre-registration (AR-020, candidates in AR-023).

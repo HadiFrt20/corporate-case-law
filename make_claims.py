@@ -69,8 +69,8 @@ def _confirm(path):
     m = _re.search(r"confirm_world_gap: ([+-][\d.]+)  \[95% CI ([+-][\d.]+), ([+-][\d.]+)\] over (\d+)", t)
     neg = _re.search(r"worlds_negative:\s+(\d+) of (\d+)", t); res = _re.search(r"confirm_result:\s+(\w+)", t)
     return dict(gap=float(m.group(1)), lo=float(m.group(2)), hi=float(m.group(3)), n=int(m.group(4)), neg=int(neg.group(1)), res=res.group(1))
-c1, c2 = _confirm("autoresearch/CONFIRM_1.txt"), _confirm("autoresearch/CONFIRM_2.txt")
-for c in (c1, c2): assert c["res"] in ("PASS", "FAIL") and (c["res"] == "PASS") == (c["lo"] > -0.25), c   # the verdict must match the registered rule
+c1, c2, c3 = _confirm("autoresearch/CONFIRM_1.txt"), _confirm("autoresearch/CONFIRM_2.txt"), _confirm("autoresearch/CONFIRM_3.txt")
+for c in (c1, c2, c3): assert c["res"] in ("PASS", "FAIL") and (c["res"] == "PASS") == (c["lo"] > -0.25), c   # the verdict must match the registered rule
 verdict = "FAILED" if c1["res"] == c2["res"] == "FAIL" else ("PASSED" if c1["res"] == c2["res"] == "PASS" else "split (one PASS, one FAIL)")
 below0 = all(c["hi"] < 0 for c in (c1, c2)); in_margin = all(c["lo"] <= -0.25 <= c["hi"] for c in (c1, c2))
 DR = json.load(open(os.path.join(HERE, "autoresearch", "detector_result.json")))
@@ -79,12 +79,17 @@ auto = (f"- **Autoresearch loop** (`autoresearch/`, own `WORKLOG.md` and `ADR.md
         f"plain-data laws, adversarial tests, pre-registered tests). The loop added overruling precedents (a stricter-law rule where above-policy approvals "
         f"renew at least 0.20 worse than comparable in-policy approvals). In the pre-registered detector experiment, overrules caught "
         f"{st['twolit']['caught_strong']:.0f}% of harmful cases at drops of 0.25 to 0.30 versus {st['noovr']['caught_strong']:.0f}% without them, and caused "
-        f"{st['twolit']['nh_ovr_share']:.0%} of the false rejections in no-harm worlds. **Two pre-registered confirmatory tests on freshly generated worlds {verdict}** (the two selected locked candidates, each on 24 new worlds): "
+        f"{st['twolit']['nh_ovr_share']:.0%} of the false rejections in no-harm worlds. Line 1's **two pre-registered confirmatory tests on freshly generated worlds {verdict}** (the two selected locked candidates, each on 24 new worlds): "
         f"per-world gap to the best of five fixed baselines {c1['gap']:+.3f} pts [{c1['lo']:+.3f}, {c1['hi']:+.3f}] ({c1['neg']} of {c1['n']} worlds negative) and "
         f"{c2['gap']:+.3f} pts [{c2['lo']:+.3f}, {c2['hi']:+.3f}] ({c2['neg']} of {c2['n']} negative). "
         + ("Both intervals lie entirely below zero, so on these synthetic worlds the locked candidates are measurably worse than the retrospective "
            "best-of-five comparator; " if below0 else "") + ("both intervals also contain the -0.25 margin, so a deficit larger than the margin is not established. " if in_margin else "")
-        + "Non-inferiority, causal harm detection and real-firm transfer are not established (AR-018).")
+        + f"Line 2 (AR-021) then diagnosed the cause (mining recall on generated thresholds; overrule false alarms near the threshold), fixed it on a dev "
+          f"panel that contained generated worlds, and its single pre-registered confirmatory test **{c3['res'] + 'ED' if c3['res'] == 'PASS' else c3['res']}**: per-world gap {c3['gap']:+.3f} pts "
+          f"[{c3['lo']:+.3f}, {c3['hi']:+.3f}] over {c3['n']} new worlds ({c3['neg']} negative)"
+          + (f", i.e. non-inferior at the -0.25 margin to the retrospective best of five fixed baselines; the interval contains zero, so not superior. " if c3['res'] == 'PASS' and c3['lo'] <= 0 <= c3['hi'] else ". ")
+          + "Not established: superiority, causal harm detection under unobserved confounding, power for harm exactly at the threshold, transfer to real firms, "
+          "any governance advantage (AR-023).")
 block = "\n".join([sim, real, dbx, auto, gov])
 R = open(os.path.join(HERE, "README.md")).read()
 a, b = R.index("<!-- CLAIMS:BEGIN -->"), R.index("<!-- CLAIMS:END -->")

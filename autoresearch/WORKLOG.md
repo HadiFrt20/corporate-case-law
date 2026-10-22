@@ -168,3 +168,9 @@ with explicit splitting); a safety hook mistook a Python one-liner for kubectl a
   threshold-aware overrule test. Dev +0.144 -> +0.326. Locked as `candidates/m_line2.py` / tag ar-line2-locked.
 - Descriptive panels: monitor +0.043, stress -0.337, detector -0.100 (exact-threshold harm missed more often).
 - Manifest `confirm_3.json` committed before the run, with simulator and compiler pinned (AR-019 gap closed).
+
+## 2026-10-22 · CONFIRMATORY TEST 3 (line 2): PASS
+
+- `--panel confirm --manifest manifests/confirm_3.json`, run once: per-world gap **+0.030 [-0.116, +0.175]**, 9 of 24 worlds
+  negative, **PASS**; harm caught 94.1%, false rejections 0.10%. Bonferroni over all three confirmatory tests: [-0.152,
+  +0.212], still a pass. Line 2 closed (AR-020); claims in AR-023.

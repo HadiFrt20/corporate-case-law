@@ -1,0 +1,62 @@
+confirm draw: k=166832719 manifest=autoresearch/manifests/confirm_3.json
+---
+score_pts:        +0.030  [95% CI -0.099, +0.158]  (config-level, NOT the registered analysis: see confirm_world_gap)
+worst_gap_pts:    -0.994  (gen:166832723/segment/35723)
+harmful_appr_pct: 0.092
+harm_caught_pct:  94.1
+false_rej_pct:    0.100
+rules_mean:       6.08  (literals 11.1, overrules 0.47)
+panel:            confirm (48 configs)
+  gen:166832719 exception s35719  br0.71 ccl 0.9999  best gbm         0.9986  gap  +0.13  harmful  0.00%  caught   n/a   false_rej  0.01%  rules  6.0  ovr 0.0
+  gen:166832719 segment   s35719         ccl 0.9999  best gbm         0.9986  gap  +0.13  harmful  0.00%  caught   n/a   false_rej  0.01%  rules  6.0  ovr 0.0
+  gen:166832720 exception s35720  br0.67 ccl 0.9945  best gbm         0.9991  gap  -0.46  harmful  0.00%  caught   n/a   false_rej  0.13%  rules  5.7  ovr 0.0
+  gen:166832720 segment   s35720         ccl 0.9945  best gbm         0.9991  gap  -0.46  harmful  0.00%  caught   n/a   false_rej  0.13%  rules  5.7  ovr 0.0
+  gen:166832721 exception s35721  br0.61 ccl 0.9997  best veto        0.9864  gap  +1.32  harmful  0.00%  caught 100.0%  false_rej  0.03%  rules  6.0  ovr 1.0
+  gen:166832721 segment   s35721         ccl 0.9997  best gbm         0.9985  gap  +0.12  harmful  0.00%  caught   n/a   false_rej  0.03%  rules  6.0  ovr 0.0
+  gen:166832722 exception s35722  br0.49 ccl 0.9998  best veto        0.9977  gap  +0.21  harmful  0.00%  caught 100.0%  false_rej  0.00%  rules  6.0  ovr 1.0
+  gen:166832722 segment   s35722         ccl 0.9998  best gbm         0.9986  gap  +0.12  harmful  0.00%  caught   n/a   false_rej  0.00%  rules  6.0  ovr 0.0
+  gen:166832723 exception s35723  br0.65 ccl 0.9714  best tlearner    0.9783  gap  -0.70  harmful  1.82%  caught  44.0%  false_rej  0.05%  rules  4.9  ovr 0.4
+  gen:166832723 segment   s35723         ccl 0.9891  best gbm         0.9991  gap  -0.99  harmful  0.00%  caught   n/a   false_rej  0.15%  rules  5.4  ovr 0.5
+  gen:166832724 exception s35724  br0.49 ccl 0.9996  best veto        0.9978  gap  +0.18  harmful  0.00%  caught 100.0%  false_rej  0.04%  rules  6.0  ovr 1.0
+  gen:166832724 segment   s35724         ccl 0.9996  best gbm         0.9982  gap  +0.13  harmful  0.00%  caught   n/a   false_rej  0.04%  rules  6.0  ovr 0.0
+  gen:166832725 exception s35725  br0.42 ccl 0.9988  best veto        0.9994  gap  -0.06  harmful  0.00%  caught 100.0%  false_rej  0.12%  rules  6.0  ovr 1.0
+  gen:166832725 segment   s35725         ccl 0.9988  best gbm         0.9992  gap  -0.04  harmful  0.00%  caught   n/a   false_rej  0.12%  rules  6.0  ovr 0.0
+  gen:166832726 exception s35726  br0.53 ccl 0.9995  best veto        0.9979  gap  +0.16  harmful  0.00%  caught 100.0%  false_rej  0.05%  rules  6.9  ovr 1.0
+  gen:166832726 segment   s35726         ccl 0.9980  best gbm         0.9988  gap  -0.08  harmful  0.00%  caught   n/a   false_rej  0.20%  rules  6.8  ovr 0.9
+  gen:166832727 exception s35727  br0.71 ccl 0.9998  best gbm         0.9985  gap  +0.14  harmful  0.00%  caught   n/a   false_rej  0.02%  rules  6.0  ovr 0.0
+  gen:166832727 segment   s35727         ccl 0.9985  best gbm         0.9985  gap  +0.00  harmful  0.00%  caught   n/a   false_rej  0.15%  rules  6.6  ovr 0.6
+  gen:166832728 exception s35728  br0.71 ccl 0.9993  best gbm         0.9991  gap  +0.02  harmful  0.00%  caught   n/a   false_rej  0.07%  rules  6.0  ovr 0.0
+  gen:166832728 segment   s35728         ccl 0.9975  best gbm         0.9991  gap  -0.15  harmful  0.00%  caught   n/a   false_rej  0.25%  rules  6.9  ovr 0.9
+  gen:166832729 exception s35729  br0.38 ccl 0.9989  best veto        0.9986  gap  +0.03  harmful  0.00%  caught 100.0%  false_rej  0.11%  rules  7.3  ovr 1.3
+  gen:166832729 segment   s35729         ccl 0.9990  best gbm         0.9988  gap  +0.01  harmful  0.00%  caught   n/a   false_rej  0.10%  rules  6.3  ovr 0.3
+  gen:166832730 exception s35730  br0.41 ccl 0.9990  best veto        0.9985  gap  +0.05  harmful  0.00%  caught 100.0%  false_rej  0.10%  rules  6.0  ovr 1.0
+  gen:166832730 segment   s35730         ccl 0.9990  best gbm         0.9984  gap  +0.06  harmful  0.00%  caught   n/a   false_rej  0.10%  rules  6.0  ovr 0.0
+  gen:166832731 exception s35731  br0.75 ccl 0.9992  best gbm         0.9989  gap  +0.03  harmful  0.00%  caught   n/a   false_rej  0.08%  rules  6.0  ovr 0.0
+  gen:166832731 segment   s35731         ccl 0.9992  best gbm         0.9989  gap  +0.03  harmful  0.00%  caught   n/a   false_rej  0.08%  rules  6.0  ovr 0.0
+  gen:166832732 exception s35732  br0.37 ccl 0.9990  best veto        0.9984  gap  +0.06  harmful  0.00%  caught 100.0%  false_rej  0.07%  rules  6.0  ovr 1.0
+  gen:166832732 segment   s35732         ccl 0.9990  best gbm         0.9983  gap  +0.07  harmful  0.00%  caught   n/a   false_rej  0.07%  rules  6.0  ovr 0.0
+  gen:166832733 exception s35733  br0.69 ccl 0.9991  best gbm         0.9986  gap  +0.05  harmful  0.00%  caught   n/a   false_rej  0.09%  rules  5.0  ovr 0.0
+  gen:166832733 segment   s35733         ccl 0.9980  best gbm         0.9986  gap  -0.06  harmful  0.00%  caught   n/a   false_rej  0.20%  rules  5.4  ovr 0.4
+  gen:166832734 exception s35734  br0.67 ccl 0.9994  best gbm         0.9988  gap  +0.06  harmful  0.00%  caught   n/a   false_rej  0.00%  rules  6.0  ovr 0.0
+  gen:166832734 segment   s35734         ccl 0.9993  best gbm         0.9988  gap  +0.05  harmful  0.00%  caught   n/a   false_rej  0.01%  rules  6.2  ovr 0.2
+  gen:166832735 exception s35735  br0.47 ccl 0.9999  best veto        0.9996  gap  +0.03  harmful  0.00%  caught 100.0%  false_rej  0.00%  rules  6.0  ovr 1.0
+  gen:166832735 segment   s35735         ccl 0.9977  best gbm         0.9995  gap  -0.18  harmful  0.00%  caught   n/a   false_rej  0.23%  rules  6.4  ovr 0.4
+  gen:166832736 exception s35736  br0.62 ccl 0.9995  best tlearner    0.9845  gap  +1.50  harmful  0.00%  caught 100.0%  false_rej  0.05%  rules  6.0  ovr 1.0
+  gen:166832736 segment   s35736         ccl 0.9974  best gbm         0.9989  gap  -0.15  harmful  0.00%  caught   n/a   false_rej  0.26%  rules  6.8  ovr 0.8
+  gen:166832737 exception s35737  br0.55 ccl 0.9906  best veto        0.9949  gap  -0.43  harmful  0.00%  caught 100.0%  false_rej  0.05%  rules  5.2  ovr 1.0
+  gen:166832737 segment   s35737         ccl 0.9906  best gbm         0.9986  gap  -0.80  harmful  0.00%  caught   n/a   false_rej  0.05%  rules  5.2  ovr 0.0
+  gen:166832738 exception s35738  br0.6  ccl 0.9984  best veto        0.9842  gap  +1.42  harmful  0.00%  caught 100.0%  false_rej  0.16%  rules  7.0  ovr 1.0
+  gen:166832738 segment   s35738         ccl 0.9967  best gbm         0.9991  gap  -0.24  harmful  0.00%  caught   n/a   false_rej  0.33%  rules  6.2  ovr 0.2
+  gen:166832739 exception s35739  br0.64 ccl 0.9739  best tlearner    0.9720  gap  +0.20  harmful  2.58%  caught  56.2%  false_rej  0.01%  rules  6.1  ovr 0.6
+  gen:166832739 segment   s35739         ccl 0.9998  best gbm         0.9993  gap  +0.05  harmful  0.00%  caught   n/a   false_rej  0.00%  rules  6.0  ovr 0.0
+  gen:166832740 exception s35740  br0.38 ccl 0.9990  best veto        0.9980  gap  +0.10  harmful  0.00%  caught 100.0%  false_rej  0.10%  rules  7.0  ovr 1.0
+  gen:166832740 segment   s35740         ccl 0.9988  best gbm         0.9982  gap  +0.06  harmful  0.00%  caught   n/a   false_rej  0.12%  rules  6.1  ovr 0.1
+  gen:166832741 exception s35741  br0.45 ccl 0.9974  best veto        0.9980  gap  -0.06  harmful  0.00%  caught 100.0%  false_rej  0.26%  rules  6.0  ovr 1.0
+  gen:166832741 segment   s35741         ccl 0.9974  best gbm         0.9988  gap  -0.14  harmful  0.00%  caught   n/a   false_rej  0.26%  rules  6.0  ovr 0.0
+  gen:166832742 exception s35742  br0.51 ccl 1.0000  best veto        0.9984  gap  +0.15  harmful  0.00%  caught 100.0%  false_rej  0.00%  rules  6.0  ovr 1.0
+  gen:166832742 segment   s35742         ccl 0.9966  best gbm         0.9990  gap  -0.24  harmful  0.00%  caught   n/a   false_rej  0.33%  rules  6.8  ovr 0.8
+confirm_world_gap: +0.030  [95% CI -0.116, +0.175] over 24 independent worlds
+confirm_margin:    -0.25
+confirm_result:    PASS (pre-registered: lower bound > margin)
+worlds_negative:   9 of 24
+seconds:          414.0

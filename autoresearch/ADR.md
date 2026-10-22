@@ -420,3 +420,31 @@ threshold. A real trade-off: fewer false alarms near the threshold, less power a
 lower bound exceeds -0.25, one run, reported whatever it shows).
 
 **Status.** Accepted (frozen).
+
+### AR-022 result: confirmatory test 3 PASSED (2026-10-22)
+
+Draw k = 166832719, 24 new worlds, output verbatim in `autoresearch/CONFIRM_3.txt`. **Per-world gap +0.030 pts [95% CI
+-0.116, +0.175]; 9 of 24 worlds negative; PASS** (lower bound above -0.25). Harm caught 94.1%, false rejections 0.10%.
+
+Robustness, computed after the run from the same output (not part of the registration): with a Bonferroni correction over
+all three confirmatory tests ever run (98.33% interval) the bound is -0.152, still above -0.25; the lower bound also clears
+a margin of -0.12. The interval contains zero: this is non-inferiority to the retrospective best of five fixed baselines,
+not superiority.
+
+## AR-023 · What the research now supports (2026-10-22)
+
+- **Supported (synthetic, generated planted-rule worlds):** the locked line-2 CCL (12-month beam mining with a fine
+  numeric grid and an error-weighted gain, overruling precedents with a Bonferroni search correction and a test against the
+  harm threshold) is non-inferior at -0.25 pts to the retrospective best of five fixed case-level baselines, with a law of
+  about 8 readable rules, catching 94% of causal harm.
+- **History kept:** line 1's two confirmatory tests FAILED (-0.373, -0.374); line 2 diagnosed why (mining recall on generated
+  thresholds; overrule false alarms near the threshold), fixed it on a dev panel that finally contained generated worlds,
+  and passed its single test.
+- **Not supported:** superiority; causal harm detection under unobserved confounding (stress panel: fooled like every
+  outcome-aware method); power for harm exactly at the threshold (detector: 75% caught); transfer to real firms; any
+  governance advantage; that compact rules beat tuned black boxes (the baselines are fixed, not tuned).
+- **Line 2 is closed** (AR-020). A next line needs a newly diagnosed cause and its own pre-registration. Candidates:
+  real longitudinal decision data with outcomes; tuned and representation-matched baselines; sequential evidence across
+  months for threshold power.
+
+**Status.** Accepted.
