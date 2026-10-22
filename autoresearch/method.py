@@ -16,6 +16,19 @@ import numpy as np
 import ccl_sim as C
 
 MINER, ADM, LAW_REF = "beam", 2, "scoped"
+_decile_literals = C.generic_literals
+
+
+def literals(d):
+    """decile thresholds, plus EVERY threshold for small integer fields (a real miner tries all of them)"""
+    L = _decile_literals(d)
+    for f in ("term", "tenure_y"):
+        if f in d and d[f].nunique() <= 20:
+            for x in sorted(d[f].unique())[:-1]: L += [f"{f} > {x:g}", f"{f} <= {x:g}"]
+    return list(dict.fromkeys(L))
+
+
+C.generic_literals = literals   # the miners call ccl_sim.generic_literals: swap in the richer candidate set
 OVR_MIN_KNOWN, OVR_Z, OVR_MAX = 40, -3.0, 3
 
 
