@@ -1,0 +1,28 @@
+{
+ "id": "confirm_3",
+ "date": "2026-10-22",
+ "adr": "AR-022",
+ "method": "autoresearch/candidates/m_line2.py",
+ "method_sha256": "19f6cfc93ae0c18e995f8bbb133128d7b05d39ab1953554f745c140270d86dab",
+ "selected_by": "AR-021 inner loop: experiments 1, 5, 7 kept on dev v4 (+0.144 -> +0.326); locked as tag ar-line2-locked",
+ "harness_sha": "b39e81ac4179",
+ "n_worlds": 24,
+ "per_world_configs": [
+  "exception (harm size drawn per world)",
+  "segment (no causal harm)"
+ ],
+ "harm_bad_renew_range": [
+  0.35,
+  0.75
+ ],
+ "world_and_seed_draw": "secrets.randbits(30) at run time; recorded in the output",
+ "primary_metric": "per-world gap = mean over its two configs of (CCL agreement - best of five fixed baselines, retrospective), points",
+ "inference": "two-sided 95% t-interval over the 24 independent worlds",
+ "margin_pts": -0.25,
+ "margin_justification": "0.25 points = 1 decision in 400. Against best-baseline error rates of about 0.1% to 0.3% this allows CCL up to roughly two to three times the errors of the best black box; it is a lenient margin, stated as such. A pass therefore means 'not much worse than the best of five fixed models on these synthetic worlds', nothing stronger.",
+ "success_rule": "PASS iff the lower 95% bound of the per-world gap exceeds -0.25",
+ "reporting": "the result is reported whatever it shows; no method or harness change between this manifest's commit and the run; one run only",
+ "simulator_sha": "aec5a5c78d96dc8a",
+ "rulec_sha256": "87fc26b79b949b2eb1d4f118a5ddaf74f3af87ef451a28da8d4fded6d3468c56",
+ "family": "line 2 (AR-021): its single confirmatory test, alpha 0.05; line 1's two failed tests reported alongside, not pooled"
+}

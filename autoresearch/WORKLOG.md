@@ -161,3 +161,10 @@ with explicit splitting); a safety hook mistook a Python one-liner for kubectl a
   from invalid runs, manifests pin simulator and compiler, confirm CI labelling. 35 harness tests pass.
 - Mistakes: the dev-panel insertion first failed to parse twice (a trailing comma before the appended list made Python
   read it as a dict key).
+
+## 2026-10-22 · Line 2 inner loop (8 experiments) and confirm_3 manifest
+
+- Results in `results_line2.tsv` (untracked) and AR-022 (tracked). Kept: fine size grid, error-weighted miner gain,
+  threshold-aware overrule test. Dev +0.144 -> +0.326. Locked as `candidates/m_line2.py` / tag ar-line2-locked.
+- Descriptive panels: monitor +0.043, stress -0.337, detector -0.100 (exact-threshold harm missed more often).
+- Manifest `confirm_3.json` committed before the run, with simulator and compiler pinned (AR-019 gap closed).

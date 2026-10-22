@@ -393,3 +393,30 @@ the lower bound exceeds -0.25), with simulator and compiler hashes pinned. Line 
 single test; line 1's two failed tests are reported alongside, not pooled.
 
 **Status.** Accepted (frozen).
+
+## AR-022 · Line 2 inner loop result and confirm_3 pre-registration (2026-10-22, committed BEFORE the run)
+
+**Inner loop (dev v4, 32 configs; stopped at 8 of 12 experiments after a flat sensitivity check).**
+
+| # | change | dev | decision |
+|---|---|---|---|
+| base | m_bonf (line 1 final) | +0.144 | generated segment worlds -0.365 |
+| 1 | 2.5%-quantile size thresholds | +0.234 | keep |
+| 2 | CART-style threshold refinement | +0.100 | discard |
+| 3 | miner precision 0.95 | +0.039 | discard |
+| 4 | beam 100 | +0.234 | discard (same score, more compute) |
+| 5 | error-weighted miner gain (errors cost 2x) | +0.305 | keep |
+| 6 | error weight 3 | +0.307 | not adopted (flat) |
+| 7 | overrule also needs z <= -1 against the threshold (not just against zero) | +0.326 | keep |
+| 8 | sensitivity of 7 (-0.5 / -1.5) | +0.313 / +0.304 | flat; -1.5 loses harm detection |
+
+Final dev +0.326 [+0.071, +0.581]; generated segment worlds -0.033; harm caught 100% on dev.
+**Descriptive checks (not used to decide):** monitor +0.043 [-0.062, +0.149]; stress -0.337; detector -0.100 (line-1 final:
++0.073) with harm caught 75% (was 83.5%): requiring evidence that the drop EXCEEDS 0.20 misses harm sitting exactly at the
+threshold. A real trade-off: fewer false alarms near the threshold, less power at it.
+
+**Confirm_3.** Manifest `manifests/confirm_3.json`: method `candidates/m_line2.py` (hash pinned), harness, simulator
+(`aec5a5c78d96dc8a`) and compiler hashes pinned; protocol as AR-015 (24 new worlds, per-world t-interval, margin -0.25, PASS iff the
+lower bound exceeds -0.25, one run, reported whatever it shows).
+
+**Status.** Accepted (frozen).
