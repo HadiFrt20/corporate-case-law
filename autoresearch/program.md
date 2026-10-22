@@ -39,7 +39,7 @@ What you CANNOT do:
   from the simulator's code or random seeds (that is cheating, not research)
 - look at the monitor, stress or fresh panels to choose what to keep
 
-**The goal: the highest `score_pts`** (mean over the 16 dev configurations, since harness v2.1, of CCL minus
+**The goal: the highest `score_pts`** (mean over the 32 dev configurations, since harness v4, of CCL minus
 the best of five fixed baselines selected retrospectively per configuration, in points). 0 means CCL ties the best black box; positive means it beats it.
 
 **Simplicity criterion** (as in the original): all else equal, simpler is better, and fewer rules is better.
@@ -94,4 +94,5 @@ where the law loses (harmful approvals = leaked harm; false rejections = over-bl
 ## Current state (2026-10-22)
 
 Line 1 STOPPED (AR-018: two confirmatory tests failed). Line 2 (AR-021) CLOSED: its single confirmatory test PASSED
-(AR-022). A new line needs a newly diagnosed cause and its own pre-registration (AR-020, candidates in AR-023).
+(AR-022). The confirmatory family is CLOSED (AR-024): further lines are diagnostic only, unless a new question is registered
+with an alpha-spending plan before its first look.

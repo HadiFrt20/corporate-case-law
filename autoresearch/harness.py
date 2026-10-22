@@ -77,7 +77,7 @@ def validate(law):
         if kind not in CAP_RANGE: return None, f"holding {i}: kind {kind!r}"
         if not isinstance(lits, list) or not lits or len(lits) > MAX_LITS: return None, f"holding {i}: 1..{MAX_LITS} literals required"
         for l in lits:
-            if not isinstance(l, str) or not any(r.match(l) for r in LIT_RES): return None, f"holding {i}: literal {l!r} not in the grammar"
+            if not isinstance(l, str) or not any(r.fullmatch(l) for r in LIT_RES): return None, f"holding {i}: literal {l!r} not in the grammar"
         if not isinstance(cap, (int, float)) or not math.isfinite(cap) or not CAP_RANGE[kind][0] <= cap <= CAP_RANGE[kind][1]:
             return None, f"holding {i}: cap {cap!r} out of range for {kind}"
         total += len(lits); out.append({"id": f"L{i}", "kind": kind, "lits": list(lits), "cap": float(cap)})
@@ -207,7 +207,7 @@ def confirm_summary(out, cache, man):
     lo = g.mean() - half
     print(f"confirm_world_gap: {g.mean():+.3f}  [95% CI {lo:+.3f}, {g.mean() + half:+.3f}] over {n} independent worlds")
     print(f"confirm_margin:    {man['margin_pts']}")
-    print(f"confirm_result:    {'PASS' if lo > man['margin_pts'] else 'FAIL'} (pre-registered: lower bound > margin)")
+    print(f"confirm_result:    {'PASS' if lo > man['margin_pts'] else 'FAIL'} (pre-registered: lower bound of a two-sided 95% CI > margin, i.e. a one-sided 2.5% test)")
     print(f"worlds_negative:   {int((g < 0).sum())} of {n}")
 
 
@@ -219,6 +219,8 @@ def main():
     if a.method: a.method = os.path.abspath(a.method)   # the runner starts in a temp dir (bug found on the first detector run)
     if a.panel == "confirm":
         man = json.load(open(a.manifest)); mp = os.path.join(ROOT, man["method"])
+        need = {"method", "method_sha256", "harness_sha", "simulator_sha", "rulec_sha256", "n_worlds", "harm_bad_renew_range", "margin_pts"}
+        if need - set(man) and man.get("id") not in ("confirm_1", "confirm_2"): print(f"status: manifest missing {sorted(need - set(man))}"); return
         sha = hashlib.sha256(open(mp, "rb").read()).hexdigest()
         if sha != man["method_sha256"]: print("status: manifest method hash mismatch"); return
         if HARNESS_SHA != man["harness_sha"]: print("status: manifest harness hash mismatch"); return
@@ -253,7 +255,7 @@ def main():
     if a.dump: json.dump([dict(r, base_cached=cache.get(json.dumps(r["cfg"], sort_keys=True))) for r in out], open(a.dump, "w"))
     if viol: print("---\nstatus:           invalid\nviolation:       ", viol[0], "\nscore_pts:        nan"); return
     summarize(out, cache, a.panel)
-    if a.panel == "confirm": confirm_summary(out, cache, json.load(open(a.manifest)))
+    if a.panel == "confirm": confirm_summary(out, cache, man)   # the manifest validated before the run, not a re-read (round 4)
     print(f"seconds:          {time.time() - t0:.1f}")
 
 

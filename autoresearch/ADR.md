@@ -448,3 +448,31 @@ not superiority.
   months for threshold power.
 
 **Status.** Accepted.
+
+### AR-023 corrections after Astra round 4 (record B+; narrow claim B; broad claim C-)
+
+- Wording: line 2 "targeted the hypothesised causes ... improved on a revised dev panel ... passed a fresh SAME-FAMILY
+  evaluation". Which of the three changes caused the improvement is not isolated (a paired factorial would be needed).
+- Confirm_3 facts: **6.08 rules on average** (not "about 8"); exception worlds **+0.17**, segment worlds
+  **-0.11** (the overall +0.030 is not uniform parity); harm caught 94.1% is a **macro-average**, with two
+  worlds at 44% and 56%.
+- The pass is a one-sided 2.5% non-inferiority test (lower bound of a two-sided 95% interval); the margin is lenient
+  (about 1.8 to 3.5 times the best baseline's error); the result would not pass -0.10.
+- Boundary power: for a true drop of exactly 0.20, the threshold test `(lift + 0.20) / se <= -1` passes about 16% of the
+  time by construction. The oracle (harm at >= 0.20) and the detector (act only on evidence of > 0.20) encode different
+  thresholds; deciding which is right is a policy question, not a tuning one.
+- Harness fixes after the run (no effect on the result): the confirm summary uses the validated manifest object (it
+  re-read the file), required manifest fields, `fullmatch` literal grammar, one-sided wording.
+
+## AR-024 · Research-wide budget: the confirmatory family is closed (2026-10-22)
+
+**Context.** AR-020 bounds each inner loop and each line, but not the number of lines: "new diagnosis, new line" can
+still become "continue until success" (Astra round 4).
+
+**Decision.** The question "is CCL non-inferior to case-level baselines on generated worlds" has used its budget: three
+confirmatory tests (two FAIL, one PASS), all reported together. No further claim-bearing test of this question. Further
+lines are DIAGNOSTIC only (paired factorial of the three line-2 changes; boundary benchmark; tuned and representation-matched
+baselines; new generator families), unless a new question is registered with an explicit alpha-spending plan before its
+first look.
+
+**Status.** Accepted.

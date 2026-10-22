@@ -64,6 +64,7 @@ dbx = (f"- **Databricks build** (`dbx/REPORT.md`, one synthetic run): month-end 
 gov = ("- **Governance advantage: untested.** CCL produces compact executable rules that support inspection, testing and controlled deployment; whether that beats an "
        "explained black box in practice has not been measured.")
 import re as _re
+import numpy as np
 def _confirm(path):
     t = open(os.path.join(HERE, path)).read()
     m = _re.search(r"confirm_world_gap: ([+-][\d.]+)  \[95% CI ([+-][\d.]+), ([+-][\d.]+)\] over (\d+)", t)
@@ -73,6 +74,12 @@ c1, c2, c3 = _confirm("autoresearch/CONFIRM_1.txt"), _confirm("autoresearch/CONF
 for c in (c1, c2, c3): assert c["res"] in ("PASS", "FAIL") and (c["res"] == "PASS") == (c["lo"] > -0.25), c   # the verdict must match the registered rule
 verdict = "FAILED" if c1["res"] == c2["res"] == "FAIL" else ("PASSED" if c1["res"] == c2["res"] == "PASS" else "split (one PASS, one FAIL)")
 below0 = all(c["hi"] < 0 for c in (c1, c2)); in_margin = all(c["lo"] <= -0.25 <= c["hi"] for c in (c1, c2))
+_t3 = open(os.path.join(HERE, "autoresearch", "CONFIRM_3.txt")).read()
+_rows3 = [l for l in _t3.splitlines() if l.startswith("  gen")]
+_g3 = lambda l: float(_re.search(r"gap\s+([+-][\d.]+)", l).group(1))
+_c3 = sorted(float(x) for x in _re.findall(r"caught\s+([\d.]+)%", _t3))
+X3 = dict(exc=float(np.mean([_g3(l) for l in _rows3 if l.split()[1] == "exception"])), seg=float(np.mean([_g3(l) for l in _rows3 if l.split()[1] == "segment"])),
+          macro=float(_re.search(r"harm_caught_pct:\s+([\d.]+)", _t3).group(1)), cmin=_c3[:2], rules=float(_re.search(r"rules_mean:\s+([\d.]+)", _t3).group(1)))
 DR = json.load(open(os.path.join(HERE, "autoresearch", "detector_result.json")))
 st = DR["stats"]
 auto = (f"- **Autoresearch loop** (`autoresearch/`, own `WORKLOG.md` and `ADR.md`; karpathy/autoresearch adapted: frozen harness, method in an isolated process, "
@@ -84,10 +91,14 @@ auto = (f"- **Autoresearch loop** (`autoresearch/`, own `WORKLOG.md` and `ADR.md
         f"{c2['gap']:+.3f} pts [{c2['lo']:+.3f}, {c2['hi']:+.3f}] ({c2['neg']} of {c2['n']} negative). "
         + ("Both intervals lie entirely below zero, so on these synthetic worlds the locked candidates are measurably worse than the retrospective "
            "best-of-five comparator; " if below0 else "") + ("both intervals also contain the -0.25 margin, so a deficit larger than the margin is not established. " if in_margin else "")
-        + f"Line 2 (AR-021) then diagnosed the cause (mining recall on generated thresholds; overrule false alarms near the threshold), fixed it on a dev "
-          f"panel that contained generated worlds, and its single pre-registered confirmatory test **{c3['res'] + 'ED' if c3['res'] == 'PASS' else c3['res']}**: per-world gap {c3['gap']:+.3f} pts "
+        + f"Line 2 (AR-021) then targeted the hypothesised causes (mining recall on generated thresholds; overrule false alarms near the threshold), improved on a "
+          f"revised dev panel that contains generated worlds, and its single pre-registered confirmatory test on new draws from the SAME generator family "
+          f"**{c3['res'] + 'ED' if c3['res'] == 'PASS' else c3['res']}**: per-world gap {c3['gap']:+.3f} pts "
           f"[{c3['lo']:+.3f}, {c3['hi']:+.3f}] over {c3['n']} new worlds ({c3['neg']} negative)"
-          + (f", i.e. non-inferior at the -0.25 margin to the retrospective best of five fixed baselines; the interval contains zero, so not superior. " if c3['res'] == 'PASS' and c3['lo'] <= 0 <= c3['hi'] else ". ")
+          + (f", i.e. non-inferior at the -0.25 margin (a lenient one: up to about 2 to 3.5 times the best baseline's errors) to the retrospective best of five "
+             f"fixed, untuned baselines; the interval contains zero, so not superior. The average hides a split: exception worlds {X3['exc']:+.2f} pts, segment "
+             f"worlds {X3['seg']:+.2f} pts; harm caught {X3['macro']:.1f}% as a macro-average with two worlds at {X3['cmin'][0]:.0f}% and {X3['cmin'][1]:.0f}%; "
+             f"{X3['rules']:.2f} rules on average. Which of the three line-2 changes caused the improvement is not isolated. " if c3['res'] == 'PASS' and c3['lo'] <= 0 <= c3['hi'] else ". ")
           + "Not established: superiority, causal harm detection under unobserved confounding, power for harm exactly at the threshold, transfer to real firms, "
           "any governance advantage (AR-023).")
 block = "\n".join([sim, real, dbx, auto, gov])

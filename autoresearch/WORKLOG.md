@@ -174,3 +174,10 @@ with explicit splitting); a safety hook mistook a Python one-liner for kubectl a
 - `--panel confirm --manifest manifests/confirm_3.json`, run once: per-world gap **+0.030 [-0.116, +0.175]**, 9 of 24 worlds
   negative, **PASS**; harm caught 94.1%, false rejections 0.10%. Bonferroni over all three confirmatory tests: [-0.152,
   +0.212], still a pass. Line 2 closed (AR-020); claims in AR-023.
+
+## 2026-10-22 · Astra round 4 and closing the family
+
+- Review `docs/reviews/astra_autoresearch_round4_2026-10-22.md` (record B+, narrow claim B, broad claim C-); response
+  `docs/reviews/response_autoresearch_round4_2026-10-22.md`.
+- README wording regenerated with scope (same-family, untuned retrospective baselines, effect split, macro catch, 6.08 rules).
+- Harness: validated manifest reused, required fields, fullmatch grammar. AR-024 closes the confirmatory family.
