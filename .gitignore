@@ -16,3 +16,6 @@ autoresearch/baselines_*.json
 autoresearch/monitor.tsv
 autoresearch/stress.tsv
 autoresearch/fresh.tsv
+autoresearch/detector_*.json
+autoresearch/detector_*.log
+!autoresearch/detector_analysis.py
