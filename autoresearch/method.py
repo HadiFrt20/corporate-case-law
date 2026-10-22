@@ -69,5 +69,10 @@ def build_law(view, X, m):
     win = view.month >= m - 12
     mw, aw = win & (view.month < m - ADM), win & (view.month >= m - ADM)
     hs = C.moot_court(C.mine_beam(view[mw], min_support=MIN_SUPPORT, beam=BEAM), view[aw], X[aw])
-    law = hs   # no rule-level outcome screen: harm is handled by overruling precedents
-    return law + overrules(view)[: max(0, 15 - len(law))]
+    ovr = overrules(view)
+    # an overruled precedent is struck from the law: drop a loosening holding whose above-policy cases all fall
+    # inside an overrule (its decisions cannot change, only the rule count does)
+    st = view.statute.values
+    om = [C.fires(o, view, X) for o in ovr]
+    law = [h for h in hs if h["kind"] == "tighten" or not any(((C.fires(h, view, X) & ~st) <= o).all() and (C.fires(h, view, X) & ~st).any() for o in om)]
+    return law + ovr[: max(0, 15 - len(law))]
