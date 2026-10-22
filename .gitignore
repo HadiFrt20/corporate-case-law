@@ -9,3 +9,7 @@ ecc_review.err
 dbx/*.log
 real/hmda/raw/
 blog/_crops/
+autoresearch/results.tsv
+autoresearch/holdout.tsv
+autoresearch/*.log
+autoresearch/baselines_*.json
