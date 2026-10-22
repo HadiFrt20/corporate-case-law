@@ -7,8 +7,10 @@ process (harness v2, AR-009); the harness validates the law and decides with its
 
 Current method (AR-005, AR-006, AR-008, AR-010):
   - beam-search mining on the last 12 months (no moot court for mined rules)
-  - overruling precedents: a stricter-law holding for a population whose above-policy approvals renew clearly worse
-    than its own in-policy approvals, in every one-literal refinement of it
+  - overruling precedents: a stricter-law holding for a population whose above-policy approvals renew at least 0.20
+    worse than its own in-policy approvals (z <= -3 against zero), UNLESS some one- or two-literal refinement shows
+    significant evidence that its drop is below 0.20; refinements with too few outcomes are skipped (they do not
+    object). An observational association screen, not causal identification (AR-011, AR-012, Astra round 2).
   - a loosening precedent is struck only when an overrule's literals are a subset of its own (logical implication:
     it can never decide differently on any case)
 """

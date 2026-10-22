@@ -188,3 +188,25 @@ near-threshold configs now duplicate dev in kind (on other seeds) and only its c
 as a check. The fresh panel is the clean test.
 
 **Status.** Accepted.
+
+## AR-013 · Stop optimizing; pre-commit a falsification experiment, then one confirmatory test (2026-10-22)
+
+**Context.** Two fresh draws failed non-inferiority (-0.419, -0.042). Astra round 2: the process is now honest about
+failure, but the diagnosis (joint confounding behind the false rejections) is a hypothesis, and further fresh draws per
+revised method would be optional stopping.
+
+**Decision.** The optimization loop pauses. Next, in this order, all human-owned and frozen before any result is seen:
+1. **Paired falsification experiment** on a new `--panel detector` (controlled worlds: causal exception harm,
+   segment-only, joint segment x region confounding, unobserved confounding, small cells; harm drops 0.10, 0.15, 0.20,
+   0.25, 0.30), comparing three frozen methods on identical firms: ar-locked-2, the same miner with no overrules, and
+   the one-literal-refinement variant (ar-locked-1). Per overrule, log the population, its evidence, skipped
+   refinements, decisions changed, harmful approvals prevented and valid approvals rejected. Question: do overrules
+   cause the fresh false rejections, and does the two-literal check reduce them without losing power near 0.20?
+2. **One confirmatory evaluation**, pre-registered in a manifest committed before the run: method hash, harness hash,
+   simulator hash, number of generated worlds (at least 24, independent world clusters), harm-size distribution, the
+   margin and its justification, inference by world cluster (not configuration), success criterion, and the rule that
+   every draw is reported whatever it shows. No method change between the manifest and the run.
+
+**Consequences.** No claim of non-inferiority until step 2 passes. Fresh runs 1 and 2 remain in the record as failures.
+
+**Status.** Accepted.

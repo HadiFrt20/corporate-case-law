@@ -92,3 +92,26 @@ with explicit splitting); a safety hook mistook a Python one-liner for kubectl a
   Astra round 1, point 5.1 (refinements by one literal miss confounders defined by two literals jointly, e.g. a rogue
   approver = segment x region). Next: two-literal refinements (proposed by the review BEFORE this run), judged on dev,
   then a NEW fresh draw; every fresh run is logged here so the adaptivity stays visible.
+
+## 2026-10-22 · experiment 20, fresh run 2, Astra review round 2 (B-)
+
+| # | commit | hypothesis | dev score | rules | decision |
+|---|---|---|---|---|---|
+| 20 | 8e11282 | two-literal refinements (categorical / boolean pairs) in the overrule check | +0.319 | 9.32 | keep (false rejections 0.106% to 0.094%); locked as ar-locked-2 |
+
+- Monitor (ar-locked-2): +0.006 [-0.108, +0.121], non-inferior at -0.25.
+- **Fresh run 2** (draw k = 940134736, output verbatim in `FRESH_run2_k940134736.txt`): **-0.042 [-0.676, +0.591], NOT
+  non-inferior** (interval too wide). Harm caught 100%, harmful approvals 0%, false rejections 0.50% (run 1: 0.71%). Four
+  segment worlds still lose 0.37 to 0.88 pts (over-blocking); three near-threshold worlds win +1.30 to +1.63 (the black
+  boxes over-block there); one near-threshold world loses 1.35. Different worlds from run 1: the change is suggestive,
+  not a measured improvement.
+- **Disclosure:** fresh run 2 was launched before Astra round 2 had been read. Round 2 recommends against another fresh
+  draw before a frozen falsification experiment and warns that "one fresh draw per revised method until one passes" is
+  optional stopping. Two fresh draws have now been used; both are kept and both failed non-inferiority.
+- Astra round 2 (`docs/reviews/astra_autoresearch_round2_2026-10-22.md`): B- for the loop, D for any non-inferiority
+  claim. Defects it found and fixed here: the GC leak probe never actually inspected pandas objects (now fixed and
+  covered by its own positive control); the outcome-timing test used the code under test as its oracle (now a
+  handcrafted case); `MONTH_TIMEOUT_S` was unused (now enforced with select); a literal on a field missing in a world
+  crashed instead of invalidating (now a violation); stale wording ("every refinement", "12 configs", "best black box").
+  New tests: 32 harness tests, full suite 111 passed. Dev re-run after the harness changes: +0.319, unchanged.
+- Response: `docs/reviews/response_autoresearch_round2_2026-10-22.md`. Next step pre-committed in AR-013.

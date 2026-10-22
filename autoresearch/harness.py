@@ -5,21 +5,23 @@ Trust boundary (AR-009, after Astra review round 1):
     VIEW: rows with month < m, only the columns in VIEW_COLS, renewal outcomes only where knowable before m
     (ccl_sim.outcome_rows; elsewhere renewed = False, flag outcome_known). It never sees the firm, the seed, the world
     or this process's memory, and anything it does to ccl_sim stays in its own process.
-  - it returns plain JSON holdings; validate() accepts ONLY {"kind", "lits", "cap"} holdings whose literals match a
+  - it returns plain JSON holdings; validate() reconstructs ONLY {"kind", "lits", "cap"} from each holding (runner.py flags
+    ast / conds holdings, which are rejected; any other key is dropped) whose literals match a
     strict grammar over the deal fields in FIELDS (no approved / renewed / statute / month / outcome fields), at most
     MAX_RULES holdings, MAX_LITS literals each, MAX_TOTAL_LITS overall, finite caps in range. No AST, no trees.
   - decisions are made HERE with this process's own ccl_sim.apply on decision-time columns only (DEC_COLS).
   - baselines are computed HERE, in processes that never import the method, and cached by harness/world/simulator hash.
 
-Metric: score_pts = mean over the panel of (CCL agreement - best baseline agreement) * 100, with a 95% t-interval over
+Metric (dev panel: 16 configs since v2.1, AR-012): score_pts = mean over the panel of (CCL agreement - best baseline agreement) * 100, with a 95% t-interval over
 configurations (configurations share seeds across worlds, so the interval is optimistic). Baselines: GBM, GBM +
-renewal veto, GBM + T-learner, a 15-leaf decision tree (a compact rule model), and that tree + the renewal veto.
+renewal veto, GBM + T-learner, a 15-leaf decision tree (a compact rule model), and that tree + the renewal veto,
+selected RETROSPECTIVELY per configuration (the best of five fixed baselines, not the best possible black box).
 
 Panels: dev (decide keep/discard), monitor (seen at checkpoints only), stress (harm-detector stress tests,
 reported, never in the score), fresh (newly generated worlds and seeds drawn at run time; run ONCE per locked method).
 Usage: python autoresearch/harness.py [--panel dev|monitor|stress|fresh]
 """
-import argparse, hashlib, json, math, os, pickle, re, secrets, subprocess, sys, tempfile, time
+import argparse, hashlib, json, math, os, pickle, re, secrets, select, subprocess, sys, tempfile, time
 os.environ.setdefault("OMP_NUM_THREADS", "1")
 from concurrent.futures import ProcessPoolExecutor
 import numpy as np
@@ -111,11 +113,15 @@ def eval_config(cfg, need_base, method_path=None):
                 p = os.path.join(tmp, f"view_{m}.pkl")
                 with open(p, "wb") as f: pickle.dump(view_of(df, m), f)
                 proc.stdin.write(json.dumps({"path": p, "m": m}) + "\n"); proc.stdin.flush()
+                ready, _, _ = select.select([proc.stdout], [], [], MONTH_TIMEOUT_S)
+                if not ready: res["violation"] = f"month {m}: method timeout after {MONTH_TIMEOUT_S}s"; break
                 line = proc.stdout.readline(); os.remove(p)
                 rep = json.loads(line) if line else {"error": "runner died"}
                 if "error" in rep: res["violation"] = f"month {m}: method error {rep['error']}"; break
                 law, err = validate(rep["law"])
                 if err: res["violation"] = f"month {m}: {err}"; break
+                missing = sorted({re.split(r"[ =!<>]", l.replace("NOT ", ""))[0] for h in law for l in h["lits"]} - set(df.columns))
+                if missing: res["violation"] = f"month {m}: literal on a field not available in this world: {missing}"; break
                 WD.setup(cfg)
                 te = (df.month == m).values; dt, Xt = df[te], X[te]
                 pred = np.asarray(C.apply(law, dt[[c for c in DEC_COLS if c in dt]], Xt)[0], bool)

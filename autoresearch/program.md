@@ -39,8 +39,8 @@ What you CANNOT do:
   from the simulator's code or random seeds (that is cheating, not research)
 - look at the monitor, stress or fresh panels to choose what to keep
 
-**The goal: the highest `score_pts`** (mean over the 12 dev configurations of CCL minus the best case-level
-baseline, in points). 0 means CCL ties the best black box; positive means it beats it.
+**The goal: the highest `score_pts`** (mean over the 16 dev configurations, since harness v2.1, of CCL minus
+the best of five fixed baselines selected retrospectively per configuration, in points). 0 means CCL ties the best black box; positive means it beats it.
 
 **Simplicity criterion** (as in the original): all else equal, simpler is better, and fewer rules is better.
 A +0.02 gain that adds 40 lines or 4 rules is probably not worth it. Equal score with less code or fewer
@@ -90,3 +90,8 @@ On branch `autoresearch/<tag>`:
 
 Do not stop to ask whether to continue. When out of ideas, re-read the per-configuration lines: they say
 where the law loses (harmful approvals = leaked harm; false rejections = over-blocking).
+
+## Current state (2026-10-22)
+
+The loop is PAUSED by AR-013: two fresh draws failed non-inferiority. Do not optimize further and do not draw another
+fresh panel until the human has frozen the detector falsification experiment and the confirmatory manifest.

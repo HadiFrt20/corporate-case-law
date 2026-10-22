@@ -1,0 +1,23 @@
+fresh draw: k=940134736
+---
+score_pts:        -0.042  [95% CI -0.676, +0.591]
+worst_gap_pts:    -1.353  (gen:940134742/exception/36738)
+non_inferior:     no (lower CI vs margin -0.25)
+harmful_appr_pct: 0.000
+harm_caught_pct:  100.0
+false_rej_pct:    0.498
+rules_mean:       5.99  (literals 10.9, overrules 1.01)
+panel:            fresh (12 configs)
+  gen:940134736 exception s35736         ccl 0.9959  best veto        0.9984  gap  -0.25  harmful  0.00%  caught 100.0%  false_rej  0.41%  rules  6.0  ovr 1.0
+  gen:940134736 segment   s35736         ccl 0.9945  best gbm         0.9982  gap  -0.37  harmful  0.00%  caught   n/a   false_rej  0.55%  rules  6.2  ovr 0.2
+  gen:940134737 exception s35737         ccl 0.9908  best veto        0.9985  gap  -0.77  harmful  0.00%  caught 100.0%  false_rej  0.17%  rules  5.2  ovr 1.2
+  gen:940134737 segment   s35737         ccl 0.9896  best gbm         0.9984  gap  -0.88  harmful  0.00%  caught   n/a   false_rej  0.29%  rules  5.7  ovr 0.6
+  gen:940134738 exception s35738         ccl 0.9986  best veto        0.9984  gap  +0.02  harmful  0.00%  caught 100.0%  false_rej  0.14%  rules  5.0  ovr 1.0
+  gen:940134738 segment   s35738         ccl 0.9917  best gbm         0.9989  gap  -0.71  harmful  0.00%  caught   n/a   false_rej  0.83%  rules  6.6  ovr 1.6
+  gen:940134739 exception s35739         ccl 0.9983  best veto        0.9987  gap  -0.04  harmful  0.00%  caught 100.0%  false_rej  0.17%  rules  5.7  ovr 1.0
+  gen:940134739 segment   s35739         ccl 0.9929  best gbm         0.9990  gap  -0.61  harmful  0.00%  caught   n/a   false_rej  0.71%  rules  6.8  ovr 1.1
+  gen:940134740 exception s36736  br0.63 ccl 0.9916  best veto        0.9753  gap  +1.63  harmful  0.00%  caught 100.0%  false_rej  0.84%  rules  6.0  ovr 1.0
+  gen:940134741 exception s36737  br0.59 ccl 0.9969  best veto        0.9839  gap  +1.30  harmful  0.00%  caught 100.0%  false_rej  0.31%  rules  6.6  ovr 1.6
+  gen:940134742 exception s36738  br0.58 ccl 0.9815  best veto        0.9950  gap  -1.35  harmful  0.00%  caught 100.0%  false_rej  0.91%  rules  5.2  ovr 1.0
+  gen:940134743 exception s36739  br0.6  ccl 0.9934  best veto        0.9781  gap  +1.53  harmful  0.00%  caught 100.0%  false_rej  0.66%  rules  7.0  ovr 1.0
+seconds:          90.0

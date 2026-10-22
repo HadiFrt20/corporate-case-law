@@ -71,9 +71,12 @@ def test_method_cannot_find_the_firm_or_oracle_in_memory(tmp_path):
             for f in inspect.stack():
                 if any(k in f.frame.f_locals for k in ("df", "seed", "cfg")): raise RuntimeError("LEAK: caller frame")
             for o in gc.get_objects():
-                try: cols = list(getattr(o, "columns", []) or [])
+                try:
+                    cols = getattr(o, "columns", None)
+                    if cols is None: continue
+                    names = {str(c) for c in list(cols)}
                 except Exception: continue
-                if "harm_oracle" in cols or "binding" in cols: raise RuntimeError("LEAK: oracle in memory")
+                if "harm_oracle" in names or "binding" in names: raise RuntimeError("LEAK: oracle in memory")
             if "harm_oracle" in view.columns or "binding" in view.columns: raise RuntimeError("LEAK: view")
             return []
     """)
@@ -96,12 +99,60 @@ def test_leak_probe_positive_control(tmp_path):
     p = tmp_path / "probe.py"
     p.write_text(textwrap.dedent('''
         import gc, inspect
-        def build_law(view, X, m):
-            for f in inspect.stack():
-                if any(k in f.frame.f_locals for k in ("df", "seed", "cfg")): raise RuntimeError("LEAK: caller frame")
+        def build_law(view, X, m, frames=True):
+            if frames:
+                for f in inspect.stack():
+                    if any(k in f.frame.f_locals for k in ("df", "seed", "cfg")): raise RuntimeError("LEAK: caller frame")
+            for o in gc.get_objects():
+                try:
+                    cols = getattr(o, "columns", None)
+                    if cols is None: continue
+                    names = {str(c) for c in list(cols)}
+                except Exception: continue
+                if "harm_oracle" in names or "binding" in names: raise RuntimeError("LEAK: oracle in memory")
             return []
     '''))
     spec = importlib.util.spec_from_file_location("probe", p); mod = importlib.util.module_from_spec(spec); spec.loader.exec_module(mod)
     df = pd.DataFrame({"harm_oracle": [True]})   # noqa: F841  (what the v1 harness had in the caller frame)
-    with pytest.raises(RuntimeError, match="LEAK"):
+    with pytest.raises(RuntimeError, match="caller frame"):
         mod.build_law(df, None, 40)
+    with pytest.raises(RuntimeError, match="oracle in memory"):      # the GC route on its own (round 2: never validated before)
+        mod.build_law(df, None, 40, frames=False)
+
+
+
+def test_outcome_timing_handcrafted():
+    """independent of ccl_sim.outcome_rows: approved deals only, decided before m, term ended STRICTLY before m"""
+    import pandas as pd
+    df = pd.DataFrame(dict(month=[20, 20, 20, 33, 21], term=[1] * 5, approved=[True, False, True, True, True],
+                           renewed=[True, True, False, True, True], disc=[10.0] * 5, statute=[True] * 5,
+                           segment=["SMB"] * 5, region=["FR"] * 5, renewal=[False] * 5, quarter_end=[False] * 5,
+                           competitor=[False] * 5, churn_high=[False] * 5, size_k=[100.0] * 5))
+    df["outcome_known_month"] = df.month + 12 * df.term          # 32, 32, 32, 45, 33
+    v = H.view_of(df, 33)
+    assert list(v.outcome_known) == [True, False, True, False]   # rejected deal never known; the month-21 deal ends at 33, not < 33
+    assert list(v.renewed) == [True, False, False, False]        # the rejected deal's renewal is hidden even though it is True
+    assert 33 not in set(v.month)                                # the month-33 deal is not in the past
+    assert not H.view_of(df, 32).outcome_known.any()             # maturity exactly at m is not yet known
+
+
+def test_total_literal_budget_boundary():
+    assert H.validate([ok(["renewal", "competitor", "churn_high"])] * 15)[1] is None           # 45 literals: allowed
+    law, err = H.validate([ok(["renewal", "competitor", "churn_high", "quarter_end"])] * 12)    # 48 literals
+    assert law is None and "45" in err
+
+
+def test_ast_and_conds_rejected_end_to_end(tmp_path):
+    r = run_method(tmp_path, "def build_law(view, X, m):\n    return [{'kind': 'loosen', 'ast': ['or'], 'cap': 30.0}]\n")
+    assert r["violation"] and "only lits/cap" in r["violation"]
+
+
+def test_hanging_method_times_out(tmp_path, monkeypatch):
+    monkeypatch.setattr(H, "MONTH_TIMEOUT_S", 3)
+    r = run_method(tmp_path, "import time\ndef build_law(view, X, m):\n    time.sleep(60)\n    return []\n")
+    assert r["violation"] and "timeout" in r["violation"]
+
+
+def test_law_on_a_missing_field_is_invalid_not_a_crash(tmp_path):
+    r = run_method(tmp_path, "def build_law(view, X, m):\n    return [{'kind': 'loosen', 'lits': ['tenure_y > 8'], 'cap': 25.0}]\n")
+    assert r["violation"] and "not available" in r["violation"]          # the easy world has no tenure field
