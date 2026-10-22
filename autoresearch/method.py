@@ -23,8 +23,12 @@ OVR_MIN_KNOWN, OVR_Z, OVR_MAX = 40, -3.0, 3
 
 
 def literals(d):
-    """decile thresholds, plus EVERY threshold for small integer fields (a real miner tries all of them)"""
+    """decile thresholds, plus EVERY threshold for small integer fields (a real miner tries all of them), plus a fine
+    2.5%-quantile grid for continuous fields (line 2, AR-021: generated thresholds such as 650k fall between deciles)"""
     L = C.generic_literals(d)
+    for f in ("size_k",):
+        if f in d:
+            for x in sorted({float(np.round(np.quantile(d[f], q))) for q in np.arange(0.025, 1, 0.025)}): L += [f"{f} > {x:g}", f"{f} <= {x:g}"]
     for f in ("term", "tenure_y"):
         if f in d and d[f].nunique() <= 20:
             for x in sorted(d[f].unique())[:-1]: L += [f"{f} > {x:g}", f"{f} <= {x:g}"]
