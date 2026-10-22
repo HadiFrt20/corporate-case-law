@@ -35,6 +35,26 @@ def literals(d):
     return list(dict.fromkeys(L))
 
 
+ERR_W = 2.0   # line 2 exp 5: an error costs ERR_W correct decisions in the miner's gain (was 1: gain = 2g - n)
+
+
+def _best_cap(n_le, g_le, n_tot, g_tot, kind, nlits, min_support, min_prec):
+    """ccl_sim._best_cap with an error weight"""
+    n, g = (n_le, g_le) if kind == "loosen" else (n_tot[:, None] - n_le, g_tot[:, None] - g_le)
+    ok = (n >= min_support) & (g >= min_prec * np.maximum(n, 1))
+    gain = np.where(ok, g - ERR_W * (n - g) - 3 * nlits, -1e9); j = gain.argmax(1); r = np.arange(len(j))
+    return gain[r, j], j, n[r, j], g[r, j], ok.any(1)
+
+
+def _score_children(Lf, W, rows, cand, depth, kind, min_support, min_prec):
+    """ccl_sim._score_children calling the weighted _best_cap"""
+    H = np.rint(Lf[np.ix_(cand, rows)] @ W[rows]).astype(np.int64); nb = W.shape[1] // 2
+    n_tot, g_tot = H[:, :nb].sum(1), H[:, nb:].sum(1); keep = n_tot >= min_support
+    H, n_tot, g_tot = H[keep], n_tot[keep], g_tot[keep]
+    gain, j, n, g, has = _best_cap(H[:, :nb - 1].cumsum(1), H[:, nb:-1].cumsum(1), n_tot, g_tot, kind, depth, min_support, min_prec)
+    return cand[keep], np.where(has, gain, -1e9), j, n, g, has, g_tot / n_tot
+
+
 def mine_beam(d, lits, min_support=60, min_prec=.9, max_rules=14, max_lits=3, beam=25):
     """ccl_sim.mine_beam with the candidate literals passed in (no monkeypatching the simulator, AR-007)"""
     Lm = np.array([C.literal(l, d) for l in lits]); disc, appr = d.disc.values, d.approved.values
@@ -47,7 +67,7 @@ def mine_beam(d, lits, min_support=60, min_prec=.9, max_rules=14, max_lits=3, be
             rows = np.flatnonzero(open_); Lo = Lm[:, rows]; W = C._cap_bins(disc[rows], good[rows], caps); Lf = Lo.astype(W.dtype)
             best, frontier = None, [((), np.arange(len(rows)))]
             for depth in range(1, max_lits + 1):
-                parts = [(p, C._score_children(Lf, W, pr, after[combo[-1]] if combo else np.arange(len(lits)), depth, kind, min_support, min_prec))
+                parts = [(p, _score_children(Lf, W, pr, after[combo[-1]] if combo else np.arange(len(lits)), depth, kind, min_support, min_prec))
                          for p, (combo, pr) in enumerate(frontier) if not combo or len(after[combo[-1]])]
                 if not parts: break
                 pid = np.concatenate([np.full(len(s[0]), p) for p, s in parts])
