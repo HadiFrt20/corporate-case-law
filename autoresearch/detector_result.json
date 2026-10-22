@@ -1,0 +1,36 @@
+{
+ "stats": {
+  "twolit": {
+   "score": -0.019601109962360832,
+   "rules": 9.803030303030303,
+   "nh_false_rej": 2763,
+   "nh_ovr_false_rej": 2071,
+   "nh_ovr_share": 0.7495475931958017,
+   "caught_strong": 100.0,
+   "ovr_months_noharm": 0.29365079365079366
+  },
+  "onelit": {
+   "score": -0.020407953610181793,
+   "rules": 9.808080808080806,
+   "nh_false_rej": 2771,
+   "nh_ovr_false_rej": 2079,
+   "nh_ovr_share": 0.7502706604114038,
+   "caught_strong": 100.0,
+   "ovr_months_noharm": 0.29761904761904756
+  },
+  "noovr": {
+   "score": -1.5836890147536598,
+   "rules": 9.585858585858585,
+   "nh_false_rej": 692,
+   "nh_ovr_false_rej": 0,
+   "nh_ovr_share": 0.0,
+   "caught_strong": 0.0,
+   "ovr_months_noharm": 0.0
+  }
+ },
+ "H1": true,
+ "H2": false,
+ "H3": true,
+ "reduction": 0.003848003848003878,
+ "selected": "twolit"
+}

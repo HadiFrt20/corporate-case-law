@@ -19,3 +19,4 @@ autoresearch/fresh.tsv
 autoresearch/detector_*.json
 autoresearch/detector_*.log
 !autoresearch/detector_analysis.py
+!autoresearch/detector_result.json

@@ -63,7 +63,24 @@ dbx = (f"- **Databricks build** (`dbx/REPORT.md`, one synthetic run): month-end 
        + (f"A control re-proposal of a screened rule ended as `{ctl[0]['verdict']}`." if ctl else ""))
 gov = ("- **Governance advantage: untested.** CCL produces compact executable rules that support inspection, testing and controlled deployment; whether that beats an "
        "explained black box in practice has not been measured.")
-block = "\n".join([sim, real, dbx, gov])
+import re as _re
+def _confirm(path):
+    t = open(os.path.join(HERE, path)).read()
+    m = _re.search(r"confirm_world_gap: ([+-][\d.]+)  \[95% CI ([+-][\d.]+), ([+-][\d.]+)\] over (\d+)", t)
+    neg = _re.search(r"worlds_negative:\s+(\d+) of (\d+)", t); res = _re.search(r"confirm_result:\s+(\w+)", t)
+    return dict(gap=float(m.group(1)), lo=float(m.group(2)), hi=float(m.group(3)), n=int(m.group(4)), neg=int(neg.group(1)), res=res.group(1))
+c1, c2 = _confirm("autoresearch/CONFIRM_1.txt"), _confirm("autoresearch/CONFIRM_2.txt")
+DR = json.load(open(os.path.join(HERE, "autoresearch", "detector_result.json")))
+st = DR["stats"]
+auto = (f"- **Autoresearch loop** (`autoresearch/`, own `WORKLOG.md` and `ADR.md`; karpathy/autoresearch adapted: frozen harness, method in an isolated process, "
+        f"plain-data laws, adversarial tests, pre-registered tests). The loop added overruling precedents (a stricter-law rule where above-policy approvals "
+        f"renew at least 0.20 worse than comparable in-policy approvals). In the pre-registered detector experiment, overrules caught "
+        f"{st['twolit']['caught_strong']:.0f}% of harmful cases at drops of 0.25 to 0.30 versus {st['noovr']['caught_strong']:.0f}% without them, and caused "
+        f"{st['twolit']['nh_ovr_share']:.0%} of the false rejections in no-harm worlds. **Two pre-registered confirmatory tests on freshly generated worlds FAILED**: "
+        f"per-world gap to the best of five fixed baselines {c1['gap']:+.3f} pts [{c1['lo']:+.3f}, {c1['hi']:+.3f}] ({c1['neg']} of {c1['n']} worlds negative) and "
+        f"{c2['gap']:+.3f} pts [{c2['lo']:+.3f}, {c2['hi']:+.3f}] ({c2['neg']} of {c2['n']} negative). On these synthetic worlds CCL is measurably worse than "
+        f"case-level baselines; non-inferiority, causal harm detection and real-firm transfer are not established (AR-018).")
+block = "\n".join([sim, real, dbx, auto, gov])
 R = open(os.path.join(HERE, "README.md")).read()
 a, b = R.index("<!-- CLAIMS:BEGIN -->"), R.index("<!-- CLAIMS:END -->")
 open(os.path.join(HERE, "README.md"), "w").write(R[:a] + "<!-- CLAIMS:BEGIN -->\n" + block + "\n" + R[b:])
