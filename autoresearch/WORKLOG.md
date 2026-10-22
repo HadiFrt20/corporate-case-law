@@ -145,3 +145,12 @@ with explicit splitting); a safety hook mistook a Python one-liner for kubectl a
 - Descriptive diagnosis: mining recall on generated rule shapes (about -0.3 pts even where no overrule fires) plus missed
   near-threshold harm; overrule false alarms were not the main driver.
 - Decision AR-018: stop; publish everything including both failures; open hypotheses listed for a future line.
+
+## 2026-10-22 · Astra round 3 (record B+) and publication
+
+- Review `docs/reviews/astra_autoresearch_round3_2026-10-22.md`; response `response_autoresearch_round3_2026-10-22.md`.
+- Fixed: README status contradiction, generated verdict wording with an assertion, AR-018 claim scope (corrections),
+  AR-019 provenance gaps recorded (simulator unchanged during the line: git evidence).
+- Before publishing, the commits of this line were re-authored with the GitHub noreply address (they had been made with
+  a personal address). This rewrites commit hashes; every hash cited in ADR.md, WORKLOG.md and RUN_oct22.md was remapped
+  to its rewritten counterpart in the same order (`HASHMAP_publish.txt` lists old -> new).

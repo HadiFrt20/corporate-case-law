@@ -330,3 +330,30 @@ no third confirmatory test of a tweaked method in this session (that would be op
 mining recall; overrule power near the threshold (sequential evidence across months instead of a single-month test).
 
 **Status.** Accepted.
+
+### AR-018 corrections after Astra round 3 (B+ for the record)
+
+- "The best CCL found by the loop" -> **the two selected locked CCL candidates** (dev / detector selection does not show
+  which candidate is best on the confirmatory distribution).
+- Both intervals exclude zero **and both contain -0.25**: the deficit is real against this comparator, but a deficit
+  larger than the margin is not established.
+- "Overrules make CCL catch causal harm at all" -> on the detector panel, at drops of 0.25 to 0.30, overrules catch 100%
+  vs 0% without them. "Search adjustment removes their false alarms" -> **on the inspected detector panel**, search
+  adjustment eliminated the measured overrule-attributable false rejections outside the unobserved-confounding configs;
+  confirm 2 still shows overrules firing in segment worlds.
+- H2 falsified **this two-literal remedy**, not joint confounding in general; overrule attribution measures direct
+  decision changes from deleting overrules from the final law (it does not restore struck precedents).
+- Between-run differences (confirm 1 vs 2) are descriptive, not treatment effects; the "miner misses generated
+  thresholds" diagnosis is a hypothesis.
+
+## AR-019 · Provenance gaps acknowledged (2026-10-22)
+
+**Context.** Round 3: the manifests pin method and harness hashes but not the simulator; the timeout can still block on
+a partial line; invalid runs may write partial baseline caches; the confirmatory summary prints an approximate
+configuration-level CI before the registered world-level one.
+
+**Decision.** Recorded as open defects for the next line. Evidence for these runs: `ccl_sim.py` and `rulec.py` have no
+commits since the autoresearch baseline (last change `eeedfa7`, 2026-10-20; `CODE_SHA aec5a5c78d96dc8a`, also in the
+baseline cache file names). The registered result is the `confirm_world_gap` line, not the `score_pts` line.
+
+**Status.** Accepted.
