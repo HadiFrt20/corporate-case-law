@@ -15,7 +15,7 @@ from itertools import combinations
 import numpy as np
 import ccl_sim as C
 
-MINER, ADM, LAW_REF = "beam", 4, "scoped"
+MINER, ADM, LAW_REF, MIN_SUPPORT = "beam", 4, "scoped", 40
 _decile_literals = C.generic_literals
 
 
@@ -68,7 +68,7 @@ def overrules(view):
 def build_law(view, X, m):
     win = view.month >= m - 12
     mw, aw = win & (view.month < m - ADM), win & (view.month >= m - ADM)
-    hs = C.moot_court(C.mine(view[mw], X[mw], MINER), view[aw], X[aw])
+    hs = C.moot_court(C.mine_beam(view[mw], min_support=MIN_SUPPORT), view[aw], X[aw])
     C.LAW_REF = LAW_REF
     judged = C.good_law(hs, view, X, now=m)
     law = [h for h in judged if h["outcome"] not in ("bad", "quarantined_no_controls")]
