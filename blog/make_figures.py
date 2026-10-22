@@ -77,6 +77,11 @@ def locator(board, current, cell=34, gap=5):
     return im
 
 
+def plain(img, width):
+    """the figure is the board crop only: no header band, no locator (Hadi, 2026-10-22)"""
+    return img.resize((width, int(width * img.size[1] / img.size[0])), Image.LANCZOS)
+
+
 def with_header(img, board, zone, title, width):
     """Resize the zone render and add a header band: label on the left, locator on the right."""
     img = img.resize((width, int(width * img.size[1] / img.size[0])), Image.LANCZOS)
@@ -93,12 +98,14 @@ def with_header(img, board, zone, title, width):
 
 def main():
     d = json.load(open(BOARD)); os.makedirs(os.path.join(HERE, "_crops"), exist_ok=True)
-    for f in os.listdir(os.path.join(HERE, "img")):
-        if f.endswith(".png"): os.remove(os.path.join(HERE, "img", f))  # stale figures from the old layout
+    for z in ZONES.values():   # only this script's own figures (the architecture diagram and board 3 live here too)
+        for name, *_ in z.values():
+            q = os.path.join(HERE, "img", name + ".png")
+            if os.path.exists(q): os.remove(q)
     for board, zones in ZONES.items():
         for zone, (name, (x0, x1), (y0, y1), title) in zones.items():
             w = 2000 if name in WIDE else 1500
-            with_header(crop_board(d, name, x0, x1, y0, y1), board, zone, title, w).save(os.path.join(HERE, "img", name + ".png"), optimize=True)
+            plain(crop_board(d, name, x0, x1, y0, y1), w).save(os.path.join(HERE, "img", name + ".png"), optimize=True)
             print(name, flush=True)
     # recap overviews, rendered one row at a time so the browser never clips a tall canvas, then stacked
     for board, (x0, x1), rows in [(1, (-50, 3500), [(-50, 175), R1, R2, R3, R4]),

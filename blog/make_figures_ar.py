@@ -23,7 +23,7 @@ def main():
     d = json.load(open(BOARD3)); os.makedirs(os.path.join(HERE, "_crops"), exist_ok=True)
     for zone, (name, (x0, x1), (y0, y1), title) in ZONES3.items():
         w = 2000 if zone == 0 else 1500
-        MF.with_header(MF.crop_board(d, name, x0, x1, y0, y1), 3, zone, title, w).save(os.path.join(HERE, "img", name + ".png"), optimize=True)
+        MF.plain(MF.crop_board(d, name, x0, x1, y0, y1), w).save(os.path.join(HERE, "img", name + ".png"), optimize=True)
         print(name, flush=True)
     rows = [(0, 1080)] + [(180 + r * 930, 180 + r * 930 + 900) for r in range(1, 4)]
     parts = [MF.crop_board(d, f"b3_recap_r{i}", 20, 3440, a, b, anchors=True) for i, (a, b) in enumerate(rows)]

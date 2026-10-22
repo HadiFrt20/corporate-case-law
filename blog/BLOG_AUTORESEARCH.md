@@ -23,7 +23,7 @@ Here is where it landed:
 3. **The most valuable thing the loop produced was not a better method. It was a better way of testing**: a frozen harness the agent cannot touch, a rule that the agent may only decide on one panel, pre-registered tests with hashes, and a rule for when to stop.
 4. **The result is narrow.** Same family of simulated worlds, untuned baselines, parity not superiority, and no real firm yet.
 
-Each figure below is one zone of a single hand-drawn whiteboard (board 3). The small map in the top-right corner of each figure shows where you are on the board. The full board comes at the end.
+Each figure below is one zone of a single hand-drawn whiteboard (board 3). The full board comes at the end.
 
 ![Board 3, header](img/b3_z00_header.png)
 *Figure 1. Board 3, header: autoresearch adapted to Corporate Case Law, with who did what written on the board itself.*

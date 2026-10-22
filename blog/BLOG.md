@@ -22,7 +22,7 @@ After four rounds of external review, five seeds, 180 simulation runs, one real 
 
 The rest of this post goes down the pyramid: why the problem matters, the idea, the evidence, then the full technical detail for anyone who wants to rebuild it.
 
-**How to read the figures.** This work lives on two hand-drawn whiteboards. Board 1 is my study of the paper that started it; board 2 is Corporate Case Law. Neither is shown whole up front. Each figure is one zone, and the small map in its top-right corner tells you where you are: the red cell is the zone you are looking at, grey cells are zones you have already seen, white cells are still to come. Each full board appears only once you have walked all of it. Every number on board 2 is read from the result files.
+**How to read the figures.** This work lives on two hand-drawn whiteboards. Board 1 is my study of the paper that started it; board 2 is Corporate Case Law. Neither is shown whole up front. Each figure is one zone, in reading order. Each full board appears only once you have walked all of it. Every number on board 2 is read from the result files.
 
 ---
 
