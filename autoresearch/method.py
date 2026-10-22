@@ -68,7 +68,7 @@ def overrules(view):
 def build_law(view, X, m):
     win = view.month >= m - 12
     mw, aw = win & (view.month < m - ADM), win & (view.month >= m - ADM)
-    hs = C.moot_court(C.mine_beam(view[mw], min_support=MIN_SUPPORT, beam=BEAM), view[aw], X[aw])
+    hs = [dict(h, id=f'H{i}') for i, h in enumerate(C.mine_beam(view[win], min_support=MIN_SUPPORT, beam=BEAM))]   # ABLATION: no moot court
     ovr = overrules(view)
     # an overruled precedent is struck from the law: drop a loosening holding whose above-policy cases all fall
     # inside an overrule (its decisions cannot change, only the rule count does)
