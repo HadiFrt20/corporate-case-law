@@ -60,13 +60,19 @@ def mine_beam(d, lits, min_support=60, min_prec=.9, max_rules=14, max_lits=3, be
     return out
 
 
-def homogeneous(ls, P, masks, known, ren, st, taken, min_n=20):
-    """compare like with like: the contrast must survive every one-literal refinement of the population"""
+def homogeneous(ls, P, masks, known, ren, st, taken, min_n=20, z_fail=2.0):
+    """compare like with like: reject the population if some one-literal refinement shows SIGNIFICANT evidence that its
+    drop is smaller than the harm threshold (a statistical test, so sampling noise in small cells does not veto a real
+    effect, and a heterogeneous population is still caught; AR-012)"""
     for q, Q in masks.items():
         if q in ls: continue
         for side in (P & Q, P & ~Q):
             a = known & side & ~st & ~taken; b = known & side & st & ~taken
-            if a.sum() >= min_n and b.sum() >= min_n and ren[a].mean() - ren[b].mean() > -C.HARM_DROP: return False
+            na, nb = a.sum(), b.sum()
+            if na < min_n or nb < min_n: continue
+            pa, pb = ren[a].mean(), ren[b].mean()
+            se = np.sqrt(max(pa * (1 - pa) / na + pb * (1 - pb) / nb, 1e-9))
+            if (pa - pb + C.HARM_DROP) / se > z_fail: return False
     return True
 
 
