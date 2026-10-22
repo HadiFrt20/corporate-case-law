@@ -84,7 +84,7 @@ with explicit splitting); a safety hook mistook a Python one-liner for kubectl a
 
 - Monitor: -0.032 [95% CI -0.169, +0.106], non-inferior at -0.25 (worst easy/segment/202 -0.412), harm caught 100%.
 - **Fresh run 1** (draw k = 16737199, 12 configs, 4 generated worlds x 2 effects + 4 with random near-threshold harm;
-  run once, output kept verbatim in ): **-0.419 [-0.901, +0.063], NOT non-inferior**.
+  run once, output kept verbatim in `FRESH_run1_k16737199.txt`): **-0.419 [-0.901, +0.063], NOT non-inferior**.
   Harm caught 97%, harmful approvals 0.10%, but false rejections 0.71% on average (up to 1.44%) with overrules firing
   in segment worlds that contain no causal harm (up to 2.2 per month). One near-threshold world won big (+1.53, where
   the black boxes over-block), one missed harm (81.9% caught).
