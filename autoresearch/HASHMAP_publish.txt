@@ -1,0 +1,39 @@
+old (pre-publication)	new (published)	subject
+1f46772	3e59007	docs: blog draft (pyramid structure) with 17 board figures and generat
+fffa349	727e4bd	docs: walk both boards zone by zone in the blog, with a you-are-here l
+7009ec0	2357eee	docs: numbered caption under every blog figure
+ddacde5	3ed8c72	docs: close the blog with a decluttered architecture diagram of the bu
+be2c97e	844067a	docs: figure 26 is now the deployed component architecture
+9423fd3	37fe91e	docs: replace blog tables with lists (Substack does not render tables)
+7b5b94b	c89e1c6	autoresearch: frozen harness, baseline method, program.md
+d1db96f	3f4d5c8	exp: overruling precedents (outcome-mined stricter-law holdings, same-
+c3bd236	dbe19d0	exp: overruling precedents (fix: holding id)
+84f96fe	fdce31b	exp: overrule only when the contrast holds in every refinement (no Sim
+acf8b75	6acfab5	exp: every threshold for small integer fields
+cca8fe4	7098514	exp: admission window 4 months
+7fc7232	2cb85a2	exp: beam min_support 40
+531478d	c21f081	exp: beam width 60
+0056e3f	607ab98	exp: drop the rule-level outcome screen (overrules handle harm)
+eda0170	1e2ea22	exp: strike precedents fully inside an overrule
+a3618e4	ab1ee9b	exp: beam min_support 30
+fa08623	c2a3cd0	autoresearch oct22: run log, ADR-043, worklog
+06f9477	9936171	autoresearch: project worklog and ADR log (AR-001..AR-007), logging ru
+e3a50cd	1beffba	ablation: no moot court (mine on the full window, admit everything)
+ec00013	8e61d33	autoresearch: log exp 14, AR-008 (no moot court for mined rules)
+9e42f98	b1c8cc3	autoresearch: harness v2 trust boundary (AR-009), method fixes (AR-010
+08c36ca	d15a21b	exp: refinements must show the full harm drop
+5ce0e00	b9fd371	exp: statistical refinement test (reject only on significant evidence 
+8eac07d	55dc0f0	autoresearch: harness v2.1 dev panel with near-threshold harm, AR-012 
+a787c57	bc32f34	autoresearch: fresh run 1 of the locked method: -0.419, not non-inferi
+6c25bda	435c6a2	autoresearch: worklog fix (filename lost to shell substitution)
+8e11282	2b7061e	exp: two-literal refinements in the overrule check (joint confounders)
+e6a9069	0f9722f	autoresearch: exp 20, fresh run 2 (-0.042, not non-inferior), Astra ro
+0f04399	6554029	autoresearch: harness v3 (detector + confirm panels, overrule attribut
+54b885c	a24dd16	autoresearch: AR-014 analysis script (committed before reading detecto
+89f71ef	a3e7f39	autoresearch: harness fix: resolve --method to an absolute path (runne
+6efd56f	dd79b45	autoresearch: AR-014 results (H1 yes, H2 falsified, H3 yes), AR-015 co
+914f007	f20f22f	autoresearch: confirmatory test 1 FAILS (-0.373 [-0.603, -0.142], 22/2
+e6a37f2	69ecd7d	autoresearch: AR-016 Bonferroni overrules (dev +0.360, detector +0.073
+77eae3b	15e7f2a	autoresearch: confirmatory test 2 FAILS (-0.374 [-0.591, -0.157]); dia
+9e1fc99	a4594a4	README: generated autoresearch evidence (both confirmatory tests FAIL)
+34b9b40	ebf5239	autoresearch: Astra round 3 (record B+), claim scope corrections, AR-0
