@@ -65,6 +65,15 @@ Every 5 kept commits, and at the end, run the holdout once and append to `holdou
 The holdout has unseen seeds and an unseen world (different rule shapes, a different stricter rule, a rogue
 approver in another segment). If dev improves while holdout falls, you are overfitting the simulator: say so.
 
+## Logging and decisions (this project's own records)
+
+- `autoresearch/WORKLOG.md`: after EVERY experiment, add a row (number, commit, hypothesis, dev score, rules,
+  decision and why). Record crashes and mistakes too.
+- `autoresearch/ADR.md`: when a kept change alters the method's design (a new mechanism, a removed one, a policy
+  for the loop itself), add an AR-NNN record: context, decision, consequences, status. Parameter tweaks go in the
+  worklog only.
+- Commit the worklog and ADR updates with the experiment they describe (results.tsv stays untracked).
+
 ## The loop
 
 On branch `autoresearch/<tag>`:
