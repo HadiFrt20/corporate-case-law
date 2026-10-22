@@ -210,3 +210,24 @@ revised method would be optional stopping.
 **Consequences.** No claim of non-inferiority until step 2 passes. Fresh runs 1 and 2 remain in the record as failures.
 
 **Status.** Accepted.
+
+## AR-014 · Pre-registered detector falsification experiment (2026-10-22, written BEFORE any run)
+
+**Frozen.** Harness v3 (`--panel detector`, 33 configs on new seeds 501 to 503): hard-world causal exception harm at
+drops 0.10, 0.15, 0.20, 0.25, 0.30 (renewal 0.75 to 0.55); segment-only worlds (hard, gen:900001, gen:900002);
+unobserved confounding (hard, confounded); small cells (hard, 40,000 deals, both effects). Per month the harness
+attributes decisions to overrules (approvals the law minus its overrules would grant but the law rejects). Three
+frozen methods in `autoresearch/candidates/`: `m_twolit.py` (ar-locked-2), `m_onelit.py` (ar-locked-1), `m_noovr.py`
+(ar-locked-2 with overrules switched off).
+
+**Hypotheses and criteria.** "No-harm configs" = segment-only, confounded, and causal drops 0.10 / 0.15 (below the 0.20
+threshold, so the oracle calls nothing harmful).
+- H1 (cause): for `m_twolit` in no-harm configs, at least 50% of false rejections are attributable to overrules.
+- H2 (fix): `m_twolit` vs `m_onelit`: overrule-attributable false rejections in no-harm configs fall by at least 30%,
+  AND the share of harmful cases caught at drops 0.25 / 0.30 falls by at most 5 points.
+- H3 (net value): `m_twolit` mean score over the whole detector panel exceeds `m_noovr`.
+
+**Selection rule for the confirmatory test (AR-015).** The candidate with the highest detector-panel score_pts; if
+within 0.02 of another, the one with fewer rules on average. Applied mechanically; no method edits after this record.
+
+**Status.** Accepted (frozen before running).

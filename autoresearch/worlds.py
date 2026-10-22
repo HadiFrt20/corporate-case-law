@@ -53,7 +53,7 @@ def setup(cfg):
 def firm(cfg):
     setup(cfg)
     rng = np.random.default_rng(cfg["seed"])
-    df = C.make_firm(rng, 120000, cfg.get("bad_renew", 0.35))
+    df = C.make_firm(rng, int(cfg.get("n", 120000)), cfg.get("bad_renew", 0.35))   # n: smaller firms = small cells (detector panel)
     if cfg.get("stress") == "confounded":
         # one population (not the rogue one) whose above-policy deals renew at 0.50 regardless of approval
         q = np.random.default_rng(cfg["seed"] + 7)

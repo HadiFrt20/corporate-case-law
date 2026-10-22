@@ -50,6 +50,11 @@ PANELS = {
     "monitor": [P(world=w, effect=e, seed=s) for w in ("easy", "hard", "alt") for e in ("exception", "segment") for s in (101, 202)],
     "stress": [P(world="hard", effect="segment", seed=s, stress="confounded") for s in (7, 11)]
               + [P(world="hard", effect="exception", seed=s, bad_renew=b) for b in (0.70, 0.60) for s in (7, 11)],
+    # detector falsification panel (AR-014): new seeds 501-503, frozen before any run
+    "detector": [P(world="hard", effect="exception", seed=s, bad_renew=b) for b in (0.75, 0.70, 0.65, 0.60, 0.55) for s in (501, 502, 503)]
+                + [P(world=w, effect="segment", seed=s) for w in ("hard", "gen:900001", "gen:900002") for s in (501, 502, 503)]
+                + [P(world="hard", effect="segment", seed=s, stress="confounded") for s in (501, 502, 503)]
+                + [P(world="hard", effect=e, seed=s, n=40000) for e in ("exception", "segment") for s in (501, 502, 503)],
 }
 SRC = "".join(open(os.path.join(HERE, f)).read() for f in ("harness.py", "worlds.py", "runner.py"))
 HARNESS_SHA = hashlib.sha256(SRC.encode()).hexdigest()[:12]
@@ -124,8 +129,14 @@ def eval_config(cfg, need_base, method_path=None):
                 if missing: res["violation"] = f"month {m}: literal on a field not available in this world: {missing}"; break
                 WD.setup(cfg)
                 te = (df.month == m).values; dt, Xt = df[te], X[te]
-                pred = np.asarray(C.apply(law, dt[[c for c in DEC_COLS if c in dt]], Xt)[0], bool)
+                dcols = dt[[c for c in DEC_COLS if c in dt]]
+                pred = np.asarray(C.apply(law, dcols, Xt)[0], bool)
                 orc, harm = dt.harm_oracle.values, dt.harmful_if_approved.values
+                ovr = [h for h in law if h["kind"] == "tighten" and h["cap"] == C.STATUTE_CAP]
+                pred0 = np.asarray(C.apply([h for h in law if h not in ovr], dcols, Xt)[0], bool) if ovr else pred
+                changed = pred0 & ~pred                                        # approvals the overrules turned into rejections
+                res.setdefault("ovr_false_rej", []).append(int((changed & orc).sum())); res.setdefault("ovr_prevented", []).append(int((changed & harm).sum()))
+                res.setdefault("all_false_rej_n", []).append(int((~pred & orc).sum())); res.setdefault("ovr_pops", []).append([" AND ".join(h["lits"]) for h in ovr])
                 res["agree"].append(float((pred == orc).mean())); res["harmful"].append(float((pred & harm).mean()))
                 res["harm_cases"].append(int(harm.sum())); res["blocked_harm"].append(int((~pred & harm).sum()))
                 res["false_rej"].append(float((~pred & orc).mean())); res["rules"].append(len(law)); res["lits"].append(sum(len(h["lits"]) for h in law))
@@ -159,15 +170,47 @@ def summarize(out, cache, panel):
     print(f"rules_mean:       {np.mean([x['rules'] for x in rows]):.2f}  (literals {np.mean([x['lits'] for x in rows]):.1f}, overrules {np.mean([x['ovr'] for x in rows]):.2f})")
     print(f"panel:            {panel} ({n} configs)")
     for x in rows:
-        c = x["cfg"]; tag = f"{c['world']:6s} {c['effect']:9s} s{c['seed']:<6d}" + (f" br{c['bad_renew']}" if c["bad_renew"] != 0.35 else "") + (f" {c['stress']}" if c["stress"] else "")
+        c = x["cfg"]; tag = f"{c['world']:6s} {c['effect']:9s} s{c['seed']:<6d}" + (f" br{c['bad_renew']}" if c["bad_renew"] != 0.35 else "") + (f" {c['stress']}" if c["stress"] else "") + (f" n{c['n'] // 1000}k" if c.get("n") else "")
         print(f"  {tag:38s} ccl {x['ccl']:.4f}  best {x['bk']:11s} {x['bv']:.4f}  gap {x['gap']:+6.2f}  harmful {x['harmful']:5.2f}%  "
               f"caught {('%5.1f%%' % x['catch']) if x['catch'] is not None else '  n/a '}  false_rej {x['false_rej']:5.2f}%  rules {x['rules']:4.1f}  ovr {x['ovr']:.1f}")
 
 
+def confirm_summary(out, cache, man):
+    """pre-registered inference (AR-015): one gap per WORLD (mean of its exception and segment configs), t-interval over
+    worlds; success iff the lower 95% bound exceeds the margin"""
+    from collections import defaultdict
+    per = defaultdict(list)
+    for r in out:
+        b = cache[json.dumps(r["cfg"], sort_keys=True)]; ccl = float(np.average(r["agree"], weights=r["n"]))
+        per[r["cfg"]["world"]].append((ccl - max(b.values())) * 100)
+    g = np.array([np.mean(v) for v in per.values()]); n = len(g)
+    from scipy import stats
+    half = stats.t.ppf(0.975, n - 1) * g.std(ddof=1) / math.sqrt(n)
+    lo = g.mean() - half
+    print(f"confirm_world_gap: {g.mean():+.3f}  [95% CI {lo:+.3f}, {g.mean() + half:+.3f}] over {n} independent worlds")
+    print(f"confirm_margin:    {man['margin_pts']}")
+    print(f"confirm_result:    {'PASS' if lo > man['margin_pts'] else 'FAIL'} (pre-registered: lower bound > margin)")
+    print(f"worlds_negative:   {int((g < 0).sum())} of {n}")
+
+
 def main():
-    ap = argparse.ArgumentParser(); ap.add_argument("--panel", default="dev", choices=["dev", "monitor", "stress", "fresh"])
+    ap = argparse.ArgumentParser(); ap.add_argument("--panel", default="dev", choices=["dev", "monitor", "stress", "fresh", "detector", "confirm"])
+    ap.add_argument("--manifest", default=None, help="confirm panel: committed pre-registration manifest (AR-013)")
+    ap.add_argument("--dump", default=None, help="write per-config raw results as JSON (detector panel)")
     ap.add_argument("--method", default=None, help="path to a method file (tests); default autoresearch/method.py"); a = ap.parse_args()
-    if a.panel == "fresh":
+    if a.panel == "confirm":
+        man = json.load(open(a.manifest)); mp = os.path.join(ROOT, man["method"])
+        sha = hashlib.sha256(open(mp, "rb").read()).hexdigest()
+        if sha != man["method_sha256"]: print("status: manifest method hash mismatch"); return
+        if HARNESS_SHA != man["harness_sha"]: print("status: manifest harness hash mismatch"); return
+        k = secrets.randbits(30); rr = np.random.default_rng(k); a.method = mp
+        panel = []
+        for i in range(man["n_worlds"]):
+            br = round(float(rr.uniform(*man["harm_bad_renew_range"])), 2)
+            panel += [P(world=f"gen:{k + i}", effect="exception", seed=k % 100000 + 3000 + i, bad_renew=br),
+                      P(world=f"gen:{k + i}", effect="segment", seed=k % 100000 + 3000 + i)]
+        print(f"confirm draw: k={k} manifest={a.manifest}")
+    elif a.panel == "fresh":
         k = secrets.randbits(30)    # drawn now: nobody, including the agent, has seen these worlds or seeds
         panel = [P(world=f"gen:{k + i}", effect=e, seed=k % 100000 + 1000 + i) for i in range(4) for e in ("exception", "segment")]
         rr = np.random.default_rng(k)   # v2.1: plus harm of random size around the threshold (drop 0.10 to 0.30)
@@ -183,9 +226,12 @@ def main():
     viol = [r["violation"] for r in out if r["violation"]]
     for r in out:
         if r["base"]: cache[json.dumps(r["cfg"], sort_keys=True)] = {k: float(np.average(v, weights=r["n"])) for k, v in r["base"].items()}
-    if a.panel != "fresh": json.dump(cache, open(cache_p, "w"))
+    if a.panel not in ("fresh", "confirm"): json.dump(cache, open(cache_p, "w"))
+    if a.dump: json.dump([dict(r, base_cached=cache.get(json.dumps(r["cfg"], sort_keys=True))) for r in out], open(a.dump, "w"))
     if viol: print("---\nstatus:           invalid\nviolation:       ", viol[0], "\nscore_pts:        nan"); return
-    summarize(out, cache, a.panel); print(f"seconds:          {time.time() - t0:.1f}")
+    summarize(out, cache, a.panel)
+    if a.panel == "confirm": confirm_summary(out, cache, json.load(open(a.manifest)))
+    print(f"seconds:          {time.time() - t0:.1f}")
 
 
 if __name__ == "__main__":
