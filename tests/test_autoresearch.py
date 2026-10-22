@@ -156,3 +156,13 @@ def test_hanging_method_times_out(tmp_path, monkeypatch):
 def test_law_on_a_missing_field_is_invalid_not_a_crash(tmp_path):
     r = run_method(tmp_path, "def build_law(view, X, m):\n    return [{'kind': 'loosen', 'lits': ['tenure_y > 8'], 'cap': 25.0}]\n")
     assert r["violation"] and "not available" in r["violation"]          # the easy world has no tenure field
+
+
+def test_main_resolves_a_relative_method_path(tmp_path, monkeypatch):
+    """the runner starts in a temp dir: a relative --method must be made absolute (bug hit on the first detector run)"""
+    p = tmp_path / "m.py"; p.write_text("def build_law(view, X, m):\n    return []\n")
+    monkeypatch.chdir(tmp_path)
+    r = H.eval_config(CFG, False, os.path.abspath("m.py"))
+    assert r["violation"] is None
+    src = open(os.path.join(ROOT, "autoresearch", "harness.py")).read()
+    assert "a.method = os.path.abspath(a.method)" in src

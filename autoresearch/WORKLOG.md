@@ -115,3 +115,15 @@ with explicit splitting); a safety hook mistook a Python one-liner for kubectl a
   crashed instead of invalidating (now a violation); stale wording ("every refinement", "12 configs", "best black box").
   New tests: 32 harness tests, full suite 111 passed. Dev re-run after the harness changes: +0.319, unchanged.
 - Response: `docs/reviews/response_autoresearch_round2_2026-10-22.md`. Next step pre-committed in AR-013.
+
+## 2026-10-22 · AR-014 detector falsification experiment, then AR-015 manifest
+
+- Harness v3: detector panel (33 configs, seeds 501 to 503), confirm panel driven by a committed manifest, per-overrule
+  attribution of changed decisions. Candidates frozen in `candidates/` (one-literal, two-literal, no overrules).
+- Pre-registration AR-014 committed (0f04399) before any run; analysis script committed (54b885c) before reading output.
+- First detector attempt: all configs died (relative method path, runner cwd is a temp dir). Fixed in 89f71ef, test added.
+- Results: H1 supported (75% of no-harm false rejections are overrules), H2 NOT supported (two-literal refinements: -0.4%),
+  H3 supported (overrules net positive: -0.020 vs -1.584). False overrules = thin numeric tails = multiple testing.
+- Selection by the pre-registered rule: `m_twolit.py`. Manifest `confirm_1.json` (AR-015) committed before the run.
+- Not done on purpose: no method change in response to the H2 failure before the confirmatory run (that is the next
+  iteration: search-adjusted overrules, AR-016 to come).

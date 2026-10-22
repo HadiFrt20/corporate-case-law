@@ -231,3 +231,34 @@ threshold, so the oracle calls nothing harmful).
 within 0.02 of another, the one with fewer rules on average. Applied mechanically; no method edits after this record.
 
 **Status.** Accepted (frozen before running).
+
+### AR-014 result (2026-10-22, analysis script committed before results were read)
+
+| | two-literal (ar-locked-2) | one-literal (ar-locked-1) | no overrules |
+|---|---|---|---|
+| detector score_pts | -0.020 | -0.020 | -1.584 |
+| harm caught, drops 0.25 / 0.30 | 100% | 100% | 0% |
+| no-harm false rejections (count) | 2,763 | 2,771 | 692 |
+| of which caused by overrules | 2,071 (75.0%) | 2,079 (75.0%) | 0 |
+
+- **H1 supported**: overrules cause 75% of the false rejections in no-harm worlds.
+- **H2 NOT supported**: two-literal refinements cut overrule false rejections by 0.4% (target 30%). The joint-confounding
+  diagnosis of the fresh failures is **falsified**. The false overrules sit on thin numeric tails that change month to
+  month (`term > 2 AND tenure_y <= 0`, `size_k <= 28 AND tenure_y <= 1`, `size_k > 1000 AND ...`): a multiple-testing
+  failure over ~1,800 candidate populations per month, as Astra round 2 predicted. In the confounded worlds the
+  overrule hits a plausible segment x region cell, as designed: not detectable from these data.
+- **H3 supported**: overrules are worth their errors on this panel (-0.020 vs -1.584).
+- At exactly the threshold (drop 0.20) only 17% to 59% of harmful cases are caught: about coin-flip power at a cutoff.
+- **Selection** (pre-registered rule): two-literal (tied within 0.02 with one-literal, fewer rules) -> `m_twolit.py`.
+- Infrastructure bug on the first attempt: the harness passed the candidate path relative to the repo while the runner
+  starts in a temp dir; every config died at month 36 with no result. Fixed (absolute path, regression test) and re-run.
+
+## AR-015 · Confirmatory test 1, pre-registered (2026-10-22, committed BEFORE the run)
+
+**Decision.** Manifest `autoresearch/manifests/confirm_1.json`: method `candidates/m_twolit.py` (hash pinned, selected by
+the AR-014 rule), harness hash pinned, 24 generated worlds drawn at run time, each with an exception config (harm size
+drawn per world, renewal 0.35 to 0.75: drops 0.10 to 0.50) and a segment config; per-world gap; two-sided 95% t-interval
+over worlds; margin -0.25 pts with its (lenient) justification; PASS iff the lower bound exceeds the margin; one run,
+reported whatever it shows.
+
+**Status.** Accepted (frozen).
