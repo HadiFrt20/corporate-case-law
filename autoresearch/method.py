@@ -69,7 +69,5 @@ def build_law(view, X, m):
     win = view.month >= m - 12
     mw, aw = win & (view.month < m - ADM), win & (view.month >= m - ADM)
     hs = C.moot_court(C.mine_beam(view[mw], min_support=MIN_SUPPORT, beam=BEAM), view[aw], X[aw])
-    C.LAW_REF = LAW_REF
-    judged = C.good_law(hs, view, X, now=m)
-    law = [h for h in judged if h["outcome"] not in ("bad", "quarantined_no_controls")]
+    law = hs   # no rule-level outcome screen: harm is handled by overruling precedents
     return law + overrules(view)[: max(0, 15 - len(law))]
