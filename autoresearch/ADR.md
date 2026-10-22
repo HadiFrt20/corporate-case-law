@@ -91,3 +91,19 @@ mechanism could replace `apply` itself in the worker process, which the gates wo
 `ccl_sim`'s callables are unchanged after each `build_law`, or copy the miner into `method.py`.
 
 **Status.** Proposed.
+
+## AR-008 · No moot court for mined rules; replay admission kept for untrusted proposals only (2026-10-22)
+
+**Context.** Experiment 14 (an ablation) removed the replay admission step: mine on the full 12-month window and admit
+every rule the miner returns (the miner already requires 90% precision and 30 cases). Dev -> +0.181 (every config
+positive), holdout -0.071 -> +0.050.
+
+**Decision.** Keep the ablation in the method. Record plainly that, in this simulator, the moot court cost accuracy for
+mined rules: splitting 12 months into 8 for mining and 4 for replay starved rare rules of data. The moot court's other
+role, keeping untrusted proposals (LLM-written rules, human edits) out of the law, is not exercised by this harness.
+
+**Consequences.** CCL's "replay as the admission test" claim must be narrowed to untrusted proposals until a harness
+test shows otherwise. Proposed harness change (human-owned): inject plausible-but-wrong candidate rules each month and
+score whether the law admits them; that would let replay prove or lose its value inside the loop.
+
+**Status.** Accepted (exploratory); supersedes the admission-window decisions of experiments 4 and 12 for mined rules.

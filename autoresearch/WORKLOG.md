@@ -34,3 +34,13 @@ Holdout checkpoints: 531478d -0.180; a3618e4 -0.071. Harmful approvals 0% in eve
 
 What went wrong: experiment 1's first run crashed (holdings without an `id`); a safety hook flagged a combined
 grep-and-commit command twice, so edits and commits now run as separate steps.
+
+## 2026-10-22 · experiment 14 (ablation that was kept)
+
+| # | commit | hypothesis | dev score | rules | decision |
+|---|---|---|---|---|---|
+| 14 | e3a50cd | ablation: drop the moot court, mine on the full 12-month window, admit every mined rule | +0.181 | 8.77 | keep: all 12 dev configs positive; holdout -0.071 to +0.050 (first positive), alt world ties or beats |
+
+This undercuts "replay as an admission test" for MINED rules in this simulator: a high-precision miner on 12 months beats
+mining on 8 and replaying on 4. It says nothing about untrusted proposals (LLM-written rules), which this harness never
+injects; see AR-008.
