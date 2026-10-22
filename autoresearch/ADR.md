@@ -90,7 +90,7 @@ mechanism could replace `apply` itself in the worker process, which the gates wo
 **Decision pending** the Astra review: either forbid monkeypatching in `program.md` and have the harness verify that
 `ccl_sim`'s callables are unchanged after each `build_law`, or copy the miner into `method.py`.
 
-**Status.** Proposed.
+**Status.** Superseded by AR-009/AR-010 (monkeypatching removed; the method now runs in its own process).
 
 ## AR-008 · No moot court for mined rules; replay admission kept for untrusted proposals only (2026-10-22)
 
@@ -107,3 +107,63 @@ test shows otherwise. Proposed harness change (human-owned): inject plausible-bu
 score whether the law admits them; that would let replay prove or lose its value inside the loop.
 
 **Status.** Accepted (exploratory); supersedes the admission-window decisions of experiments 4 and 12 for mined rules.
+
+## AR-009 · Harness v2: an enforced trust boundary (2026-10-22, after Astra review round 1)
+
+**Context.** Astra (round 1, grade C+) showed the v1 boundary was procedural: the method ran in the harness process
+(caller frames held the firm, seed and oracle), could monkeypatch `apply` / `outcome_rows`, the scorer passed
+`approved` / `renewed` to the rule engine, AST holdings escaped the size gate, literals were not restricted to
+decision fields, and baselines could be computed after the method had mutated the simulator.
+
+**Decision.**
+- The method runs in `runner.py`, a separate `python -I` process; for each month it receives a pickled view of
+  `VIEW_COLS` only and returns plain JSON. Its mutations of `ccl_sim` stay in its own process.
+- `validate()` accepts only `{kind, lits, cap}` holdings; literals must match a strict grammar over the nine deal fields
+  (no approved, renewed, statute, month, disc or outcome literals); at most 15 holdings, 4 literals each, 45 overall;
+  finite caps in range (loosen 15 to 60, tighten 0 to 15). No AST, no trees.
+- Decisions are made by the harness's own `ccl_sim.apply` on decision-time columns only.
+- Baselines are computed in workers that never import the method; added a compact-rule baseline (15-leaf tree) and
+  that tree plus the renewal veto.
+- Reported: 95% t-interval over configurations (optimistic: seeds are shared across worlds), false rejections, share of
+  harmful cases caught, overrule count, literal count; a prespecified non-inferiority margin of -0.25 pts for the
+  monitor and fresh panels.
+- Panels: dev (decides), monitor (the former holdout; seen at checkpoints, so not a clean test), stress (harm-detector
+  tests, never in the score), fresh (worlds generated from templates with a generator seed drawn at run time;
+  run once per locked method).
+- 27 adversarial tests (`tests/test_autoresearch.py`): forbidden fields, malformed laws, hidden columns, outcome
+  masking, a method that monkeypatches `apply` (no effect on scoring), a method that searches caller frames and the
+  garbage collector for the firm or oracle (finds nothing; a positive control in-process does find it), a law that
+  reads outcomes (invalid), method crashes (reported).
+
+**Consequences.** The v1 result reproduces under v2: dev +0.181 [+0.147, +0.214]. Still not a sandbox: the method can
+read files on disk (the harness, the simulator) and could regenerate firms from published seeds; that remains
+prohibited in `program.md` and is the reason the fresh panel draws its seeds at run time.
+
+**Status.** Accepted.
+
+## AR-010 · Method fixes from review round 1 (2026-10-22)
+
+**Decision.** (1) The beam miner is copied into `method.py` and takes its candidate literals as an argument (no
+monkeypatching). (2) A loosening precedent is struck only when an overrule's literals are a subset of its own
+(logical implication: it can never decide differently), instead of containment on past rows. (3) Overrules are
+chosen to fit the rule budget first, and precedents are struck only against the overrules actually kept. (4) In the
+sequential overrule search both arms exclude rows already overruled (the v1 code excluded them from one arm only).
+
+**Consequences.** Same dev score as before (+0.181): these were correctness fixes, not gains.
+
+**Status.** Accepted.
+
+## AR-011 · Stress findings: what the overrule detector can and cannot do (2026-10-22)
+
+**Context.** Stress panel (harness v2): effect below the 0.20 threshold (renewal 0.85 vs 0.70), just above (0.85 vs 0.60),
+and a non-causal confound (weak customers get bigger discounts and renew badly whether or not approved).
+
+**Findings.** Below threshold: no overrule fires (correct); the veto and T-learner over-block (0.990 / 0.986 vs CCL
+0.999). Just above: CCL catches 91.5% and 100% of harmful cases, +0.36 and +1.34 pts vs the best baseline. Confounded:
+CCL is fooled (false rejections 2.4% to 2.6%, -2.2 to -2.4 pts vs plain GBM), but so is every outcome-aware method
+(veto 0.913 to 0.919, T-learner 0.971 to 0.974, CCL 0.973 to 0.975); only methods that ignore outcomes are unaffected.
+
+**Decision.** State the limitation plainly: overruling is an observational association rule with a refinement check;
+it cannot detect confounding by unobserved customer quality. Do not claim causal harm detection.
+
+**Status.** Accepted.

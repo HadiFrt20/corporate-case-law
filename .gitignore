@@ -13,3 +13,6 @@ autoresearch/results.tsv
 autoresearch/holdout.tsv
 autoresearch/*.log
 autoresearch/baselines_*.json
+autoresearch/monitor.tsv
+autoresearch/stress.tsv
+autoresearch/fresh.tsv

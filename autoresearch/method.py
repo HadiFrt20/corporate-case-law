@@ -1,78 +1,103 @@
 """The CCL method under research. THIS is the only file the autoresearch loop edits.
 
-build_law(view, X, m) receives the past as the firm knew it at decision month m (rows with month < m,
-no ground truth, renewal outcomes only where knowable before m: column outcome_known) and returns the law
-for month m: a list of holdings in ccl_sim's rule schema, e.g.
-  {"kind": "loosen", "lits": ["segment = 'ENT'", "competitor"], "cap": 30.0}
-The frozen harness applies the law with ccl_sim.apply and scores it. The method is never told the world,
-the rogue effect or the seed.
+build_law(view, X, m) receives the past as the firm knew it at decision month m (rows with month < m, deal fields,
+approved, statute, outcome_known_month, renewed only where knowable before m: column outcome_known) and returns the
+law for month m: a list of holdings {"kind": "loosen" | "tighten", "lits": [...], "cap": float}. It runs in its own
+process (harness v2, AR-009); the harness validates the law and decides with its own rule engine.
 
-v5.1 CCL (beam miner on m-12..m-3, moot court on m-2..m-1, scoped outcome screen)
-+ overruling precedents: a population whose above-policy approvals renew clearly worse than its own
-  in-policy approvals, in every refinement of it (no Simpson effect), gets a stricter-law holding.
+Current method (AR-005, AR-006, AR-008, AR-010):
+  - beam-search mining on the last 12 months (no moot court for mined rules)
+  - overruling precedents: a stricter-law holding for a population whose above-policy approvals renew clearly worse
+    than its own in-policy approvals, in every one-literal refinement of it
+  - a loosening precedent is struck only when an overrule's literals are a subset of its own (logical implication:
+    it can never decide differently on any case)
 """
 from itertools import combinations
 import numpy as np
 import ccl_sim as C
 
-MINER, ADM, LAW_REF, MIN_SUPPORT, BEAM = "beam", 4, "scoped", 30, 60
-_decile_literals = C.generic_literals
+MIN_SUPPORT, BEAM, MAX_RULES = 30, 60, 15
+OVR_MIN_KNOWN, OVR_Z, OVR_MAX = 40, -3.0, 3
 
 
 def literals(d):
     """decile thresholds, plus EVERY threshold for small integer fields (a real miner tries all of them)"""
-    L = _decile_literals(d)
+    L = C.generic_literals(d)
     for f in ("term", "tenure_y"):
         if f in d and d[f].nunique() <= 20:
             for x in sorted(d[f].unique())[:-1]: L += [f"{f} > {x:g}", f"{f} <= {x:g}"]
     return list(dict.fromkeys(L))
 
 
-C.generic_literals = literals   # the miners call ccl_sim.generic_literals: swap in the richer candidate set
-OVR_MIN_KNOWN, OVR_Z, OVR_MAX = 40, -3.0, 3
+def mine_beam(d, lits, min_support=60, min_prec=.9, max_rules=14, max_lits=3, beam=25):
+    """ccl_sim.mine_beam with the candidate literals passed in (no monkeypatching the simulator, AR-007)"""
+    Lm = np.array([C.literal(l, d) for l in lits]); disc, appr = d.disc.values, d.approved.values
+    after = [np.array([j for j, b in enumerate(lits) if b > a], int) for a in lits]
+    out = []; overridden = np.zeros(len(d), bool)
+    for kind in ["tighten", "loosen"]:
+        open_ = (~d.statute.values & ~overridden) if kind == "loosen" else d.statute.values.copy()
+        caps, good = C._beam_caps(kind), (appr if kind == "loosen" else ~appr)
+        for _ in range(max_rules):
+            rows = np.flatnonzero(open_); Lo = Lm[:, rows]; W = C._cap_bins(disc[rows], good[rows], caps); Lf = Lo.astype(W.dtype)
+            best, frontier = None, [((), np.arange(len(rows)))]
+            for depth in range(1, max_lits + 1):
+                parts = [(p, C._score_children(Lf, W, pr, after[combo[-1]] if combo else np.arange(len(lits)), depth, kind, min_support, min_prec))
+                         for p, (combo, pr) in enumerate(frontier) if not combo or len(after[combo[-1]])]
+                if not parts: break
+                pid = np.concatenate([np.full(len(s[0]), p) for p, s in parts])
+                lit, gain, j, n, g, has, pur = (np.concatenate(a) for a in zip(*(s for _, s in parts)))
+                order = np.lexsort((-pur, -gain))
+                for i in order[:5]:
+                    if has[i] and (best is None or gain[i] > best[0]):
+                        best = (gain[i], frontier[pid[i]][0] + (lit[i],), caps[j[i]], int(n[i]), g[i] / n[i])
+                top = order[np.argsort(-pur[order], kind="stable")][:beam]
+                frontier = [(frontier[pid[i]][0] + (lit[i],), frontier[pid[i]][1][Lo[lit[i], frontier[pid[i]][1]]]) for i in top]
+            if best is None or best[0] <= 0: break
+            _, combo, cap, n, prec = best
+            h = dict(kind=kind, lits=[lits[k] for k in combo], cap=float(cap), support=n)
+            out.append(h); f = C.fires(h, d, None); open_ = open_ & ~f
+            if kind == "tighten": overridden |= f
+    return out
 
 
 def homogeneous(ls, P, masks, known, ren, st, taken, min_n=20):
-    """compare like with like: the contrast must survive every refinement of the population (no Simpson effect)"""
+    """compare like with like: the contrast must survive every one-literal refinement of the population"""
     for q, Q in masks.items():
         if q in ls: continue
         for side in (P & Q, P & ~Q):
-            a = known & side & ~st & ~taken; b = known & side & st
+            a = known & side & ~st & ~taken; b = known & side & st & ~taken
             if a.sum() >= min_n and b.sum() >= min_n and ren[a].mean() - ren[b].mean() > -C.HARM_DROP / 2: return False
     return True
 
 
-def overrules(view):
+def overrules(view, lits):
     """stricter-law holdings from outcomes: above-policy approvals vs in-policy approvals in the SAME population"""
     known, ren, st = view.outcome_known.values, view.renewed.values, view.statute.values
-    lits = [l for l in C.generic_literals(view) if not l.startswith("disc")]
     masks = {l: C.literal(l, view) for l in lits}
     pops = [((l,), masks[l]) for l in lits] + [((a, b), masks[a] & masks[b]) for a, b in combinations(lits, 2)]
     out, taken = [], np.zeros(len(view), bool)
     for _ in range(OVR_MAX):
         best = None
         for ls, P in pops:
-            a = known & P & ~st & ~taken; b = known & P & st
+            a = known & P & ~st & ~taken; b = known & P & st & ~taken     # both arms exclude already-overruled rows
             na, nb = a.sum(), b.sum()
             if na < OVR_MIN_KNOWN or nb < OVR_MIN_KNOWN: continue
-            pa, pb = ren[a].mean(), ren[b].mean(); lift = pa - pb
+            lift = ren[a].mean() - ren[b].mean()
             if lift > -C.HARM_DROP: continue
             p = (ren[a].sum() + ren[b].sum()) / (na + nb); z = lift / np.sqrt(max(p * (1 - p) * (1 / na + 1 / nb), 1e-9))
             if z <= OVR_Z and (best is None or z < best[0]) and homogeneous(ls, P, masks, known, ren, st, taken): best = (z, ls, P)
         if best is None: break
-        out.append({"id": f"O{len(out)}", "kind": "tighten", "lits": list(best[1]), "cap": C.STATUTE_CAP, "support": int((best[2] & ~st).sum()), "outcome": "overrule"})
+        out.append({"kind": "tighten", "lits": list(best[1]), "cap": C.STATUTE_CAP})
         taken |= best[2]
     return out
 
 
 def build_law(view, X, m):
-    win = view.month >= m - 12
-    mw, aw = win & (view.month < m - ADM), win & (view.month >= m - ADM)
-    hs = [dict(h, id=f'H{i}') for i, h in enumerate(C.mine_beam(view[win], min_support=MIN_SUPPORT, beam=BEAM))]   # ABLATION: no moot court
-    ovr = overrules(view)
-    # an overruled precedent is struck from the law: drop a loosening holding whose above-policy cases all fall
-    # inside an overrule (its decisions cannot change, only the rule count does)
-    st = view.statute.values
-    om = [C.fires(o, view, X) for o in ovr]
-    law = [h for h in hs if h["kind"] == "tighten" or not any(((C.fires(h, view, X) & ~st) <= o).all() and (C.fires(h, view, X) & ~st).any() for o in om)]
-    return law + ovr[: max(0, 15 - len(law))]
+    recent = view[view.month >= m - 12]
+    hs = mine_beam(recent, literals(recent), min_support=MIN_SUPPORT, beam=BEAM)
+    ovr_all = overrules(view, literals(view))
+    for k in range(len(ovr_all), -1, -1):      # choose the overrules that fit FIRST, then strike only against those (AR-010)
+        ovr = ovr_all[:k]
+        law = [h for h in hs if not (h["kind"] == "loosen" and any(set(o["lits"]) <= set(h["lits"]) for o in ovr))] + ovr
+        if len(law) <= MAX_RULES: return law
+    return hs[:MAX_RULES]

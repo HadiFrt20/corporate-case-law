@@ -12,14 +12,15 @@ rule-level outcome screen cannot see). The question for this loop:
 
 ## Files
 
-- `autoresearch/harness.py`: FROZEN. Builds the firms, hides ground truth, applies the law with the frozen
-  rule engine, scores against the harm-aware oracle, enforces the form gates. Do not modify.
-- `ccl_sim.py`, `rulec.py`: FROZEN. The simulator, the rule language (`literal`, `fires`, `apply`, `to_sql`) and
-  the trusted compiler. Do not modify. You may import and call anything in them, or copy a function into
-  `method.py` and change the copy.
+- `autoresearch/harness.py`, `runner.py`, `worlds.py`: FROZEN (harness v2, AR-009). The harness builds the firms, sends
+  your method a view of the past in a separate process, validates the plain-data law you return, decides with its own
+  rule engine and scores against the harm-aware oracle. Do not modify.
+- `ccl_sim.py`, `rulec.py`: FROZEN. You may import and call helpers, or copy a function into `method.py` and change
+  the copy. Do not monkeypatch them (it has no effect on scoring anyway: your process is not the harness's).
 - `autoresearch/method.py`: THE ONLY FILE YOU EDIT. `build_law(view, X, m)` returns the law for month m.
 - `autoresearch/results.tsv`: experiment log (untracked).
-- `autoresearch/holdout.tsv`: holdout checkpoints (untracked).
+- `autoresearch/monitor.tsv`, `stress.tsv`, `fresh.tsv`: panel logs (untracked).
+- `autoresearch/WORKLOG.md`, `autoresearch/ADR.md`: this project's own records (tracked).
 
 ## Rules of the game
 
@@ -31,10 +32,12 @@ What you CANNOT do:
 - install packages
 - decide anything at decision time with a model: the harness applies your law with `ccl_sim.apply`, so your
   only output is a list of rules
-- break the form gates: at most 15 holdings, at most 4 conditions each, valid literals or AST, numeric caps
+- break the form gates: at most 15 holdings of the form {kind, lits, cap}, at most 4 literals each and 45 overall,
+  literals only over the deal fields (segment, region, renewal, quarter_end, competitor, churn_high, term, size_k,
+  tenure_y), finite caps in range
 - use information the firm did not have: the view already hides it; do not try to reconstruct hidden columns
   from the simulator's code or random seeds (that is cheating, not research)
-- look at the holdout to choose what to keep
+- look at the monitor, stress or fresh panels to choose what to keep
 
 **The goal: the highest `score_pts`** (mean over the 12 dev configurations of CCL minus the best case-level
 baseline, in points). 0 means CCL ties the best black box; positive means it beats it.
@@ -50,20 +53,21 @@ explain a gain by a quirk of the simulator, discard it and say so in the descrip
 ## Running
 
 ```
-python3 autoresearch/harness.py > autoresearch/run.log 2>&1
-grep "^score_pts:\|^rules_mean:\|^status:" autoresearch/run.log
+python3 autoresearch/harness.py --panel dev > autoresearch/run.log 2>&1
+grep "^score_pts:\|^false_rej\|^rules_mean:\|^status:" autoresearch/run.log
 ```
-A run takes about 20 seconds (baselines are cached). If `status: invalid` appears, the law broke a gate.
+A run takes about 45 seconds (baselines are cached). If `status: invalid` appears, the law broke a gate.
 
 ## Logging
 
 `results.tsv`, tab-separated, header: `commit	score_pts	worst_gap	rules_mean	status	description`
 status is `keep`, `discard`, `invalid` or `crash`.
 
-Every 5 kept commits, and at the end, run the holdout once and append to `holdout.tsv`:
-`python3 autoresearch/harness.py --holdout > autoresearch/holdout.log 2>&1`.
-The holdout has unseen seeds and an unseen world (different rule shapes, a different stricter rule, a rogue
-approver in another segment). If dev improves while holdout falls, you are overfitting the simulator: say so.
+Every 5 kept commits, run the monitor and stress panels and append to `monitor.tsv` / `stress.tsv`
+(`--panel monitor`, `--panel stress`). The monitor has unseen seeds and an alt world; it is seen repeatedly, so it is
+not a clean test. The stress panel tests the harm detector (below / above threshold, non-causal confounding).
+Run `--panel fresh` ONCE per locked method (it draws new worlds and seeds at run time) and log it to `fresh.tsv`.
+If dev improves while monitor or fresh fall, you are overfitting the simulator: say so.
 
 ## Logging and decisions (this project's own records)
 

@@ -44,3 +44,16 @@ grep-and-commit command twice, so edits and commits now run as separate steps.
 This undercuts "replay as an admission test" for MINED rules in this simulator: a high-precision miner on 12 months beats
 mining on 8 and replaying on 4. It says nothing about untrusted proposals (LLM-written rules), which this harness never
 injects; see AR-008.
+
+## 2026-10-22 · Astra review round 1 (C+) and harness v2
+
+- Review: `docs/reviews/astra_autoresearch_round1_2026-10-22.md` (the raw stream was decoded as latin-1; repaired to
+  UTF-8 once, text otherwise unedited). Response: `docs/reviews/response_autoresearch_round1_2026-10-22.md`.
+- Built harness v2 (AR-009): separate method process, plain-data law, strict literal grammar, decision-time columns,
+  clean baselines plus a compact-tree baseline, CIs, false rejections, monitor / stress / fresh panels.
+- Method fixes (AR-010). Re-ran: dev +0.181 [95% CI +0.147, +0.214], identical to v1; monitor +0.052 [-0.040, +0.144],
+  non-inferior at the -0.25 margin; stress panel (AR-011).
+- Tests: 27 adversarial harness tests; full suite 106 passed.
+- Mistakes: harness v2 first run crashed (decision columns included `tenure_y` in the easy world); the first leak probe
+  crashed on objects whose `columns` attribute is not iterable; added a positive control so the probe's silence means
+  something. A safety hook mistook a Python one-liner for a kubectl command; read the cache file directly instead.
